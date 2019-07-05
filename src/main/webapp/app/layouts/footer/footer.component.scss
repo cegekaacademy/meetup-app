@@ -1,0 +1,15 @@
+#sticky-footer {
+  flex-shrink: unset;
+  color: white;
+}
+
+.bottom {
+  position: inherit;
+  bottom: 0;
+  width: 100%;
+}
+
+.footer-link {
+  color: white;
+  font-weight: bold;
+}
