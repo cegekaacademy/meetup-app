@@ -1,4 +1,4 @@
-package com.cegeka.academy.address;
+package com.cegeka.academy.domain;
 import javax.persistence.*;
 
 @Entity
