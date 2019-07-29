@@ -571,7 +571,7 @@
                         <url>jdbc:mysql://localhost:3306/academyProject</url>
                         <defaultSchemaName>academyProject</defaultSchemaName>
                         <username>root</username>
-                        <password></password>
+                        <password>starsinger23</password>
                         <referenceUrl>hibernate:spring:com.cegeka.academy.domain?dialect=org.hibernate.dialect.MySQL5InnoDBDialect&amp;hibernate.physical_naming_strategy=org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy&amp;hibernate.implicit_naming_strategy=org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy</referenceUrl>
                         <verbose>true</verbose>
                         <logging>debug</logging>
