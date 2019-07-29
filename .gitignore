@@ -5,5 +5,6 @@ node_modules/
 .idea/libraries/
 target/
 
-.idea/libraries
+.idea/libraries/*.xml
+
 
