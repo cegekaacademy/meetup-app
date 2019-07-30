@@ -11,7 +11,7 @@ import javax.transaction.Transactional;
 
 @SpringBootTest(classes = AcademyProjectApp.class)
 @Transactional
-public class TestInterest {
+public class InterestTest {
 
     @Autowired
     InterestRepository interestRepository;
