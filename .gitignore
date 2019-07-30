@@ -4,7 +4,3 @@ node_modules/
 .idea/library/
 .idea/libraries/
 target/
-
-.idea/libraries/*.xml
-
-
