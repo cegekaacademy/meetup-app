@@ -23,8 +23,7 @@ public class UserChallengeRepositoryTest {
         userChallengeRepository.save(userChallenge);
 
 
-        assertTrue(true);
-//        assertThat(userChallengeRepository.findById((long) 1)).isEqualTo(3);
+        assertThat(userChallengeRepository.findById((long) 1)).isEqualTo(3);
     }
 
     @Test
