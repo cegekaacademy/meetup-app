@@ -23,6 +23,15 @@ public class Invitation {
     @Column(name = "status", length = 45)
     private String status;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_invitationUser",referencedColumnName = "id")
+    private User user;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_user",referencedColumnName = "id")
+    private Event event;
+
+
     public Long getId() {
         return id;
     }
@@ -47,12 +56,31 @@ public class Invitation {
         this.status = status;
     }
 
+
+    public User getIdInvitationUser() {
+        return user;
+    }
+
+    public void setIdInvitationUser(User idInvitationUser) {
+        this.user = idInvitationUser;
+    }
+
+    public Event getIdEvent() {
+        return event;
+    }
+
+    public void setIdEvent(Event idEvent) {
+        this.event = idEvent;
+    }
+
     @Override
     public String toString() {
         return "Invitation{" +
                 "id=" + id +
                 ", description='" + description + '\'' +
                 ", status='" + status + '\'' +
+                ", idInvitationUser=" + user +
+                ", idEvent=" + event +
                 '}';
     }
 }
