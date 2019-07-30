@@ -151,4 +151,8 @@
             <column name="local_date" type="date"/>
         </createTable>
     </changeSet>
+
+    <changeSet id="00000000000003" author="jhipster">
+        <createSequence sequenceName="hibernate_sequence"/>
+    </changeSet>
 </databaseChangeLog>
