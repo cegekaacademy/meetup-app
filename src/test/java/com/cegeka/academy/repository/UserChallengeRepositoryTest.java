@@ -1,29 +1,35 @@
 package com.cegeka.academy.repository;
 
+import com.cegeka.academy.AcademyProjectApp;
 import com.cegeka.academy.domain.UserChallenge;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.*;
 
+@SpringBootTest(classes = AcademyProjectApp.class)
+@Transactional
 public class UserChallengeRepositoryTest {
 
     @Autowired
-    UserChallengeRepository userChallengeRepository;
+    UserChallengeRepository repository;
 
     @Test
     public void testAddUserChallenge() {
         UserChallenge userChallenge = new UserChallenge();
         userChallenge.setChallengeId((long)1);
         userChallenge.setUserId((long)1);
-        userChallengeRepository.save(userChallenge);
+        repository.save(userChallenge);
         userChallenge.setChallengeId((long)2);
-        userChallengeRepository.save(userChallenge);
+        repository.save(userChallenge);
         userChallenge.setUserId((long)2);
-        userChallengeRepository.save(userChallenge);
+        repository.save(userChallenge);
 
 
-        assertThat(userChallengeRepository.findById((long) 1)).isEqualTo(3);
+        assertThat(repository.findAll().size()).isEqualTo(3);
     }
 
     @Test
@@ -32,7 +38,7 @@ public class UserChallengeRepositoryTest {
         userChallenge.setChallengeId((long)1);
         userChallenge.setUserId((long)1);
 
-        assertThat(userChallengeRepository.findAllByUserId((long)1)).isEqualTo(userChallengeRepository.findAll().get(0));
+        assertThat(repository.findAllByUserId((long)1)).isEqualTo(repository.findAll().get(0));
     }
 
     @Test
@@ -41,6 +47,6 @@ public class UserChallengeRepositoryTest {
         userChallenge.setChallengeId((long)1);
         userChallenge.setUserId((long)2);
 
-        assertThat(userChallengeRepository.findAllByChallengeId((long)2)).isEqualTo(userChallengeRepository.findAll().get(1));
+        assertThat(repository.findAllByChallengeId((long)2)).isEqualTo(repository.findAll().get(1));
     }
 }
