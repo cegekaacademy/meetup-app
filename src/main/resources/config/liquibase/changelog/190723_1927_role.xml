@@ -18,7 +18,7 @@
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="name" type="varchar(45)">
-                <constraints unique="true" nullable="false" uniqueConstraintName="ux_group"/>
+                <constraints unique="true" nullable="false" uniqueConstraintName="ux_role"/>
             </column>
         </createTable>
 

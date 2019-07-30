@@ -15,13 +15,11 @@
 
     <changeSet author="echipa1" id="20190723200002">
         <addColumn
-                schemaName="academyProject"
                 tableName="jhi_user">
             <column name="photo" type="blob"/>
         </addColumn>
 
         <addColumn
-                schemaName="academyProject"
                 tableName="jhi_user">
             <column name="date_of_birth" type="date"/>
         </addColumn>
