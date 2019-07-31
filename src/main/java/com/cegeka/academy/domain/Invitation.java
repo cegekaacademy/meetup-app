@@ -11,6 +11,7 @@ import javax.validation.constraints.Size;
 @Table(name = "invitation")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class Invitation {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
