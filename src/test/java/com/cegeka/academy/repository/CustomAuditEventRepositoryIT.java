@@ -35,6 +35,9 @@ public class CustomAuditEventRepositoryIT {
     private PersistenceAuditEventRepository persistenceAuditEventRepository;
 
     @Autowired
+    private UserChallengeRepository userChallengeRepository;
+
+    @Autowired
     private AuditEventConverter auditEventConverter;
 
     private CustomAuditEventRepository customAuditEventRepository;
