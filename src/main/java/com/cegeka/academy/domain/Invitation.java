@@ -25,11 +25,11 @@ public class Invitation {
     private String status;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_invitationUser",referencedColumnName = "id")
+    @JoinColumn(name = "id_invitation_user",referencedColumnName = "id")
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_user",referencedColumnName = "id")
+    @JoinColumn(name = "id_event",referencedColumnName = "id")
     private Event event;
 
     public Long getId() {
@@ -57,15 +57,14 @@ public class Invitation {
     }
 
 
-    public User getIdInvitationUser() {
+    public User getInvitedUser() {
         return user;
     }
-
-    public void setIdInvitationUser(User idInvitationUser) {
-        this.user = idInvitationUser;
+    public void setInvitedUser(User invitedUser) {
+        this.user = invitedUser;
     }
 
-    public Event getIdEvent() {
+    public Event getInvitationEvent() {
         return event;
     }
 
