@@ -69,8 +69,8 @@ public class Invitation {
         return event;
     }
 
-    public void setIdEvent(Event idEvent) {
-        this.event = idEvent;
+    public void setInvitationEvent(Event event) {
+        this.event = event;
     }
 
     @Override
