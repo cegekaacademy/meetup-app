@@ -27,6 +27,17 @@ public class Role implements Serializable {
     @Column(name = "name", length = 45, nullable = false)
     private String name;
 
+    @ManyToOne()
+    @JoinColumn(name = "role_id")
+    private GroupUserRole groupUserRole;
+
+    public GroupUserRole getGroupUserRole() {
+        return groupUserRole;
+    }
+
+    public void setGroupUserRole(GroupUserRole groupUserRole) {
+        this.groupUserRole = groupUserRole;
+    }
 
     public Long getId() {
         return id;

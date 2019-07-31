@@ -11,13 +11,13 @@ public class GroupUserRole {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @OneToMany
+    @OneToMany(mappedBy = "groupUserRole")
     private Set<User> users;
 
-    @OneToMany
+    @OneToMany(mappedBy = "groupUserRole")
     private Set<Role> roles;
 
-    @OneToMany
+    @OneToMany(mappedBy = "groupUserRole")
     private Set<Group> groups;
 
     public long getId() {
