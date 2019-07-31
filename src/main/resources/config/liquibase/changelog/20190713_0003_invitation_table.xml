@@ -42,7 +42,7 @@
 
     </changeSet>
 
-    <changeSet author="201907300192104" id="addColumn-example">
+    <changeSet author="georgiana" id="20190730192104">
 
         <addForeignKeyConstraint baseColumnNames="id_invitationUser"
                                  baseTableName="invitation"
