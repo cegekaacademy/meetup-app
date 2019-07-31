@@ -31,7 +31,6 @@ public class Invitation {
     @JoinColumn(name = "id_user",referencedColumnName = "id")
     private Event event;
 
-
     public Long getId() {
         return id;
     }
