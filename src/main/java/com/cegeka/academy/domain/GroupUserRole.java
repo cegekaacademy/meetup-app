@@ -11,14 +11,42 @@ public class GroupUserRole {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @OneToMany(mappedBy = "groupUserRole")
-    private Set<User> users;
+    @ManyToOne
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    private User user;
 
-    @OneToMany(mappedBy = "groupUserRole")
-    private Set<Role> roles;
+    @ManyToOne
+    @JoinColumn(name = "group_id", referencedColumnName = "id")
+    private Group group;
 
-    @OneToMany(mappedBy = "groupUserRole")
-    private Set<Group> groups;
+
+    @ManyToOne
+    @JoinColumn(name = "role_id", referencedColumnName = "id")
+    private Role role;
+
+    public Group getGroup() {
+        return group;
+    }
+
+    public void setGroup(Group group) {
+        this.group = group;
+    }
+
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
 
     public long getId() {
         return id;
@@ -28,27 +56,4 @@ public class GroupUserRole {
         this.id = id;
     }
 
-    public Set<User> getUsers() {
-        return users;
-    }
-
-    public void setUsers(Set<User> users) {
-        this.users = users;
-    }
-
-    public Set<Role> getRoles() {
-        return roles;
-    }
-
-    public void setRoles(Set<Role> roles) {
-        this.roles = roles;
-    }
-
-    public Set<Group> getGroups() {
-        return groups;
-    }
-
-    public void setGroups(Set<Group> groups) {
-        this.groups = groups;
-    }
 }
