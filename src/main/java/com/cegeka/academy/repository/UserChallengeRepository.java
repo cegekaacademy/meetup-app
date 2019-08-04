@@ -12,7 +12,7 @@ public interface UserChallengeRepository extends JpaRepository<UserChallenge, Lo
 
     Optional<UserChallenge> findById(Long id);
 
-    List<UserChallenge> findAllByChallengeId(Long challengeId);
+    List<UserChallenge> findAllByInvitationId(Long challengeId);
 
     List<UserChallenge> findAllByUserId(Long userId);
 

@@ -1,5 +1,6 @@
 package com.cegeka.academy.domain;
 
+import com.mysql.cj.x.protobuf.MysqlxDatatypes;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -19,16 +20,14 @@ public class UserChallenge implements Serializable {
     private Long id;
 
     @NotNull
-    @Column(name = "user_id")
-    private Long userId;
+    @ManyToOne
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    private User user;
 
     @NotNull
-    @Column(name = "challenge_id")
-    private Long challengeId;
-
-    @NotNull
-    @Column(name = "invitation_id")
-    private Long invitationId;
+    @ManyToOne
+    @JoinColumn(name = "invitation_id", referencedColumnName = "id")
+    private Invitation invitation;
 
     @NotNull
     @Size(max = 45)
@@ -55,25 +54,13 @@ public class UserChallenge implements Serializable {
         this.id = id;
     }
 
-    public Long getUserId() {
-        return userId;
-    }
+    public User getUser() { return user; }
 
-    public void setUserId(Long userId) {
-        this.userId = userId;
-    }
+    public void setUser(User user) { this.user = user; }
 
-    public Long getChallengeId() {
-        return challengeId;
-    }
+    public Invitation getInvitation() { return invitation; }
 
-    public void setChallengeId(Long challengeId) {
-        this.challengeId = challengeId;
-    }
-
-    public Long getInvitationId() { return invitationId; }
-
-    public void setInvitationId(Long invitationId) { this.invitationId = invitationId; }
+    public void setInvitation(Invitation invitation) { this.invitation = invitation; }
 
     public String getStatus() { return status; }
 
@@ -100,10 +87,9 @@ public class UserChallenge implements Serializable {
     public String toString() {
         return "UserChallenge{" +
                 "id=" + id +
-                ", userId=" + userId +
-                ", challengeId=" + challengeId +
-                ", invitationId=" + invitationId +
-                ", status='" + status + '\'' +
+                ", user=" + user +
+                ", invitation=" + invitation +
+                ", status=" + status +
                 ", points=" + points +
                 ", startTime=" + startTime +
                 ", endTime=" + endTime +
