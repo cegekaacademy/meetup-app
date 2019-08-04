@@ -10,6 +10,7 @@ import javax.persistence.metamodel.StaticMetamodel;
 public abstract class UserChallenge_ {
 
 	public static volatile SingularAttribute<UserChallenge, Invitation> invitation;
+	public static volatile SingularAttribute<UserChallenge, Challenge> challenge;
 	public static volatile SingularAttribute<UserChallenge, Date> startTime;
 	public static volatile SingularAttribute<UserChallenge, Long> id;
 	public static volatile SingularAttribute<UserChallenge, Date> endTime;
@@ -18,6 +19,7 @@ public abstract class UserChallenge_ {
 	public static volatile SingularAttribute<UserChallenge, Double> points;
 
 	public static final String INVITATION = "invitation";
+	public static final String CHALLENGE = "challenge";
 	public static final String START_TIME = "startTime";
 	public static final String ID = "id";
 	public static final String END_TIME = "endTime";

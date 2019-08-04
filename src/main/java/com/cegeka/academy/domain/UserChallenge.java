@@ -30,6 +30,11 @@ public class UserChallenge implements Serializable {
     private Invitation invitation;
 
     @NotNull
+    @ManyToOne
+    @JoinColumn(name = "challenge_id", referencedColumnName = "id")
+    private Challenge challenge;
+
+    @NotNull
     @Size(max = 45)
     @Column(name = "status")
     private String status;
@@ -61,6 +66,10 @@ public class UserChallenge implements Serializable {
     public Invitation getInvitation() { return invitation; }
 
     public void setInvitation(Invitation invitation) { this.invitation = invitation; }
+
+    public Challenge getChallenge() { return challenge; }
+
+    public void setChallenge(Challenge challenge) { this.challenge = challenge; }
 
     public String getStatus() { return status; }
 

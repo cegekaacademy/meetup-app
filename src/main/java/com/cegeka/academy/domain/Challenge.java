@@ -6,6 +6,7 @@ import org.hibernate.annotations.Cache;
 import javax.persistence.*;
 import javax.validation.constraints.Size;
 import java.util.Date;
+import java.util.Set;
 
 @Entity
 @Table(name = "challenge")
@@ -19,6 +20,9 @@ public class Challenge {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "creator")
     private User creator;
+
+    @OneToMany
+    Set<UserChallenge> userChallengeSet;
 
     @Column(name = "start_date")
     private Date startDate;
