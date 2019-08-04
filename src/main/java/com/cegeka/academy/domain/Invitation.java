@@ -11,6 +11,7 @@ import javax.validation.constraints.Size;
 @Table(name = "invitation")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class Invitation {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -22,6 +23,14 @@ public class Invitation {
     @Size(max = 45)
     @Column(name = "status", length = 45)
     private String status;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_invitation_user",referencedColumnName = "id")
+    private User user;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_event",referencedColumnName = "id")
+    private Event event;
 
     public Long getId() {
         return id;
@@ -47,12 +56,30 @@ public class Invitation {
         this.status = status;
     }
 
+
+    public User getInvitedUser() {
+        return user;
+    }
+    public void setInvitedUser(User invitedUser) {
+        this.user = invitedUser;
+    }
+
+    public Event getInvitationEvent() {
+        return event;
+    }
+
+    public void setInvitationEvent(Event event) {
+        this.event = event;
+    }
+
     @Override
     public String toString() {
         return "Invitation{" +
                 "id=" + id +
                 ", description='" + description + '\'' +
                 ", status='" + status + '\'' +
+                ", idInvitationUser=" + user +
+                ", idEvent=" + event +
                 '}';
     }
 }
