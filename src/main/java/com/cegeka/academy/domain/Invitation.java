@@ -6,6 +6,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
+import java.util.Objects;
 
 @Entity
 @Table(name = "invitation")
@@ -70,6 +71,23 @@ public class Invitation {
 
     public void setInvitationEvent(Event event) {
         this.event = event;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Invitation that = (Invitation) o;
+        return id.equals(that.id) &&
+                description.equals(that.description) &&
+                status.equals(that.status) &&
+                user.equals(that.user) &&
+                event.equals(that.event);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, description, status, user, event);
     }
 
     @Override
