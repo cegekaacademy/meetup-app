@@ -1,7 +1,10 @@
 package com.cegeka.academy.repository;
 
 import com.cegeka.academy.AcademyProjectApp;
+import com.cegeka.academy.domain.Event;
 import com.cegeka.academy.domain.Invitation;
+import com.cegeka.academy.domain.User;
+import com.cegeka.academy.repository.util.InvitationUtil;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -16,30 +19,35 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Transactional
 public class InvitationRepositoryTest {
 
-    @Autowired InvitationRepository invitationRepository;
+    private @Autowired InvitationRepository invitationRepository;
+    private @Autowired EventRepository eventRepository;
+    private @Autowired UserRepository userRepository;
 
     @Test
     public void testAddInvitation(){
-        Invitation invitation = new Invitation();
-        invitation.setStatus("pending");
-        invitation.setDescription("ana are mere");
+        Event event = InvitationUtil.createEvent(1234L,"Ana are mere!","KFC Krushers Party",true);
+        eventRepository.save(event);
+        User user = InvitationUtil.createUser("login","anaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaana");
+        userRepository.save(user);
+        Invitation invitation = InvitationUtil.createInvitation("pending","ana are mere",event,user);
         invitationRepository.save(invitation);
         List<Invitation> list = invitationRepository.findAll();
         assertThat(list.size()).isEqualTo(1);
         assertThat(list.get(0).getStatus()).isEqualTo(invitation.getStatus());
         assertThat(list.get(0).getDescription()).isEqualTo(invitation.getDescription());
-
+        assertThat(list.get(0).getInvitationEvent().getId()).isEqualTo(invitation.getInvitationEvent().getId());
+        assertThat(list.get(0).getInvitedUser().getId()).isEqualTo(invitation.getInvitedUser().getId());
     }
 
     @Test
     public void testFindByStatus(){
-        Invitation invitation1 = new Invitation();
-        invitation1.setStatus("pending");
-        invitation1.setDescription("ana are mere");
+        Event event = InvitationUtil.createEvent(1234L,"Ana are mere!","KFC Krushers Party",true);
+        eventRepository.save(event);
+        User user = InvitationUtil.createUser("login","anaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaana");
+        userRepository.save(user);
+        Invitation invitation1 = InvitationUtil.createInvitation("pending","ana are mere",event,user);
         invitationRepository.save(invitation1);
-        Invitation invitation2 = new Invitation();
-        invitation2.setStatus("pending");
-        invitation2.setDescription("maria are pere");
+        Invitation invitation2 = InvitationUtil.createInvitation("pending","maria are pere",event,user);
         invitationRepository.save(invitation2);
         List<Invitation> list = invitationRepository.findByStatus("pending");
         assertThat(list.size()).isEqualTo(2);
@@ -47,13 +55,13 @@ public class InvitationRepositoryTest {
 
     @Test
     public void testFindByStatusWithNoResult(){
-        Invitation invitation1 = new Invitation();
-        invitation1.setStatus("pending");
-        invitation1.setDescription("ana are mere");
+        Event event = InvitationUtil.createEvent(1234L,"Ana are mere!","KFC Krushers Party",true);
+        eventRepository.save(event);
+        User user = InvitationUtil.createUser("login","anaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaana");
+        userRepository.save(user);
+        Invitation invitation1 = InvitationUtil.createInvitation("pending","ana are mere",event,user);
         invitationRepository.save(invitation1);
-        Invitation invitation2 = new Invitation();
-        invitation2.setStatus("pending");
-        invitation2.setDescription("maria are pere");
+        Invitation invitation2 = InvitationUtil.createInvitation("pending","maria are pere",event,user);
         invitationRepository.save(invitation2);
         List<Invitation> list = invitationRepository.findByStatus("invited");
         assertThat(list.size()).isEqualTo(0);
