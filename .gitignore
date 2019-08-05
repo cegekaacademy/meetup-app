@@ -1,6 +1,5 @@
-lib/
+.idea/
 node/
 node_modules/
 .idea/library/
 target/
-src/.idea/
