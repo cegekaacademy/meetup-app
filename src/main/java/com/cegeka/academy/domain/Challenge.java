@@ -21,9 +21,6 @@ public class Challenge {
     @JoinColumn(name = "creator")
     private User creator;
 
-    @OneToMany
-    Set<UserChallenge> userChallengeSet;
-
     @Column(name = "start_date")
     private Date startDate;
 

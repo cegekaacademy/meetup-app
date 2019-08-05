@@ -41,11 +41,16 @@ public class UserChallengeTest {
     @Test
     public void testAddUserChallenge() {
 
+        invitationRepository.save(invitation);
+
         user.setLogin("LoginSetForTest");
         user.setPassword("42jIG0vHCTEWClhT5R2om2V5NpgOXNcQggP6YJOz2xMccBQzGDWgqUDLKOqZ");
-
-        invitationRepository.save(invitation);
         userRepository.save(user);
+
+        challenge.setStartDate(new Date());
+        challenge.setEndDate(new Date());
+        challenge.setStatus("Active");
+        challenge.setCreator(user);
         challengeRepository.save(challenge);
 
 

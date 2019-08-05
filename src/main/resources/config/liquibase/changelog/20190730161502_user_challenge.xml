@@ -16,6 +16,9 @@
             <column name="user_id" type="bigint">
                 <constraints nullable="false" />
             </column>
+            <column name="challenge_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
             <column name="invitation_id" type="bigint">
                 <constraints nullable="false"/>
             </column>

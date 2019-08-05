@@ -33,9 +33,6 @@ public class Invitation {
     @JoinColumn(name = "id_event", referencedColumnName = "id")
     private Event event;
 
-    @OneToMany
-    Set<UserChallenge> userChallengeSet;
-
     public Long getId() {
         return id;
     }
