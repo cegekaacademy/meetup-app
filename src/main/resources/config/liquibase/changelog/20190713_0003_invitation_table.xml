@@ -22,11 +22,9 @@
         </createTable>
 
     </changeSet>
-
     <changeSet author="georgiana" id="20190730192102">
-        <addColumn
-                tableName="invitation">
-            <column name="id_invited_user" type="bigint"/>
+        <addColumn tableName="invitation">
+            <column name="id_invitation_user" type="bigint"/>
             <column name="id_event" type="bigint"/>
         </addColumn>
 
@@ -44,12 +42,11 @@
 
     <changeSet author="georgiana" id="20190730192104">
 
-        <addForeignKeyConstraint baseColumnNames="id_invited_user"
+        <addForeignKeyConstraint baseColumnNames="id_invitation_user"
                                  baseTableName="invitation"
                                  constraintName="fk_user_invitation"
                                  referencedColumnNames="id"
                                  referencedTableName="jhi_user"/>
 
     </changeSet>
-
 </databaseChangeLog>

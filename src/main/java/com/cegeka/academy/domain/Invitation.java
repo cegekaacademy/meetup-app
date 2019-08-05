@@ -6,6 +6,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
+import java.util.Objects;
 
 @Entity
 @Table(name = "invitation")
@@ -25,11 +26,11 @@ public class Invitation {
     private String status;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_invited_user", referencedColumnName = "id")
+    @JoinColumn(name = "id_invitation_user",referencedColumnName = "id")
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_event", referencedColumnName = "id")
+    @JoinColumn(name = "id_event",referencedColumnName = "id")
     private Event event;
 
     public Long getId() {
@@ -56,10 +57,10 @@ public class Invitation {
         this.status = status;
     }
 
+
     public User getInvitedUser() {
         return user;
     }
-
     public void setInvitedUser(User invitedUser) {
         this.user = invitedUser;
     }
@@ -70,6 +71,23 @@ public class Invitation {
 
     public void setInvitationEvent(Event event) {
         this.event = event;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Invitation that = (Invitation) o;
+        return id.equals(that.id) &&
+                description.equals(that.description) &&
+                status.equals(that.status) &&
+                user.equals(that.user) &&
+                event.equals(that.event);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, description, status, user, event);
     }
 
     @Override
