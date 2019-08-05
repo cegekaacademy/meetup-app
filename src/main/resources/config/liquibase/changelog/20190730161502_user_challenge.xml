@@ -35,26 +35,6 @@
                 <constraints nullable="false"/>
             </column>
         </createTable>
-
-        <!--<addPrimaryKey columnNames="user_id" tableName="user_challenge"/>-->
-
-        <!--<addForeignKeyConstraint baseColumnNames="user_id"-->
-                                 <!--baseTableName="user_challenge"-->
-                                 <!--constraintName="fk_user_id"-->
-                                 <!--referencedColumnNames="id"-->
-                                 <!--referencedTableName="jhi_user"/>-->
-
-        <!--<addForeignKeyConstraint baseColumnNames="challenge_id"-->
-                                 <!--baseTableName="user_challenge"-->
-                                 <!--constraintName="fk_challenge_id"-->
-                                 <!--referencedColumnNames="id"-->
-                                 <!--referencedTableName="challenge"/>-->
-
-        <!--<addForeignKeyConstraint baseColumnNames="invitation_id"
-                                 baseTableName="user_challenge"
-                                 constraintName="fk_invitation_id"
-                                 referencedColumnNames="id"
-                                 referencedTableName="invitation"/>-->
     </changeSet>
 
 </databaseChangeLog>
