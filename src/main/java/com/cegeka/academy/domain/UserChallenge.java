@@ -24,7 +24,6 @@ public class UserChallenge implements Serializable {
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
 
-    @NotNull
     @OneToOne
     @JoinColumn(name = "invitation_id", referencedColumnName = "id")
     private Invitation invitation;

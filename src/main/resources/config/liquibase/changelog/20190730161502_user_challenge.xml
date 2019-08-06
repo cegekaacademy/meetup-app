@@ -19,9 +19,7 @@
             <column name="challenge_id" type="bigint">
                 <constraints nullable="false"/>
             </column>
-            <column name="invitation_id" type="bigint">
-                <constraints nullable="false"/>
-            </column>
+            <column name="invitation_id" type="bigint"/>
             <column name="status" type="varchar(45)">
                 <constraints nullable="false"/>
             </column>
