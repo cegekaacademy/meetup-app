@@ -25,6 +25,11 @@
     <include file="config/liquibase/changelog/190716_1127_event.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20190713_0003_invitation_table.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20190720234201_interest_table.xml" relativeToChangelogFile="false"/>
+
+    <include file="config/liquibase/changelog/190806_1853_age_intervals.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/190806_1925_user_statistics.xml" relativeToChangelogFile="false"/>
+
+
     <!-- jhipster-needle-liquibase-add-changelog - JHipster will add liquibase changelogs here -->
     <!-- jhipster-needle-liquibase-add-constraints-changelog - JHipster will add liquibase constraints changelogs here -->
 </databaseChangeLog>

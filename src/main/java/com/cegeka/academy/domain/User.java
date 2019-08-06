@@ -93,18 +93,7 @@ public class User extends AbstractAuditingEntity implements Serializable {
     @BatchSize(size = 20)
     private Set<Authority> authorities = new HashSet<>();
 
-    @ManyToOne()
-    @JoinColumn(name = "user_id")
-    private GroupUserRole groupUserRole;
 
-
-    public GroupUserRole getGroupUserRole() {
-        return groupUserRole;
-    }
-
-    public void setGroupUserRole(GroupUserRole groupUserRole) {
-        this.groupUserRole = groupUserRole;
-    }
 
 
 

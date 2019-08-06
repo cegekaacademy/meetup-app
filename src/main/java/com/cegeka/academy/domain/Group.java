@@ -42,21 +42,12 @@ public class Group implements Serializable {
     @Column(name = "description", length = 45)
     private String description;
 
-    @ManyToOne()
-    @JoinColumn(name = "group_id")
-    private GroupUserRole groupUserRole;
 
     public Long getId() {
         return id;
     }
 
-    public GroupUserRole getGroupUserRole() {
-        return groupUserRole;
-    }
 
-    public void setGroupUserRole(GroupUserRole groupUserRole) {
-        this.groupUserRole = groupUserRole;
-    }
 
     public void setId(Long id) {
         this.id = id;
