@@ -10,6 +10,6 @@ import java.util.List;
 @Repository
 public interface EventRepository extends JpaRepository<Event, Long> {
     List<Event> findAllByOwner(User owner);
-
+    List<Event> findAllByOwner_Id(Long id);
     List<Event> findAllByIsPublicIsTrue();
 }
