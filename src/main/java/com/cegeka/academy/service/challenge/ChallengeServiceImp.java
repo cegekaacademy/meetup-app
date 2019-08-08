@@ -1,4 +1,4 @@
-package com.cegeka.academy.service;
+package com.cegeka.academy.service.challenge;
 
 import org.springframework.stereotype.Service;
 
