@@ -92,12 +92,24 @@ public class Invitation {
 
     @Override
     public String toString() {
-        return "Invitation{" +
+
+        StringBuilder result = new StringBuilder();
+
+        result.append("Invitation{" +
                 "id=" + id +
                 ", description='" + description + '\'' +
-                ", status='" + status + '\'' +
-                ", idInvitationUser=" + user +
-                ", idEvent=" + event +
-                '}';
+                ", status='" + status);
+
+        if(user!=null){
+
+            result.append(", idInvitedUser=" + user.getId());
+        }
+
+        if(event!=null){
+
+            result.append(", idEvent=" + event.getId());
+        }
+
+        return result.toString();
     }
 }
