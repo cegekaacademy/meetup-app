@@ -25,4 +25,3 @@ public interface ChallengeRepository extends JpaRepository<Challenge, Long> {
 
     List<Challenge> findAllByPoints(Double points);
 }
-

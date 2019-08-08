@@ -38,9 +38,8 @@ public class UserChallengeTest {
     private User user = new User();
     private Challenge challenge = new Challenge();
 
-    @Test
-    public void testAddUserChallenge() {
-
+    @BeforeEach
+    public void init() {
         invitationRepository.save(invitation);
 
         user.setLogin("LoginSetForTest");
@@ -52,8 +51,9 @@ public class UserChallengeTest {
         challenge.setStatus("Active");
         challenge.setCreator(user);
         challengeRepository.save(challenge);
+    }
 
-
+    public UserChallenge initObject() {
         UserChallenge userChallenge = new UserChallenge();
         userChallenge.setUser(user);
         userChallenge.setInvitation(invitation);
@@ -62,27 +62,16 @@ public class UserChallengeTest {
         userChallenge.setPoints(0);
         userChallenge.setStartTime(new Date());
         userChallenge.setEndTime(new Date());
-        userChallengeRepository.save(userChallenge);
 
-        UserChallenge userChallenge1 = new UserChallenge();
-        userChallenge1.setUser(user);
-        userChallenge1.setInvitation(invitation);
-        userChallenge1.setChallenge(challenge);
-        userChallenge1.setStatus("Active");
-        userChallenge1.setPoints(0);
-        userChallenge1.setStartTime(new Date());
-        userChallenge1.setEndTime(new Date());
-        userChallengeRepository.save(userChallenge1);
+        return userChallenge;
+    }
 
-        UserChallenge userChallenge2 = new UserChallenge();
-        userChallenge2.setUser(user);
-        userChallenge2.setInvitation(invitation);
-        userChallenge2.setChallenge(challenge);
-        userChallenge2.setStatus("Active");
-        userChallenge2.setPoints(0);
-        userChallenge2.setStartTime(new Date());
-        userChallenge2.setEndTime(new Date());
-        userChallengeRepository.save(userChallenge2);
+    @Test
+    public void testAddUserChallenge() {
+
+        userChallengeRepository.save(initObject());
+        userChallengeRepository.save(initObject());
+        userChallengeRepository.save(initObject());
 
         assertThat(userChallengeRepository.findAll().size()).isEqualTo(3);
     }
