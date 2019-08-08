@@ -12,6 +12,7 @@ import java.util.stream.Stream;
 
 @Repository
 public interface InvitationRepository extends JpaRepository<Invitation, Long> {
+
      List<Invitation> findByStatus(String status);
 
      Invitation getInvitationById(Long id);
