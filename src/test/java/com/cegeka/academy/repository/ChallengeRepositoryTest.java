@@ -2,6 +2,7 @@ package com.cegeka.academy.repository;
 
 import com.cegeka.academy.AcademyProjectApp;
 import com.cegeka.academy.domain.Challenge;
+import com.cegeka.academy.domain.ChallengeCategory;
 import com.cegeka.academy.domain.User;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.BeforeEach;
@@ -37,6 +38,9 @@ public class ChallengeRepositoryTest {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private ChallengeCategoryRepository challengeCategoryRepository;
+
     private User user;
 
     @BeforeEach
@@ -69,5 +73,32 @@ public class ChallengeRepositoryTest {
         Challenge challengeTest = challengeRepository.save(challenge);
 
         assertThat(challengeTest).isEqualTo(challenge);
+    }
+    @Test
+    public void canAddChallengeWithDescriptionAndCategory() {
+
+        Challenge challenge = new Challenge();
+        Date startDate = new Date();
+        Date endDate = new Date();
+
+        User userTest = userRepository.save(user);
+
+        ChallengeCategory challengeCategory = new ChallengeCategory();
+        challengeCategory.setName("challengeCategory");
+        challengeCategory.setDescription("challengeCategoryDescription");
+        challengeCategoryRepository.save(challengeCategory);
+
+        challenge.setCreator(userTest);
+        challenge.setPoints(22.0);
+        challenge.setStartDate(startDate);
+        challenge.setEndDate(endDate);
+        challenge.setStatus("status");
+        challenge.setDescription("description");
+        challenge.setChallengeCategory(challengeCategoryRepository.findAll().get(0));
+
+        challengeRepository.save(challenge);
+        Challenge challengeResult = challengeRepository.findAll().get(0);
+
+        assertThat(challengeResult).isEqualTo(challenge);
     }
 }
