@@ -1,7 +1,6 @@
 package com.cegeka.academy.domain;
 
 import com.cegeka.academy.config.Constants;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.BatchSize;
