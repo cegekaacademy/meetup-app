@@ -18,9 +18,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class EventRepositoryTest {
 
     @Autowired
-    EventRepository eventRepository;
+    private EventRepository eventRepository;
     @Autowired
-    UserRepository userRepository;
+    private UserRepository userRepository;
 
 
     @Test
@@ -37,10 +37,11 @@ public class EventRepositoryTest {
 
         for (int i = 0; i < 5; i++) {
             Event event = TestsRepositoryUtil.createEvent("Ana are mere!", "KFC Krushers Party", true);
-            if (i % 2 == 0)
+            if (i % 2 == 0) {
                 event.setPublic(true);
-            else
+            } else {
                 event.setPublic(false);
+            }
             eventRepository.save(event);
         }
 

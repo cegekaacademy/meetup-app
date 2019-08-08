@@ -1,7 +1,7 @@
 package com.cegeka.academy.domain;
 
-import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
@@ -23,7 +23,7 @@ public class Challenge {
     @Column(name = "start_date")
     private Date startDate;
 
-    @Column (name = "end_date")
+    @Column(name = "end_date")
     private Date endDate;
 
     @Size(min = 1, max = 50)

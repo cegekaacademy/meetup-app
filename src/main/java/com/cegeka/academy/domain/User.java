@@ -96,8 +96,8 @@ public class User extends AbstractAuditingEntity implements Serializable {
     @ManyToMany
     @JoinTable(
             name = "user_event",
-            joinColumns = {@JoinColumn(name = "userid", referencedColumnName = "id")},
-            inverseJoinColumns = {@JoinColumn(name = "eventid", referencedColumnName = "id")})
+            joinColumns = {@JoinColumn(name = "user_id", referencedColumnName = "id")},
+            inverseJoinColumns = {@JoinColumn(name = "event_id", referencedColumnName = "id")})
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     @BatchSize(size = 20)
     private Set<Event> events = new HashSet<>();
