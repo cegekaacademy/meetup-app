@@ -21,7 +21,6 @@ public class EventRepositoryTest {
     @Test
     public void testAddEvent() {
         Event event = new Event();
-        event.setAddressId(1234L);
         event.setDescription("Ana are mere!");
         event.setId(1234L);
         event.setName("KFC Krushers Party");
@@ -37,7 +36,6 @@ public class EventRepositoryTest {
 
         for (int i = 0; i < 5; i++) {
             Event event = new Event();
-            event.setAddressId(1234L);
             event.setDescription("Ana are mere!");
             event.setId(1234L);
             event.setName("KFC Krushers Party");
