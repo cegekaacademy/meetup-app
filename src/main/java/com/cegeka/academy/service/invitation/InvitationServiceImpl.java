@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class InvitationServiceImpl implements InvitationService {
+
     private final InvitationRepository invitationRepository;
 
     @Autowired
