@@ -23,20 +23,20 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class UserChallengeTest {
 
     @Autowired
-    UserChallengeRepository userChallengeRepository;
+    private UserChallengeRepository userChallengeRepository;
 
     @Autowired
-    InvitationRepository invitationRepository;
+    private InvitationRepository invitationRepository;
 
     @Autowired
-    UserRepository userRepository;
+    private UserRepository userRepository;
 
     @Autowired
-    ChallengeRepository challengeRepository;
+    private ChallengeRepository challengeRepository;
 
-    Invitation invitation = new Invitation();
-    User user = new User();
-    Challenge challenge = new Challenge();
+    private Invitation invitation = new Invitation();
+    private User user = new User();
+    private Challenge challenge = new Challenge();
 
     @Test
     public void testAddUserChallenge() {
@@ -83,7 +83,6 @@ public class UserChallengeTest {
         userChallenge2.setStartTime(new Date());
         userChallenge2.setEndTime(new Date());
         userChallengeRepository.save(userChallenge2);
-
 
         assertThat(userChallengeRepository.findAll().size()).isEqualTo(3);
     }
