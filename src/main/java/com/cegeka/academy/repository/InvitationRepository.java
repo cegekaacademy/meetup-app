@@ -1,11 +1,20 @@
 package com.cegeka.academy.repository;
 
 import com.cegeka.academy.domain.Invitation;
-import com.cegeka.academy.domain.User;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
+import java.math.BigInteger;
 import java.util.List;
+import java.util.stream.Stream;
 
 public interface InvitationRepository extends JpaRepository<Invitation, Long> {
+
      List<Invitation> findByStatus(String status);
+
+     Invitation getInvitationById(Long id);
+
+     @Query(value = "SELECT u.id FROM jhi_user u WHERE u.id =  (select i.id_invitation_user from invitation i where i.id = :invitation)", nativeQuery = true)
+     Stream<BigInteger> findInvitedUser(@Param("invitation") Invitation invitation);
 }

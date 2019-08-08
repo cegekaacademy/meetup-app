@@ -31,12 +31,15 @@ public class InvitationRepositoryTest {
         userRepository.save(user);
         Invitation invitation = TestsRepositoryUtil.createInvitation("pending", "ana are mere", event, user);
         invitationRepository.save(invitation);
+        System.out.println(user.getId()+"");
         List<Invitation> list = invitationRepository.findAll();
+        System.out.println(list.get(0).getInvitedUser().getId()+"");
         assertThat(list.size()).isEqualTo(1);
         assertThat(list.get(0).getStatus()).isEqualTo(invitation.getStatus());
         assertThat(list.get(0).getDescription()).isEqualTo(invitation.getDescription());
         assertThat(list.get(0).getInvitationEvent().getId()).isEqualTo(invitation.getInvitationEvent().getId());
         assertThat(list.get(0).getInvitedUser().getId()).isEqualTo(invitation.getInvitedUser().getId());
+
     }
 
     @Test

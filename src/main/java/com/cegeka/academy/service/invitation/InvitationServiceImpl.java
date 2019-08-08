@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 @Service
 public class InvitationServiceImpl implements InvitationService {
 
-
     private final InvitationRepository invitationRepository;
 
     @Autowired
@@ -23,7 +22,7 @@ public class InvitationServiceImpl implements InvitationService {
 
     @Override
     public String saveInvitation(Invitation invitation) {
-        return "Invitation with id: " + invitationRepository.save(invitation).getId() + " was saved to h2 database.";
+        return "Invitation with id: " + invitationRepository.save(invitation).getId() + " was saved to database.";
     }
 
     @Override
