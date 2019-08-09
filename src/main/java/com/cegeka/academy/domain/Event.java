@@ -37,8 +37,9 @@ public class Event {
     @Column(name = "is_public")
     private Boolean isPublic;
 
-    @Column(name = "address_id")
-    private Long addressId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "address_id", referencedColumnName = "id")
+    private Address addressId;
 
     public Long getId() {
         return id;
@@ -104,11 +105,11 @@ public class Event {
         isPublic = aPublic;
     }
 
-    public Long getAddressId() {
+    public Address getAddressId() {
         return addressId;
     }
 
-    public void setAddressId(Long addressId) {
+    public void setAddressId(Address addressId) {
         this.addressId = addressId;
     }
 

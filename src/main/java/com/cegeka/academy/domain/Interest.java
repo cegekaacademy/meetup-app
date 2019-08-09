@@ -24,7 +24,7 @@ public class Interest implements Serializable {
     private String description;
 
     @ManyToMany(mappedBy = "userInterests")
-    Set<User> interestUsers;
+    private Set<User> interestUsers;
 
 
     public Long getId() {

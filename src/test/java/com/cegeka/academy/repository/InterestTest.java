@@ -18,9 +18,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class InterestTest {
 
     @Autowired
-    InterestRepository interestRepository;
+    private InterestRepository interestRepository;
     @Autowired
-    UserRepository userRepository;
+    private UserRepository userRepository;
 
     @Test
     public void testAddInterest(){
@@ -92,33 +92,8 @@ public class InterestTest {
         interestRepository.save(interest1);
         userRepository.save(user);
 
-        assertThat(interestRepository.findAll().size()).isEqualTo(1);
-        assertThat(interestRepository.findAll().get(0).getName()).isEqualTo("interest1");
-        assertThat(interestRepository.findAll().get(0).getDescription()).isEqualTo("description1");
-        for(int i =0 ;i < userRepository.findAll().size(); i++)
-        {
-            System.out.println(i + ": "+ userRepository.findAll().get(i).toString());
-        }
-
         assertThat(userRepository.findAll().get(4).getUserInterests().equals(interestSet)).isTrue();
 
-        for(Object o : userRepository.findAll().get(4).getUserInterests().toArray())
-        {
-            System.out.println("\n" + (Interest) o);
-        }
-
-        for(int i =0 ;i < interestRepository.findAll().size(); i++)
-        {
-            System.out.println("\n" + i + ": "+ interestRepository.findAll().get(i).toString());
-        }
-
         assertThat(interestRepository.findAll().get(0).getInterestUsers().equals(userSet)).isTrue();
-
-        for(Object o : interestRepository.findAll().get(0).getInterestUsers().toArray())
-        {
-            System.out.println((User) o);
-        }
-
     }
-
 }
