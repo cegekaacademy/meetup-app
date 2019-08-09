@@ -46,6 +46,7 @@ public class ChallengeRepositoryTest {
 
     private Challenge challenge;
 
+    private ChallengeCategory challengeCategory;
 
     @BeforeEach
     public void init() {
@@ -64,7 +65,7 @@ public class ChallengeRepositoryTest {
         Date startDate = new Date();
         Date endDate = new Date();
 
-        ChallengeCategory challengeCategory = new ChallengeCategory();
+        challengeCategory = new ChallengeCategory();
         challengeCategory.setName("challengeCategory");
         challengeCategory.setDescription("challengeCategoryDescription");
         challengeCategoryRepository.save(challengeCategory);
@@ -82,6 +83,14 @@ public class ChallengeRepositoryTest {
 
     @AfterEach
     public void destroy(){
+
+        if(user != null){
+            userRepository.delete(user);
+        }
+
+        if(challengeCategory != null){
+            challengeCategoryRepository.delete(challengeCategory);
+        }
 
         if(challenge != null) {
             challengeRepository.delete(challenge);
