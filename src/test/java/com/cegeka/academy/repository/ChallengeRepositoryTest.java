@@ -31,10 +31,10 @@ public class ChallengeRepositoryTest {
     private static final String DEFAULT_LANGKEY = "dummy";
 
     @Autowired
-    ChallengeRepository challengeRepository;
+    private ChallengeRepository challengeRepository;
 
     @Autowired
-    UserRepository userRepository;
+    private UserRepository userRepository;
 
     private User user;
 
