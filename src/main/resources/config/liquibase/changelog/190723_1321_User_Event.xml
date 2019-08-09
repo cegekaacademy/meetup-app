@@ -28,12 +28,6 @@
                                  referencedColumnNames="id"
                                  referencedTableName="Event"/>
 
-        <loadData
-                file="config/liquibase/data/user_event.csv"
-                separator=";"
-                tableName="User_Event">
-        </loadData>
-
 
     </changeSet>
 </databaseChangeLog>
