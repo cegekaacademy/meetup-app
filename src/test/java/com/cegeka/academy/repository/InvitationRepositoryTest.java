@@ -35,8 +35,8 @@ public class InvitationRepositoryTest {
         assertThat(list.size()).isEqualTo(1);
         assertThat(list.get(0).getStatus()).isEqualTo(invitation.getStatus());
         assertThat(list.get(0).getDescription()).isEqualTo(invitation.getDescription());
-        assertThat(list.get(0).getInvitationEvent().getId()).isEqualTo(invitation.getInvitationEvent().getId());
-        assertThat(list.get(0).getInvitedUser().getId()).isEqualTo(invitation.getInvitedUser().getId());
+        assertThat(list.get(0).getEvent().getId()).isEqualTo(invitation.getEvent().getId());
+        assertThat(list.get(0).getUser().getId()).isEqualTo(invitation.getUser().getId());
     }
 
     @Test

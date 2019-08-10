@@ -58,18 +58,19 @@ public class Invitation {
     }
 
 
-    public User getInvitedUser() {
+    public User getUser() {
         return user;
     }
-    public void setInvitedUser(User invitedUser) {
-        this.user = invitedUser;
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
-    public Event getInvitationEvent() {
+    public Event getEvent() {
         return event;
     }
 
-    public void setInvitationEvent(Event event) {
+    public void setEvent(Event event) {
         this.event = event;
     }
 
@@ -78,16 +79,12 @@ public class Invitation {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Invitation that = (Invitation) o;
-        return id.equals(that.id) &&
-                description.equals(that.description) &&
-                status.equals(that.status) &&
-                user.equals(that.user) &&
-                event.equals(that.event);
+        return id.equals(that.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, description, status, user, event);
+        return Objects.hash(id);
     }
 
     @Override
