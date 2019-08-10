@@ -1,20 +1,17 @@
 package com.cegeka.academy.repository;
 
 import com.cegeka.academy.AcademyProjectApp;
-import com.cegeka.academy.config.audit.AuditEventConverter;
-import com.cegeka.academy.domain.*;
+import com.cegeka.academy.domain.Challenge;
+import com.cegeka.academy.domain.Invitation;
+import com.cegeka.academy.domain.User;
+import com.cegeka.academy.domain.UserChallenge;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import javax.transaction.Transactional;
-
-import java.time.Instant;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
