@@ -6,6 +6,8 @@ import com.cegeka.academy.service.invitation.ValidationAccessService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("invitation")
 public class InvitationController {
@@ -21,25 +23,34 @@ public class InvitationController {
     }
 
     @GetMapping("/all")
-    public String getAllInvitations(){
+    public List<Invitation> getAllInvitations(){
+
         return invitationService.getAllInvitations();
     }
 
-    @PostMapping("/post")
-    public String saveInvitation(@RequestBody Invitation newInvitation){
-        return invitationService.saveInvitation(newInvitation);
+    @PostMapping
+    public void saveInvitation(@RequestBody Invitation newInvitation){
+
+         invitationService.saveInvitation(newInvitation);
     }
 
-    @PutMapping("/update")
-    public String replaceInvitation(@RequestBody Invitation newInvitation){
-        validationAccessService.verifyUserAccessForInvitationEntity(newInvitation.getId());
-        return invitationService.updateInvitation(newInvitation);
+    @PutMapping
+    public void replaceInvitation(@RequestBody Invitation newInvitation){
+
+        if(validationAccessService.verifyUserAccessForInvitationEntity(newInvitation.getId()))
+        {
+            invitationService.updateInvitation(newInvitation);
+
+        }
     }
 
-    @DeleteMapping("/invitation/{id}")
+    @DeleteMapping("/{id}")
     void deleteInvitation(@PathVariable Long id) {
-        validationAccessService.verifyUserAccessForInvitationEntity(id);
-        invitationService.deleteInvitationById(id);
+
+        if(validationAccessService.verifyUserAccessForInvitationEntity(id))
+        {
+            invitationService.deleteInvitationById(id);
+        }
     }
 
 }

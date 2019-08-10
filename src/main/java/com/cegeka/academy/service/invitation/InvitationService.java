@@ -2,11 +2,13 @@ package com.cegeka.academy.service.invitation;
 
 import com.cegeka.academy.domain.Invitation;
 
+import java.util.List;
+
 public interface InvitationService {
 
-    String getAllInvitations();
-    String saveInvitation(Invitation invitation);
-    String updateInvitation(Invitation invitation);
+    List<Invitation> getAllInvitations();
+    void saveInvitation(Invitation invitation);
+    void updateInvitation(Invitation invitation);
     void deleteInvitationById(Long id);
 
 }
