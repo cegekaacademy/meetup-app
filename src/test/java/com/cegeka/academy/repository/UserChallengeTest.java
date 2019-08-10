@@ -69,8 +69,6 @@ public class UserChallengeTest {
     @Test
     public void testAddUserChallenge() {
 
-        System.out.println(new Date());
-
         userChallengeRepository.save(initObject());
         userChallengeRepository.save(initObject());
         userChallengeRepository.save(initObject());
