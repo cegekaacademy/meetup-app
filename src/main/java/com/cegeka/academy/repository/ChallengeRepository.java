@@ -13,8 +13,6 @@ import java.util.Optional;
 @Repository
 public interface ChallengeRepository extends JpaRepository<Challenge, Long> {
 
-    Optional<Challenge> findOneById(Long id);
-
     List<Challenge> findAllByStatus(String status);
 
     List<Challenge> findAllByCreator(User creator);

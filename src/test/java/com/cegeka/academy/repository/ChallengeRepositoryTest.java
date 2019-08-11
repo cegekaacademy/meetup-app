@@ -2,8 +2,10 @@ package com.cegeka.academy.repository;
 
 import com.cegeka.academy.AcademyProjectApp;
 import com.cegeka.academy.domain.Challenge;
+import com.cegeka.academy.domain.ChallengeCategory;
 import com.cegeka.academy.domain.User;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,15 +34,23 @@ public class ChallengeRepositoryTest {
     private static final String DEFAULT_LANGKEY = "dummy";
 
     @Autowired
-    ChallengeRepository challengeRepository;
+    private ChallengeRepository challengeRepository;
 
     @Autowired
-    UserRepository userRepository;
+    private UserRepository userRepository;
+
+    @Autowired
+    private ChallengeCategoryRepository challengeCategoryRepository;
 
     private User user;
 
+    private Challenge challenge;
+
+    private ChallengeCategory challengeCategory;
+
     @BeforeEach
     public void init() {
+
         user = new User();
         user.setLogin(DEFAULT_LOGIN);
         user.setPassword(RandomStringUtils.random(60));
@@ -50,24 +60,49 @@ public class ChallengeRepositoryTest {
         user.setLastName(DEFAULT_LASTNAME);
         user.setImageUrl(DEFAULT_IMAGEURL);
         user.setLangKey(DEFAULT_LANGKEY);
-    }
+        User userTest = userRepository.save(user);
 
-    @Test
-    public void canAddChallenge() {
-        Challenge challenge = new Challenge();
         Date startDate = new Date();
         Date endDate = new Date();
 
-        User userTest = userRepository.save(user);
+        challengeCategory = new ChallengeCategory();
+        challengeCategory.setName("challengeCategory");
+        challengeCategory.setDescription("challengeCategoryDescription");
+        challengeCategoryRepository.save(challengeCategory);
 
+        challenge = new Challenge();
         challenge.setCreator(userTest);
         challenge.setPoints(5.22);
         challenge.setStartDate(startDate);
         challenge.setEndDate(endDate);
         challenge.setStatus("new");
+        challenge.setDescription("description");
+        challenge.setChallengeCategory(challengeCategoryRepository.findAll().get(0));
 
-        Challenge challengeTest = challengeRepository.save(challenge);
+    }
 
-        assertThat(challengeTest).isEqualTo(challenge);
+    @AfterEach
+    public void destroy(){
+
+        if(user != null){
+            userRepository.delete(user);
+        }
+
+        if(challengeCategory != null){
+            challengeCategoryRepository.delete(challengeCategory);
+        }
+
+        if(challenge != null) {
+            challengeRepository.delete(challenge);
+        }
+    }
+
+    @Test
+    public void canAddChallenge() {
+
+        challengeRepository.save(challenge);
+        Challenge challengeResult = challengeRepository.findAll().get(0);
+
+        assertThat(challengeResult).isEqualTo(challenge);
     }
 }
