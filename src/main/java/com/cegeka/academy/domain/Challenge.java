@@ -32,6 +32,13 @@ public class Challenge {
 
     private double points;
 
+    @Column(name = "description")
+    private String description;
+
+    @ManyToOne
+    @JoinColumn(name = "category_id", referencedColumnName = "id")
+    private ChallengeCategory challengeCategory;
+
     public Long getId() {
         return id;
     }
@@ -76,6 +83,22 @@ public class Challenge {
         this.points = points;
     }
 
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public ChallengeCategory getChallengeCategory() {
+        return challengeCategory;
+    }
+
+    public void setChallengeCategory(ChallengeCategory challengeCategory) {
+        this.challengeCategory = challengeCategory;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -98,6 +121,8 @@ public class Challenge {
                 ", endDate=" + endDate +
                 ", status='" + status + '\'' +
                 ", points=" + points +
+                ", description='" + description + '\'' +
+                ", challengeCategory=" + challengeCategory +
                 '}';
     }
 }

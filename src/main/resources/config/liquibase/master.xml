@@ -15,7 +15,6 @@
 
     <include file="config/liquibase/changelog/00000000000000_initial_schema.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/190721_1932_address.xml" relativeToChangelogFile="false"/>
-
     <include file="config/liquibase/changelog/190721_2149_group.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/190723_1927_role.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/190723_2000_category.xml" relativeToChangelogFile="false"/>
@@ -25,8 +24,9 @@
     <include file="config/liquibase/changelog/190716_1127_event.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20190713_0003_invitation_table.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20190720234201_interest_table.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20190730162701_challenge_table.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/190730_1500_user_interest.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20190808_1909_challenge_category_table.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20190730162701_challenge_table.xml" relativeToChangelogFile="false"/>
     <!-- jhipster-needle-liquibase-add-changelog - JHipster will add liquibase changelogs here -->
     <!-- jhipster-needle-liquibase-add-constraints-changelog - JHipster will add liquibase constraints changelogs here -->
 </databaseChangeLog>
