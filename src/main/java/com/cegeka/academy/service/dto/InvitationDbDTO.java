@@ -1,7 +1,7 @@
-package com.cegeka.academy.domain;
+package com.cegeka.academy.service.dto;
 
-
-import org.hibernate.annotations.Cache;
+import com.cegeka.academy.domain.Event;
+import com.cegeka.academy.domain.User;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import javax.persistence.*;
@@ -10,8 +10,8 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "invitation")
-@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class Invitation {
+@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+public class InvitationDbDTO {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -57,7 +57,6 @@ public class Invitation {
         this.status = status;
     }
 
-
     public User getUser() {
         return user;
     }
@@ -78,7 +77,7 @@ public class Invitation {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Invitation that = (Invitation) o;
+        InvitationDbDTO that = (InvitationDbDTO) o;
         return id.equals(that.id);
     }
 
@@ -91,7 +90,6 @@ public class Invitation {
     public String toString() {
 
         StringBuilder result = new StringBuilder();
-
         result.append("Invitation{" +
                 "id=" + id +
                 ", description='" + description + '\'' +
@@ -99,12 +97,12 @@ public class Invitation {
 
         if(user != null){
 
-            result.append(", idInvitedUser=" + user.getId());
+            result.append(", idInvitedUser= " + user.getId());
         }
 
         if(event != null){
 
-            result.append(", idEvent=" + event.getId());
+            result.append(", idEvent= " + event.getId());
         }
 
         return result.toString();

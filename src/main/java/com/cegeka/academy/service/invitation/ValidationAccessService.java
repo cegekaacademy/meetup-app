@@ -3,16 +3,11 @@ package com.cegeka.academy.service.invitation;
 import com.cegeka.academy.domain.User;
 import com.cegeka.academy.repository.InvitationRepository;
 import com.cegeka.academy.service.UserService;
-import com.cegeka.academy.web.rest.errors.UnauthorizedUserException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigInteger;
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Service
 @Transactional

@@ -8,6 +8,8 @@ import com.cegeka.academy.repository.EventRepository;
 import com.cegeka.academy.repository.InvitationRepository;
 import com.cegeka.academy.repository.UserRepository;
 import com.cegeka.academy.repository.util.TestsRepositoryUtil;
+import com.cegeka.academy.service.dto.InvitationDbDTO;
+import com.cegeka.academy.service.invitation.InvitationService;
 import com.cegeka.academy.service.invitation.ValidationAccessService;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,6 +18,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(classes = AcademyProjectApp.class)
@@ -23,16 +27,18 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class UserValidationServiceTest {
 
     private @Autowired
-    InvitationRepository invitationRepository;
+    InvitationService invitationService;
     private @Autowired
     EventRepository eventRepository;
     private @Autowired
     UserRepository userRepository;
     private @Autowired
     ValidationAccessService validationAccessService;
+    private @Autowired
+    InvitationRepository invitationRepository;
 
     private User user;
-    private Invitation invitation;
+    private InvitationDbDTO invitation;
 
     @BeforeEach
     public void init() {
@@ -42,14 +48,15 @@ public class UserValidationServiceTest {
         Event event = TestsRepositoryUtil.createEvent(1234L, "Ana are mere!", "KFC Krushers Party", true);
         eventRepository.save(event);
         invitation = TestsRepositoryUtil.createInvitation("pending", "ana are mere", event, user);
-        invitationRepository.save(invitation);
+        invitationService.saveInvitation(invitation);
     }
 
     @Test
     @Transactional
     public void assertThatLoggedUserIsRecipientUser() {
 
-        boolean isTheSameUser = validationAccessService.verifyUserAccessForInvitationEntity(invitation.getId());
+        List<Invitation> list = invitationRepository.findAll();
+        boolean isTheSameUser = validationAccessService.verifyUserAccessForInvitationEntity(list.get(0).getId());
         assertThat(isTheSameUser).isEqualTo(false);
 
     }

@@ -8,8 +8,11 @@ import com.cegeka.academy.repository.EventRepository;
 import com.cegeka.academy.repository.InvitationRepository;
 import com.cegeka.academy.repository.UserRepository;
 import com.cegeka.academy.repository.util.TestsRepositoryUtil;
+import com.cegeka.academy.service.dto.InvitationDbDTO;
+import com.cegeka.academy.service.dto.InvitationDisplayDTO;
 import com.cegeka.academy.service.invitation.InvitationService;
 import com.cegeka.academy.service.invitation.ValidationAccessService;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,10 +33,12 @@ public class InvitationServiceTest {
     UserRepository userRepository;
     private @Autowired
     InvitationService invitationService;
+    private @Autowired
+    InvitationRepository invitationRepository;
 
     private User user;
     private Event event;
-    private Invitation invitation;
+    private InvitationDbDTO invitation;
 
     @BeforeEach
     public void init() {
@@ -50,35 +55,37 @@ public class InvitationServiceTest {
     @Transactional
     public void assertThatSaveInvitationIsWorking() {
 
-        List<Invitation> list = invitationService.getAllInvitations();
+        List<InvitationDisplayDTO> list = invitationService.getAllInvitations();
         assertThat(list.size()).isEqualTo(1);
         assertThat(list.get(0).getStatus()).isEqualTo(invitation.getStatus());
         assertThat(list.get(0).getDescription()).isEqualTo(invitation.getDescription());
-        assertThat(list.get(0).getEvent().getId()).isEqualTo(invitation.getEvent().getId());
-        assertThat(list.get(0).getUser().getId()).isEqualTo(invitation.getUser().getId());
+        assertThat(list.get(0).getUserName()).isEqualTo(invitation.getUser().getFirstName()+" "+invitation.getUser().getLastName());
+        assertThat(list.get(0).getEventName()).isEqualTo(invitation.getEvent().getName());
     }
 
     @Test
     @Transactional
     public void assertThatUpdateInvitationIsWorking() {
-
+        List<Invitation> list = invitationRepository.findAll();
         invitation.setStatus("am modificat status-ul");
+        invitation.setId(list.get(0).getId());
         invitationService.updateInvitation(invitation);
-        List<Invitation> list = invitationService.getAllInvitations();
+        System.out.println(invitation.getId()+"");
         assertThat(list.size()).isEqualTo(1);
         assertThat(list.get(0).getStatus()).isEqualTo(invitation.getStatus());
         assertThat(list.get(0).getDescription()).isEqualTo(invitation.getDescription());
-        assertThat(list.get(0).getEvent().getId()).isEqualTo(invitation.getEvent().getId());
-        assertThat(list.get(0).getUser().getId()).isEqualTo(invitation.getUser().getId());
+        assertThat(list.get(0).getUser()).isEqualTo(invitation.getUser());
+        assertThat(list.get(0).getEvent()).isEqualTo(invitation.getEvent());
     }
 
     @Test
     @Transactional
     public void assertThatDeleteInvitationIsWorking() {
 
-        invitationService.deleteInvitationById(invitation.getId());
-        List<Invitation> list = invitationService.getAllInvitations();
-        assertThat(list.size()).isEqualTo(0);
+        List<Invitation> listBeforeDelete = invitationRepository.findAll();
+        invitationService.deleteInvitationById(listBeforeDelete.get(0).getId());
+        List<Invitation> listAfterDelete = invitationRepository.findAll();
+        assertThat(listAfterDelete.size()).isEqualTo(0);
     }
 
     @Test
@@ -86,7 +93,7 @@ public class InvitationServiceTest {
     public void assertThatDeleteInvitationIsWorkingWithInvalidId() {
 
         invitationService.deleteInvitationById(100L);
-        List<Invitation> list = invitationService.getAllInvitations();
+        List<InvitationDisplayDTO> list = invitationService.getAllInvitations();
         assertThat(list.size()).isEqualTo(1);
     }
 

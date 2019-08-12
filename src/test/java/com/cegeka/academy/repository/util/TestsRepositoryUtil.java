@@ -4,6 +4,7 @@ import com.cegeka.academy.domain.Address;
 import com.cegeka.academy.domain.Event;
 import com.cegeka.academy.domain.Invitation;
 import com.cegeka.academy.domain.User;
+import com.cegeka.academy.service.dto.InvitationDbDTO;
 
 public class TestsRepositoryUtil {
 
@@ -34,12 +35,22 @@ public class TestsRepositoryUtil {
         return user;
     }
 
-    public static Invitation createInvitation(String status, String description, Event event, User user) {
-        Invitation invitation = new Invitation();
+    public static InvitationDbDTO createInvitation(String status, String description, Event event, User user) {
+        InvitationDbDTO invitation = new InvitationDbDTO();
         invitation.setStatus(status);
         invitation.setDescription(description);
         invitation.setUser(user);
         invitation.setEvent(event);
+        return invitation;
+    }
+
+    public static Invitation convertDTOToInvitation(InvitationDbDTO invitationDbDTO){
+        Invitation invitation = new Invitation();
+        invitation.setId(invitationDbDTO.getId());
+        invitation.setStatus(invitationDbDTO.getStatus());
+        invitation.setDescription(invitationDbDTO.getDescription());
+        invitation.setEvent(invitationDbDTO.getEvent());
+        invitation.setUser(invitationDbDTO.getUser());
         return invitation;
     }
 
