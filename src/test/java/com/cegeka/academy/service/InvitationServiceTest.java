@@ -45,7 +45,6 @@ public class InvitationServiceTest {
         event = TestsRepositoryUtil.createEvent(1234L, "Ana are mere!", "KFC Krushers Party", true);
         eventRepository.saveAndFlush(event);
         invitation = TestsRepositoryUtil.createInvitation("pending", "ana are mere", event, user);
-        invitationRepository.saveAndFlush(invitation);
         invitationService.saveInvitation(invitation);
     }
 
