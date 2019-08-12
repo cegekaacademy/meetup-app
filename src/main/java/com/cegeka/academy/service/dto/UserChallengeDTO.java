@@ -1,17 +1,13 @@
 package com.cegeka.academy.service.dto;
 
-import com.cegeka.academy.domain.Challenge;
-import com.cegeka.academy.domain.Invitation;
-import com.cegeka.academy.domain.User;
-
 import java.util.Date;
 
 public class UserChallengeDTO {
 
     private Long id;
-    private User user;
-    private Invitation invitation;
-    private Challenge challenge;
+    private UserForUserChallengeDTO user;
+    private InvitationForUserChallengeDTO invitation;
+    private ChallengeForUserChallengeDTO challenge;
     private String status;
     private double points;
     private Date startTime;
@@ -28,27 +24,27 @@ public class UserChallengeDTO {
         this.id = id;
     }
 
-    public User getUser() {
+    public UserForUserChallengeDTO getUser() {
         return user;
     }
 
-    public void setUser(User user) {
+    public void setUser(UserForUserChallengeDTO user) {
         this.user = user;
     }
 
-    public Invitation getInvitation() {
+    public InvitationForUserChallengeDTO getInvitation() {
         return invitation;
     }
 
-    public void setInvitation(Invitation invitation) {
+    public void setInvitation(InvitationForUserChallengeDTO invitation) {
         this.invitation = invitation;
     }
 
-    public Challenge getChallenge() {
+    public ChallengeForUserChallengeDTO getChallenge() {
         return challenge;
     }
 
-    public void setChallenge(Challenge challenge) {
+    public void setChallenge(ChallengeForUserChallengeDTO challenge) {
         this.challenge = challenge;
     }
 

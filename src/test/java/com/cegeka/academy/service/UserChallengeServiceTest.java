@@ -100,12 +100,21 @@ public class UserChallengeServiceTest  {
     }
 
     @Test
-    public void test(){
+    public void testGetChallengesByUserId(){
 
        List<UserChallengeDTO> results = userChallengeService.getUserChallengesByUserId(usedUser.getId());
-        assertThat(UserChallengeServiceImpl.convertToEntity(results.get(0))).isEqualTo(userChallenge);
+        assertThat(UserChallengeServiceImpl.convertUserChallengeDTOToUserChallenge(results.get(0))).isEqualTo(userChallenge);
 
     }
+
+    @Test
+    public void testGetChallengesByUserIdWithNoResult(){
+
+        List<UserChallengeDTO> results = userChallengeService.getUserChallengesByUserId(20l);
+        assertThat(results.size()).isEqualTo(0);
+
+    }
+
 
 
 }

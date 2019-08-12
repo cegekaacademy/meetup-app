@@ -14,11 +14,11 @@ public class UserChallengeController {
     @Autowired
     private UserChallengeService userChallengeService;
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/{userId}", method = RequestMethod.GET)
     @ResponseBody
-    public List<UserChallengeDTO> getChallengesByUserId(@PathVariable("id") Long id){
+    public List<UserChallengeDTO> getChallengesByUserId(@PathVariable("userId") Long userId){
 
-        return userChallengeService.getUserChallengesByUserId(id);
+        return userChallengeService.getUserChallengesByUserId(userId);
     }
 
 }
