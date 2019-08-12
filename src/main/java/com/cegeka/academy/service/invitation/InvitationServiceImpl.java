@@ -19,18 +19,12 @@ import java.util.List;
 public class InvitationServiceImpl implements InvitationService {
 
     private final InvitationRepository invitationRepository;
-    private final UserRepository userRepository;
-    private final EventRepository eventRepository;
-
 
     private Logger logger =  LoggerFactory.getLogger(InvitationServiceImpl.class);
 
-
     @Autowired
-    public InvitationServiceImpl(InvitationRepository invitationRepository, UserRepository userRepository, EventRepository eventRepository) {
+    public InvitationServiceImpl(InvitationRepository invitationRepository) {
         this.invitationRepository = invitationRepository;
-        this.userRepository = userRepository;
-        this.eventRepository = eventRepository;
     }
 
     @Override
@@ -42,18 +36,6 @@ public class InvitationServiceImpl implements InvitationService {
     @Override
     public void saveInvitation(Invitation invitation) {
 
-        if(invitation.getUser() != null){
-
-            User invitedUser = userRepository.findById(invitation.getUser().getId()).get();
-            invitation.setUser(invitedUser);
-
-        }
-
-        if(invitation.getEvent() != null){
-
-            Event invitationEvent = eventRepository.findById(invitation.getEvent().getId()).get();
-            invitation.setEvent(invitationEvent);
-        }
         logger.info("Invitation with id: "+ invitationRepository.save(invitation).getId() +"  was saved to database.");
     }
 

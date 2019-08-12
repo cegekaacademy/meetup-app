@@ -15,8 +15,4 @@ import java.util.stream.Stream;
 public interface InvitationRepository extends JpaRepository<Invitation, Long> {
 
      List<Invitation> findByStatus(String status);
-
-     @Query(value = "SELECT u.id FROM jhi_user u WHERE u.id =  (select i.id_invitation_user from invitation i where i.id = :invitation)", nativeQuery = true)
-     Stream<BigInteger> findInvitedUser(@Param("invitation") Optional<Invitation> invitation);
-
 }

@@ -27,16 +27,15 @@ public class ValidationAccessService {
         this.invitationRepository = invitationRepository;
     }
 
-    public boolean verifyUserAccessForInvitationEntity(Long idInvitedUser){
+    public boolean verifyUserAccessForInvitationEntity(Long invitationId){
 
         Optional<User> opt = userService.getUserWithAuthorities();
         final User[] userLogged = {null};
         opt.ifPresent(user -> userLogged[0] = user);
 
-        Stream<BigInteger> user = invitationRepository.findInvitedUser(invitationRepository.findById(idInvitedUser));
-        List<BigInteger> result = user.collect(Collectors.toList());
+        User invitedUser = invitationRepository.findById(invitationId).get().getUser();
 
-        if(result == null || result.size() == 0 || userLogged[0].getId() != Long.parseLong(result.get(0) + "")){
+        if(invitedUser == null || userLogged != null || !userLogged[0].equals(invitedUser)){
 
             return false;
         }
