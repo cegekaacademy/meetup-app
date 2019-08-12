@@ -1,8 +1,8 @@
 package com.cegeka.academy.service.challenge;
 
-import com.cegeka.academy.domain.Challenge;
+import com.cegeka.academy.service.dto.ChallengeDTO;
 
 public interface ChallengeService {
 
-    String saveChallenge(Challenge challenge);
+    String saveChallenge(ChallengeDTO challenge);
 }
