@@ -61,5 +61,25 @@ public class UserValidationServiceTest {
 
     }
 
+    @Test
+    @Transactional
+    public void assertThatLoggedUserIsRecipientUserWithInvalidInvitationId() {
+
+        List<Invitation> list = invitationRepository.findAll();
+        boolean isTheSameUser = validationAccessService.verifyUserAccessForInvitationEntity(100L);
+        assertThat(isTheSameUser).isEqualTo(false);
+
+    }
+
+    @Test
+    @Transactional
+    public void assertThatLoggedUserIsRecipientUserWithNullInvitationId() {
+
+        List<Invitation> list = invitationRepository.findAll();
+        boolean isTheSameUser = validationAccessService.verifyUserAccessForInvitationEntity(null);
+        assertThat(isTheSameUser).isEqualTo(false);
+
+    }
+
 
 }

@@ -24,15 +24,31 @@ public class ValidationAccessService {
 
     public boolean verifyUserAccessForInvitationEntity(Long invitationId){
 
-        Optional<User> opt = userService.getUserWithAuthorities();
-        final User[] userLogged = {null};
-        opt.ifPresent(user -> userLogged[0] = user);
-
-        User invitedUser = invitationRepository.findById(invitationId).get().getUser();
-
-        if(invitedUser == null || userLogged != null || !userLogged[0].equals(invitedUser)){
+        if(invitationId == null){
 
             return false;
+
+        }else {
+
+            Optional<User> opt = userService.getUserWithAuthorities();
+            final User[] userLogged = {null};
+
+            opt.ifPresent(user -> userLogged[0] = user);
+
+            if (userLogged[0] == null) {
+
+                return false;
+
+            } else {
+
+                User invitedUser = invitationRepository.findById(invitationId).get().getUser();
+
+                if (invitedUser == null || userLogged != null || !userLogged[0].equals(invitedUser)) {
+
+                    return false;
+                }
+            }
+
         }
 
         return true;
