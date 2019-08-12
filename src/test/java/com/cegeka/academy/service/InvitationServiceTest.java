@@ -25,8 +25,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class InvitationServiceTest {
 
     private @Autowired
-    InvitationRepository invitationRepository;
-    private @Autowired
     EventRepository eventRepository;
     private @Autowired
     UserRepository userRepository;
