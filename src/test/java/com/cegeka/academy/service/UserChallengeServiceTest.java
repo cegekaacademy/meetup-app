@@ -7,6 +7,7 @@ import com.cegeka.academy.service.dto.UserChallengeDTO;
 import com.cegeka.academy.service.userChallenge.UserChallengeService;
 import com.cegeka.academy.service.userChallenge.UserChallengeServiceImpl;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -99,6 +100,30 @@ public class UserChallengeServiceTest  {
 
     }
 
+    @AfterEach
+    public void destroy(){
+
+        if(invitation != null){
+            invitationRepository.delete(invitation);
+        }
+
+        if(user != null){
+            userRepository.delete(user);
+        }
+
+        if(challengeCategory != null){
+            challengeCategoryRepository.delete(challengeCategory);
+        }
+
+        if(challenge != null){
+            challengeRepository.delete(challenge);
+        }
+
+        if(userChallenge != null){
+            userChallengeRepository.delete(userChallenge);
+        }
+    }
+
     @Test
     public void testGetChallengesByUserId(){
 
@@ -114,7 +139,6 @@ public class UserChallengeServiceTest  {
         assertThat(results.size()).isEqualTo(0);
 
     }
-
 
 
 }
