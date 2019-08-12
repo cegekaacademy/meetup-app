@@ -38,4 +38,18 @@
                                  referencedColumnNames="id"
                                  referencedTableName="jhi_user"/>
     </changeSet>
+    <changeSet author="iuliana" id="20190730162702">
+        <addColumn tableName="challenge">
+            <column name="description" type="varchar(255)"/>
+            <column name="category_id" type="bigint"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet author="iuliana" id="20190730162703">
+        <addForeignKeyConstraint baseColumnNames="category_id"
+                                 baseTableName="challenge"
+                                 constraintName="fk_challenge_category"
+                                 referencedColumnNames="id"
+                                 referencedTableName="challenge_category"/>
+    </changeSet>
 </databaseChangeLog>
