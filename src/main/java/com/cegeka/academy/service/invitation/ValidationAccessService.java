@@ -36,7 +36,7 @@ public class ValidationAccessService {
 
                 User invitedUser = invitationRepository.findById(invitationId).get().getUser();
 
-                    if (invitedUser == null || userLogged != null || !userLogged.equals(invitedUser)) {
+                    if (invitedUser == null || userLogged == null || !userLogged.equals(invitedUser)) {
 
                         return false;
                     }
