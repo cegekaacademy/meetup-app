@@ -40,7 +40,7 @@ import {
   faAsterisk,
   faTasks,
   faHome,
-  faUserCircle
+  faUserCircle, faEdit, faPenFancy
 } from '@fortawesome/free-solid-svg-icons';
 
 // Adds the SVG icon to the library so you can use it in your page
@@ -79,5 +79,7 @@ library.add(faSearch);
 library.add(faTrashAlt);
 library.add(faAsterisk);
 library.add(faUserCircle);
+library.add(faEdit);
+library.add(faPenFancy);
 
 // jhipster-needle-add-element-to-vendor - JHipster will add new menu items here

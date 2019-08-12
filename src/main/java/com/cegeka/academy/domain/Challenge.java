@@ -6,6 +6,7 @@ import org.hibernate.annotations.Cache;
 import javax.persistence.*;
 import javax.validation.constraints.Size;
 import java.util.Date;
+import java.util.Objects;
 
 @Entity
 @Table(name = "challenge")
@@ -30,6 +31,13 @@ public class Challenge {
     private String status;
 
     private double points;
+
+    @Column(name = "description")
+    private String description;
+
+    @ManyToOne
+    @JoinColumn(name = "category_id", referencedColumnName = "id")
+    private ChallengeCategory challengeCategory;
 
     public Long getId() {
         return id;
@@ -75,6 +83,35 @@ public class Challenge {
         this.points = points;
     }
 
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public ChallengeCategory getChallengeCategory() {
+        return challengeCategory;
+    }
+
+    public void setChallengeCategory(ChallengeCategory challengeCategory) {
+        this.challengeCategory = challengeCategory;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Challenge challenge = (Challenge) o;
+        return id.equals(challenge.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
+
     @Override
     public String toString() {
         return "Challenge{" +
@@ -84,6 +121,8 @@ public class Challenge {
                 ", endDate=" + endDate +
                 ", status='" + status + '\'' +
                 ", points=" + points +
+                ", description='" + description + '\'' +
+                ", challengeCategory=" + challengeCategory +
                 '}';
     }
 }
