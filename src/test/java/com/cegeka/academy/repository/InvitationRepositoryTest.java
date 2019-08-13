@@ -25,7 +25,7 @@ public class InvitationRepositoryTest {
 
     @Test
     public void testAddInvitation(){
-        Event event = TestsRepositoryUtil.createEvent(1234L, "Ana are mere!", "KFC Krushers Party", true);
+        Event event = TestsRepositoryUtil.createEvent("Ana are mere!", "KFC Krushers Party", true);
         eventRepository.save(event);
         User user = TestsRepositoryUtil.createUser("login", "anaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaana");
         userRepository.save(user);
@@ -41,7 +41,7 @@ public class InvitationRepositoryTest {
 
     @Test
     public void testFindByStatus(){
-        Event event = TestsRepositoryUtil.createEvent(1234L, "Ana are mere!", "KFC Krushers Party", true);
+        Event event = TestsRepositoryUtil.createEvent("Ana are mere!", "KFC Krushers Party", true);
         eventRepository.save(event);
         User user = TestsRepositoryUtil.createUser("login", "anaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaana");
         userRepository.save(user);
@@ -55,7 +55,7 @@ public class InvitationRepositoryTest {
 
     @Test
     public void testFindByStatusWithNoResult(){
-        Event event = TestsRepositoryUtil.createEvent(1234L, "Ana are mere!", "KFC Krushers Party", true);
+        Event event = TestsRepositoryUtil.createEvent("Ana are mere!", "KFC Krushers Party", true);
         eventRepository.save(event);
         User user = TestsRepositoryUtil.createUser("login", "anaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaana");
         userRepository.save(user);

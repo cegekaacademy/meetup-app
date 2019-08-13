@@ -19,7 +19,7 @@ public class TestsRepositoryUtil {
         return address;
     }
 
-    public static Event createEvent(Long id, String description, String name, boolean isPublic) {
+    public static Event createEvent(String description, String name, boolean isPublic) {
         Event event = new Event();
         event.setDescription(description);
         event.setName(name);
