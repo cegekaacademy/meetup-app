@@ -7,6 +7,7 @@ import javax.persistence.*;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @Table(name = "interest")
@@ -21,6 +22,10 @@ public class Interest implements Serializable {
     @Size(max = 45)
     @Column(name = "description", length = 45)
     private String description;
+
+    @ManyToMany(mappedBy = "userInterests")
+    private Set<User> interestUsers;
+
 
     public Long getId() {
         return id;
@@ -44,6 +49,14 @@ public class Interest implements Serializable {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public Set<User> getInterestUsers() {
+        return interestUsers;
+    }
+
+    public void setInterestUsers(Set<User> interestUsers) {
+        this.interestUsers = interestUsers;
     }
 
     @Override

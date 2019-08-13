@@ -181,12 +181,12 @@ ui bootstrap tweaks
   font-size: 15px;
 }
 
-body {
+.main-background {
   background: url('../../content/images/meetup2.jpg') no-repeat center center fixed;
   -webkit-background-size: cover;
   -moz-background-size: cover;
   background-size: cover;
-  -o-background-size: cover;
+  height: 100vh;
 }
 
 .low-opacity {
