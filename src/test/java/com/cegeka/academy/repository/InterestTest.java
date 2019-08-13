@@ -15,6 +15,7 @@ import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+
 @SpringBootTest(classes = AcademyProjectApp.class)
 @Transactional
 public class InterestTest {

@@ -12,4 +12,6 @@ public interface EventRepository extends JpaRepository<Event, Long> {
     List<Event> findAllByOwner(User owner);
 
     List<Event> findAllByIsPublicIsTrue();
+
+    List<Event> findByUsers_id(Long userId);
 }
