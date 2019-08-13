@@ -40,9 +40,9 @@ public class InvitationServiceTest {
     @BeforeEach
     public void init() {
 
-        user = TestsRepositoryUtil.createUser("login","anaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaana");
+        user = TestsRepositoryUtil.createUser("login", "anaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaana");
         userRepository.saveAndFlush(user);
-        event = TestsRepositoryUtil.createEvent(1234L, "Ana are mere!", "KFC Krushers Party", true);
+        event = TestsRepositoryUtil.createEvent("Ana are mere!", "KFC Krushers Party", true);
         eventRepository.saveAndFlush(event);
         invitation = TestsRepositoryUtil.createInvitation("pending", "ana are mere", event, user);
         invitationService.saveInvitation(invitation);
@@ -56,7 +56,7 @@ public class InvitationServiceTest {
         assertThat(list.size()).isEqualTo(1);
         assertThat(list.get(0).getStatus()).isEqualTo(invitation.getStatus());
         assertThat(list.get(0).getDescription()).isEqualTo(invitation.getDescription());
-        assertThat(list.get(0).getUserName()).isEqualTo(invitation.getUser().getFirstName()+" "+invitation.getUser().getLastName());
+        assertThat(list.get(0).getUserName()).isEqualTo(invitation.getUser().getFirstName() + " " + invitation.getUser().getLastName());
         assertThat(list.get(0).getEventName()).isEqualTo(invitation.getEvent().getName());
     }
 
@@ -67,7 +67,7 @@ public class InvitationServiceTest {
         invitation.setStatus("am modificat status-ul");
         invitation.setId(list.get(0).getId());
         invitationService.updateInvitation(invitation);
-        System.out.println(invitation.getId()+"");
+        System.out.println(invitation.getId() + "");
         assertThat(list.size()).isEqualTo(1);
         assertThat(list.get(0).getStatus()).isEqualTo(invitation.getStatus());
         assertThat(list.get(0).getDescription()).isEqualTo(invitation.getDescription());

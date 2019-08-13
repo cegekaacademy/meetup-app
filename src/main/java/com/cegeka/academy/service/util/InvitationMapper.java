@@ -12,6 +12,7 @@ public class InvitationMapper {
         invitationDisplayDTO.setDescription(invitation.getDescription());
         invitationDisplayDTO.setEventName(invitation.getEvent().getName());
         invitationDisplayDTO.setUserName(invitation.getUser().getFirstName()+" "+invitation.getUser().getLastName());
+
         return invitationDisplayDTO;
     }
 }

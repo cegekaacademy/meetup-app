@@ -43,7 +43,7 @@ public class UserValidationServiceTest {
 
         user = TestsRepositoryUtil.createUser("login","anaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaana");
         userRepository.save(user);
-        Event event = TestsRepositoryUtil.createEvent(1234L, "Ana are mere!", "KFC Krushers Party", true);
+        Event event = TestsRepositoryUtil.createEvent( "Ana are mere!", "KFC Krushers Party", true);
         eventRepository.save(event);
         invitation = TestsRepositoryUtil.createInvitation("pending", "ana are mere", event, user);
         invitationService.saveInvitation(invitation);

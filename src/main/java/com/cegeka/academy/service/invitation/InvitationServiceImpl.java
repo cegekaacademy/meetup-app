@@ -42,13 +42,13 @@ public class InvitationServiceImpl implements InvitationService {
     @Override
     public void saveInvitation(Invitation invitation) {
 
-        logger.info("Invitation with id: "+ invitationRepository.saveAndFlush(invitation).getId() +"  was saved to database.");
+        logger.info("Invitation with id: "+ invitationRepository.save(invitation).getId() +"  was saved to database.");
     }
 
     @Override
     public void updateInvitation(Invitation invitation) {
 
-        logger.info("Invitation with id: "+ invitationRepository.saveAndFlush(invitation).getId() +"  was updated into database.");
+        logger.info("Invitation with id: "+ invitationRepository.save(invitation).getId() +"  was updated into database.");
     }
 
     @Override
