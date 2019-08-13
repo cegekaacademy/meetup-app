@@ -6,6 +6,7 @@ import com.cegeka.academy.repository.*;
 import com.cegeka.academy.service.dto.UserChallengeDTO;
 import com.cegeka.academy.service.userChallenge.UserChallengeService;
 import com.cegeka.academy.service.userChallenge.UserChallengeServiceImpl;
+import com.cegeka.academy.service.util.UserChallengeMapper;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -128,7 +129,7 @@ public class UserChallengeServiceTest  {
     public void testGetChallengesByUserId(){
 
        List<UserChallengeDTO> results = userChallengeService.getUserChallengesByUserId(usedUser.getId());
-        assertThat(UserChallengeServiceImpl.convertUserChallengeDTOToUserChallenge(results.get(0))).isEqualTo(userChallenge);
+        assertThat(UserChallengeMapper.convertUserChallengeDTOToUserChallenge(results.get(0))).isEqualTo(userChallenge);
 
     }
 
