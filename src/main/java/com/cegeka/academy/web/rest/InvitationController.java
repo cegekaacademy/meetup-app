@@ -39,7 +39,7 @@ public class InvitationController {
     @PutMapping
     public void replaceInvitation(@RequestBody InvitationDbDTO newInvitation){
 
-        if(validationAccessService.verifyUserAccessForInvitationEntity(newInvitation.getId()))
+        if(validationAccessService.verifyUserAccessForInvitationEntity(newInvitation.getInvitation().getId()))
         {
             invitationService.updateInvitation(newInvitation);
 

@@ -36,21 +36,23 @@ public class TestsRepositoryUtil {
     }
 
     public static InvitationDbDTO createInvitation(String status, String description, Event event, User user) {
-        InvitationDbDTO invitation = new InvitationDbDTO();
+        Invitation invitation = new Invitation();
         invitation.setStatus(status);
         invitation.setDescription(description);
         invitation.setUser(user);
         invitation.setEvent(event);
-        return invitation;
+        InvitationDbDTO invitationDbDTO = new InvitationDbDTO();
+        invitationDbDTO.setInvitation(invitation);
+        return invitationDbDTO;
     }
 
     public static Invitation convertDTOToInvitation(InvitationDbDTO invitationDbDTO){
         Invitation invitation = new Invitation();
-        invitation.setId(invitationDbDTO.getId());
-        invitation.setStatus(invitationDbDTO.getStatus());
-        invitation.setDescription(invitationDbDTO.getDescription());
-        invitation.setEvent(invitationDbDTO.getEvent());
-        invitation.setUser(invitationDbDTO.getUser());
+        invitation.setId(invitationDbDTO.getInvitation().getId());
+        invitation.setStatus(invitationDbDTO.getInvitation().getStatus());
+        invitation.setDescription(invitationDbDTO.getInvitation().getDescription());
+        invitation.setEvent(invitationDbDTO.getInvitation().getEvent());
+        invitation.setUser(invitationDbDTO.getInvitation().getUser());
         return invitation;
     }
 

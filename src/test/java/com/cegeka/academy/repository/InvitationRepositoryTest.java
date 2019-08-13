@@ -35,10 +35,10 @@ public class InvitationRepositoryTest {
         invitationRepository.save(TestsRepositoryUtil.convertDTOToInvitation(invitation));
         List<Invitation> list = invitationRepository.findAll();
         assertThat(list.size()).isEqualTo(1);
-        assertThat(list.get(0).getStatus()).isEqualTo(invitation.getStatus());
-        assertThat(list.get(0).getDescription()).isEqualTo(invitation.getDescription());
-        assertThat(list.get(0).getEvent().getId()).isEqualTo(invitation.getEvent().getId());
-        assertThat(list.get(0).getUser().getId()).isEqualTo(invitation.getUser().getId());
+        assertThat(list.get(0).getStatus()).isEqualTo(invitation.getInvitation().getStatus());
+        assertThat(list.get(0).getDescription()).isEqualTo(invitation.getInvitation().getDescription());
+        assertThat(list.get(0).getEvent().getId()).isEqualTo(invitation.getInvitation().getEvent().getId());
+        assertThat(list.get(0).getUser().getId()).isEqualTo(invitation.getInvitation().getUser().getId());
     }
 
     @Test

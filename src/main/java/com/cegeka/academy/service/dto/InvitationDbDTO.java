@@ -1,110 +1,16 @@
 package com.cegeka.academy.service.dto;
 
-import com.cegeka.academy.domain.Event;
-import com.cegeka.academy.domain.User;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
+import com.cegeka.academy.domain.Invitation;
 
-import javax.persistence.*;
-import javax.validation.constraints.Size;
-import java.util.Objects;
-
-@Entity
-@Table(name = "invitation")
-@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class InvitationDbDTO {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+   private Invitation invitation;
 
-    @Size(max = 45)
-    @Column(name = "description", length = 45)
-    private String description;
-
-    @Size(max = 45)
-    @Column(name = "status", length = 45)
-    private String status;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_invitation_user",referencedColumnName = "id")
-    private User user;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_event",referencedColumnName = "id")
-    private Event event;
-
-    public Long getId() {
-        return id;
+    public Invitation getInvitation() {
+        return invitation;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    public Event getEvent() {
-        return event;
-    }
-
-    public void setEvent(Event event) {
-        this.event = event;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        InvitationDbDTO that = (InvitationDbDTO) o;
-        return id.equals(that.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
-    }
-
-    @Override
-    public String toString() {
-
-        StringBuilder result = new StringBuilder();
-        result.append("Invitation{" +
-                "id=" + id +
-                ", description='" + description + '\'' +
-                ", status='" + status);
-
-        if(user != null){
-
-            result.append(", idInvitedUser= " + user.getId());
-        }
-
-        if(event != null){
-
-            result.append(", idEvent= " + event.getId());
-        }
-
-        return result.toString();
+    public void setInvitation(Invitation invitation) {
+        this.invitation = invitation;
     }
 }

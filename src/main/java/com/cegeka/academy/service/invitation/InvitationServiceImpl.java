@@ -4,6 +4,7 @@ import com.cegeka.academy.domain.Invitation;
 import com.cegeka.academy.repository.InvitationRepository;
 import com.cegeka.academy.service.dto.InvitationDbDTO;
 import com.cegeka.academy.service.dto.InvitationDisplayDTO;
+import com.cegeka.academy.service.util.InvitationMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,13 +33,8 @@ public class InvitationServiceImpl implements InvitationService {
         List<InvitationDisplayDTO>listToShow = new ArrayList<>();
         List<Invitation>list = invitationRepository.findAll();
         for (Invitation invitation : list) {
-            InvitationDisplayDTO aux = new InvitationDisplayDTO();
-            aux.setDescription(invitation.getDescription());
-            aux.setStatus(invitation.getStatus());
-            aux.setUserName(invitation.getUser().getFirstName()+" "+invitation.getUser().getLastName());
-            aux.setEventName(invitation.getEvent().getName());
+            InvitationDisplayDTO aux = InvitationMapper.convertInvitationEntityToInvitationDisplayDTO(invitation);
             listToShow.add(aux);
-
         }
 
         return listToShow;
@@ -47,25 +43,14 @@ public class InvitationServiceImpl implements InvitationService {
     @Override
     public void saveInvitation(InvitationDbDTO invitation) {
 
-        Invitation invitationAdded = new Invitation();
-        invitationAdded.setStatus(invitation.getStatus());
-        invitationAdded.setDescription(invitation.getDescription());
-        invitationAdded.setEvent(invitation.getEvent());
-        invitationAdded.setUser(invitation.getUser());
-
+        Invitation invitationAdded = InvitationMapper.convertDTOtoInvitation(invitation);
         logger.info("Invitation with id: "+ invitationRepository.saveAndFlush(invitationAdded).getId() +"  was saved to database.");
     }
 
     @Override
     public void updateInvitation(InvitationDbDTO invitation) {
 
-        Invitation invitationUpdated = new Invitation();
-        invitationUpdated.setId(invitation.getId());
-        invitationUpdated.setStatus(invitation.getStatus());
-        invitationUpdated.setDescription(invitation.getDescription());
-        invitationUpdated.setEvent(invitation.getEvent());
-        invitationUpdated.setUser(invitation.getUser());
-
+        Invitation invitationUpdated = InvitationMapper.convertDTOtoInvitation(invitation);
         logger.info("Invitation with id: "+ invitationRepository.saveAndFlush(invitationUpdated).getId() +"  was updated into database.");
     }
 
