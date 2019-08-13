@@ -35,30 +35,20 @@ public class ValidationAccessService {
 
         }else {
 
-            if(userService.getUserWithAuthorities().isPresent()) {
-
-                try{
+            if (userService.getUserWithAuthorities().isPresent()) {
 
                 User userLogged = userService.getUserWithAuthorities().get();
 
-                User invitedUser = invitationRepository.findById(invitationId).get().getUser();
+                if(invitationRepository.findById(invitationId).isPresent()) {
+
+                    User invitedUser = invitationRepository.findById(invitationId).get().getUser();
 
                     if (invitedUser == null || userLogged == null || userLogged.getId() != invitedUser.getId()) {
 
                         return false;
                     }
-
-                 }catch (NoSuchElementException exception){
-
-                    logger.info("There is no invitation with the requested id");
-                    return false;
-
-                }catch (Exception e){
-
-                    logger.info("Another exception appeared");
-                    return false;
-
                 }
+
             }else{
 
                 return false;

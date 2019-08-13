@@ -1,7 +1,6 @@
 package com.cegeka.academy.web.rest;
 
 import com.cegeka.academy.domain.Invitation;
-import com.cegeka.academy.service.dto.InvitationDbDTO;
 import com.cegeka.academy.service.dto.InvitationDisplayDTO;
 import com.cegeka.academy.service.invitation.InvitationService;
 import com.cegeka.academy.service.invitation.ValidationAccessService;
@@ -31,15 +30,15 @@ public class InvitationController {
     }
 
     @PostMapping
-    public void saveInvitation(@RequestBody InvitationDbDTO newInvitation){
+    public void saveInvitation(@RequestBody Invitation newInvitation){
 
          invitationService.saveInvitation(newInvitation);
     }
 
     @PutMapping
-    public void replaceInvitation(@RequestBody InvitationDbDTO newInvitation){
+    public void replaceInvitation(@RequestBody Invitation newInvitation){
 
-        if(validationAccessService.verifyUserAccessForInvitationEntity(newInvitation.getInvitation().getId()))
+        if(validationAccessService.verifyUserAccessForInvitationEntity(newInvitation.getId()))
         {
             invitationService.updateInvitation(newInvitation);
 

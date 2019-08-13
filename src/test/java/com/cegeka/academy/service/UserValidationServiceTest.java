@@ -8,10 +8,8 @@ import com.cegeka.academy.repository.EventRepository;
 import com.cegeka.academy.repository.InvitationRepository;
 import com.cegeka.academy.repository.UserRepository;
 import com.cegeka.academy.repository.util.TestsRepositoryUtil;
-import com.cegeka.academy.service.dto.InvitationDbDTO;
 import com.cegeka.academy.service.invitation.InvitationService;
 import com.cegeka.academy.service.invitation.ValidationAccessService;
-import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +36,7 @@ public class UserValidationServiceTest {
     InvitationRepository invitationRepository;
 
     private User user;
-    private InvitationDbDTO invitation;
+    private Invitation invitation;
 
     @BeforeEach
     public void init() {

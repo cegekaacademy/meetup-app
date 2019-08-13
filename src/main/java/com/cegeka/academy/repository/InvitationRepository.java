@@ -1,7 +1,6 @@
 package com.cegeka.academy.repository;
 
 import com.cegeka.academy.domain.Invitation;
-import com.cegeka.academy.service.dto.InvitationDbDTO;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

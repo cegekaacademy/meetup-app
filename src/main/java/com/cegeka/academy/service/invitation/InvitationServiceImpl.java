@@ -2,7 +2,6 @@ package com.cegeka.academy.service.invitation;
 
 import com.cegeka.academy.domain.Invitation;
 import com.cegeka.academy.repository.InvitationRepository;
-import com.cegeka.academy.service.dto.InvitationDbDTO;
 import com.cegeka.academy.service.dto.InvitationDisplayDTO;
 import com.cegeka.academy.service.util.InvitationMapper;
 import org.slf4j.Logger;
@@ -41,23 +40,20 @@ public class InvitationServiceImpl implements InvitationService {
     }
 
     @Override
-    public void saveInvitation(InvitationDbDTO invitation) {
+    public void saveInvitation(Invitation invitation) {
 
-        Invitation invitationAdded = InvitationMapper.convertDTOtoInvitation(invitation);
-        logger.info("Invitation with id: "+ invitationRepository.saveAndFlush(invitationAdded).getId() +"  was saved to database.");
+        logger.info("Invitation with id: "+ invitationRepository.saveAndFlush(invitation).getId() +"  was saved to database.");
     }
 
     @Override
-    public void updateInvitation(InvitationDbDTO invitation) {
+    public void updateInvitation(Invitation invitation) {
 
-        Invitation invitationUpdated = InvitationMapper.convertDTOtoInvitation(invitation);
-        logger.info("Invitation with id: "+ invitationRepository.saveAndFlush(invitationUpdated).getId() +"  was updated into database.");
+        logger.info("Invitation with id: "+ invitationRepository.saveAndFlush(invitation).getId() +"  was updated into database.");
     }
 
     @Override
     public void deleteInvitationById(Long id) {
 
         invitationRepository.findById(id).ifPresent(invitation -> invitationRepository.delete(invitation));
-        logger.info("Invitation with id: "+ id +"  was deleted from database.");
     }
 }
