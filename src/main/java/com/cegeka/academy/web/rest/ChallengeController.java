@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class ChallengeController {
 
     @Autowired
-    ChallengeServiceImp challengeServiceImp;
+    private ChallengeServiceImp challengeServiceImp;
 
     @RequestMapping(method = RequestMethod.DELETE)
     public void delete(@RequestParam long id){

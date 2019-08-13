@@ -11,7 +11,7 @@ import javax.transaction.Transactional;
 public class ChallengeServiceImp implements ChallengeService {
 
     @Autowired
-    ChallengeRepository challengeRepository;
+    private ChallengeRepository challengeRepository;
 
     @Override
     public void deleteChallenge(long id) {
