@@ -1,7 +1,5 @@
 package com.cegeka.academy.service.dto;
 
-import com.cegeka.academy.domain.ChallengeCategory;
-import com.cegeka.academy.domain.User;
 
 import java.util.Date;
 
@@ -9,7 +7,7 @@ public class ChallengeDTO {
 
     private Long id;
 
-    private User creator;
+    private UserDTO creator;
 
     private Date startDate;
 
@@ -21,7 +19,7 @@ public class ChallengeDTO {
 
     private String description;
 
-    private ChallengeCategory challengeCategory;
+    private ChallengeCategoryDTO challengeCategory;
 
     public Long getId() {
         return id;
@@ -31,11 +29,11 @@ public class ChallengeDTO {
         this.id = id;
     }
 
-    public User getCreator() {
+    public UserDTO getCreator() {
         return creator;
     }
 
-    public void setCreator(User creator) {
+    public void setCreator(UserDTO creator) {
         this.creator = creator;
     }
 
@@ -79,11 +77,11 @@ public class ChallengeDTO {
         this.description = description;
     }
 
-    public ChallengeCategory getChallengeCategory() {
+    public ChallengeCategoryDTO getChallengeCategory() {
         return challengeCategory;
     }
 
-    public void setChallengeCategory(ChallengeCategory challengeCategory) {
+    public void setChallengeCategory(ChallengeCategoryDTO challengeCategory) {
         this.challengeCategory = challengeCategory;
     }
 

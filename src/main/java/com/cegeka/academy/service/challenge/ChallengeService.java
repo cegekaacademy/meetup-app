@@ -4,5 +4,5 @@ import com.cegeka.academy.service.dto.ChallengeDTO;
 
 public interface ChallengeService {
 
-    String saveChallenge(ChallengeDTO challenge);
+    void saveChallenge(ChallengeDTO challenge);
 }
