@@ -32,7 +32,7 @@ public class InvitationServiceImpl implements InvitationService {
         List<InvitationDTO>listToShow = new ArrayList<>();
         List<Invitation>list = invitationRepository.findAll();
         for (Invitation invitation : list) {
-            InvitationDTO aux = InvitationMapper.convertInvitationEntityToInvitationDisplayDTO(invitation);
+            InvitationDTO aux = InvitationMapper.convertInvitationEntityToInvitationDTO(invitation);
             listToShow.add(aux);
         }
 

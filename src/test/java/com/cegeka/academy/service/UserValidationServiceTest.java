@@ -24,16 +24,20 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Transactional
 public class UserValidationServiceTest {
 
-    private @Autowired
-    InvitationService invitationService;
-    private @Autowired
-    EventRepository eventRepository;
-    private @Autowired
-    UserRepository userRepository;
-    private @Autowired
-    ValidationAccessService validationAccessService;
-    private @Autowired
-    InvitationRepository invitationRepository;
+    @Autowired
+    private InvitationService invitationService;
+
+    @Autowired
+    private EventRepository eventRepository;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private ValidationAccessService validationAccessService;
+
+    @Autowired
+    private InvitationRepository invitationRepository;
 
     private User user;
     private Invitation invitation;

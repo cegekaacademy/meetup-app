@@ -5,7 +5,7 @@ import com.cegeka.academy.service.dto.InvitationDTO;
 
 public class InvitationMapper {
 
-    public static InvitationDTO convertInvitationEntityToInvitationDisplayDTO(Invitation invitation){
+    public static InvitationDTO convertInvitationEntityToInvitationDTO(Invitation invitation) {
 
         InvitationDTO invitationDTO = new InvitationDTO();
         invitationDTO.setStatus(invitation.getStatus());
