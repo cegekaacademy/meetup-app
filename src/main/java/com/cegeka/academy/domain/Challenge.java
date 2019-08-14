@@ -12,7 +12,7 @@ import java.util.Objects;
 @Table(name = "challenge")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class Challenge {
-
+    //comment
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
