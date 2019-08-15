@@ -111,6 +111,7 @@ public class User extends AbstractAuditingEntity implements Serializable {
         )
     private Set<Interest> userInterests;
 
+
     public Long getId() {
         return id;
     }
@@ -216,7 +217,8 @@ public class User extends AbstractAuditingEntity implements Serializable {
         this.authorities = authorities;
     }
 
-    public Set<Event> getEvents() {
+
+    public Set<Event> getEvents()    {
         return events;
     }
 
@@ -230,6 +232,7 @@ public class User extends AbstractAuditingEntity implements Serializable {
 
     public void setUserInterests(Set<Interest> userInterests) {
         this.userInterests = userInterests;
+
     }
 
     @Override

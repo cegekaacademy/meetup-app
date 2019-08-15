@@ -8,5 +8,6 @@ import java.util.List;
 
 @Repository
 public interface InvitationRepository extends JpaRepository<Invitation, Long> {
+
      List<Invitation> findByStatus(String status);
 }
