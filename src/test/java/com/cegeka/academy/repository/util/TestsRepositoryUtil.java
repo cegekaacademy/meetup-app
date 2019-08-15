@@ -19,7 +19,7 @@ public class TestsRepositoryUtil {
         return address;
     }
 
-    public static Event createEvent(Long id, String description, String name, boolean isPublic) {
+    public static Event createEvent(String description, String name, boolean isPublic) {
         Event event = new Event();
         event.setDescription(description);
         event.setName(name);
@@ -38,9 +38,10 @@ public class TestsRepositoryUtil {
         Invitation invitation = new Invitation();
         invitation.setStatus(status);
         invitation.setDescription(description);
-        invitation.setInvitedUser(user);
-        invitation.setInvitationEvent(event);
+        invitation.setUser(user);
+        invitation.setEvent(event);
         return invitation;
     }
+
 
 }
