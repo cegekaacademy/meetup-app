@@ -37,10 +37,10 @@ public class UserChallengeMapper {
             userChallengeDTO.setUser(new UserMapper().userToUserDTO(userChallenge.getUser()));
             userChallengeDTO.setInvitation(convertInvitationToInvitationChallengeDTO(userChallenge.getInvitation()));
             userChallengeDTO.setChallenge(convertChallengeToChallengeDTO(userChallenge.getChallenge()));
-            userChallengeDTO.setStatus(userChallengeDTO.getStatus());
-            userChallengeDTO.setPoints(userChallengeDTO.getPoints());
-            userChallengeDTO.setStartTime(userChallengeDTO.getStartTime());
-            userChallengeDTO.setEndTime(userChallengeDTO.getEndTime());
+            userChallengeDTO.setStatus(userChallenge.getStatus());
+            userChallengeDTO.setPoints(userChallenge.getPoints());
+            userChallengeDTO.setStartTime(userChallenge.getStartTime());
+            userChallengeDTO.setEndTime(userChallenge.getEndTime());
 
             return userChallengeDTO;
         }
@@ -56,6 +56,9 @@ public class UserChallengeMapper {
         challengeDTO.setStartDate(challenge.getStartDate());
         challengeDTO.setEndDate(challenge.getEndDate());
         challengeDTO.setPoints(challenge.getPoints());
+        challengeDTO.setStatus(challenge.getStatus());
+        challengeDTO.setDescription(challenge.getDescription());
+        challengeDTO.setChallengeCategory(ChallengeMapper.convertChallengeCategoryToChallengeCategoryDTO(challenge.getChallengeCategory()));
 
         return challengeDTO;
     }
@@ -68,6 +71,9 @@ public class UserChallengeMapper {
         challenge.setStartDate(challengeDTO.getStartDate());
         challenge.setEndDate(challengeDTO.getEndDate());
         challenge.setPoints(challengeDTO.getPoints());
+        challenge.setDescription(challengeDTO.getDescription());
+        challenge.setStatus(challengeDTO.getStatus());
+        challenge.setChallengeCategory(ChallengeMapper.convertChallengeCategoryDTOToChallengeCategory(challengeDTO.getChallengeCategory()));
 
         return challenge;
     }
