@@ -218,12 +218,13 @@ public class User extends AbstractAuditingEntity implements Serializable {
     }
 
 
-    public Set<Event> getEvents() {
+    public Set<Event> getEvents()    {
         return events;
     }
 
     public void setEvents(Set<Event> events) {
         this.events = events;
+    }
 
     public Set<Interest> getUserInterests() {
         return userInterests;
