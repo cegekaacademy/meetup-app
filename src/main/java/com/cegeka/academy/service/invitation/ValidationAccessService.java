@@ -60,7 +60,7 @@ public class ValidationAccessService {
         return true;
     }
 
-    private boolean verifyUserAccessForEventEntity(Long eventId) {
+    public boolean verifyUserAccessForEventEntity(Long eventId) {
         if (eventId == null)
             return false;
         if (userService.getUserWithAuthorities().isPresent()) {
