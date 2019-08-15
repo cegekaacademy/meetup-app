@@ -1,6 +1,7 @@
 package com.cegeka.academy.service.invitation;
 
 import com.cegeka.academy.domain.User;
+import com.cegeka.academy.repository.EventRepository;
 import com.cegeka.academy.repository.InvitationRepository;
 import com.cegeka.academy.service.UserService;
 import org.slf4j.Logger;
@@ -9,22 +10,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.NoSuchElementException;
-
 @Service
 @Transactional
 public class ValidationAccessService {
 
     private final UserService userService;
     private final InvitationRepository invitationRepository;
+    private final EventRepository eventRepository;
 
     private Logger logger =  LoggerFactory.getLogger(InvitationServiceImpl.class);
 
 
     @Autowired
-    public ValidationAccessService(UserService userService, InvitationRepository invitationRepository) {
+    public ValidationAccessService(UserService userService, InvitationRepository invitationRepository, EventRepository eventRepository) {
         this.userService = userService;
         this.invitationRepository = invitationRepository;
+        this.eventRepository = eventRepository;
     }
 
     public boolean verifyUserAccessForInvitationEntity(Long invitationId){
@@ -56,6 +57,27 @@ public class ValidationAccessService {
 
           }
 
+        return true;
+    }
+
+    private boolean verifyUserAccessForEventEntity(Long eventId) {
+        if (eventId == null)
+            return false;
+        if (userService.getUserWithAuthorities().isPresent()) {
+
+            User userLogged = userService.getUserWithAuthorities().get();
+
+            if (eventRepository.findById(eventId).isPresent()) {
+
+                User eventOwner = eventRepository.findById(eventId).get().getOwner();
+
+                return eventOwner != null && userLogged.getId() == eventOwner.getId();
+            }
+
+        } else {
+
+            return false;
+        }
         return true;
     }
 }

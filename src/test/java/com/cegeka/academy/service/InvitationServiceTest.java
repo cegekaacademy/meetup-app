@@ -1,9 +1,11 @@
 package com.cegeka.academy.service;
 
 import com.cegeka.academy.AcademyProjectApp;
+import com.cegeka.academy.domain.Address;
 import com.cegeka.academy.domain.Event;
 import com.cegeka.academy.domain.Invitation;
 import com.cegeka.academy.domain.User;
+import com.cegeka.academy.repository.AddressRepository;
 import com.cegeka.academy.repository.EventRepository;
 import com.cegeka.academy.repository.InvitationRepository;
 import com.cegeka.academy.repository.UserRepository;
@@ -32,17 +34,22 @@ public class InvitationServiceTest {
     InvitationService invitationService;
     private @Autowired
     InvitationRepository invitationRepository;
+    private @Autowired
+    AddressRepository addressRepository;
 
     private User user;
     private Event event;
     private Invitation invitation;
+    private Address address;
 
     @BeforeEach
     public void init() {
 
         user = TestsRepositoryUtil.createUser("login", "anaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaana");
         userRepository.saveAndFlush(user);
-        event = TestsRepositoryUtil.createEvent("Ana are mere!", "KFC Krushers Party", true);
+        address = TestsRepositoryUtil.createAddress("Romania", "Bucuresti", "Splai", "333", "Casa", "Casa magica");
+        addressRepository.saveAndFlush(address);
+        event = TestsRepositoryUtil.createEvent("Ana are mere!", "KFC Krushers Party", true, address, user);
         eventRepository.saveAndFlush(event);
         invitation = TestsRepositoryUtil.createInvitation("pending", "ana are mere", event, user);
         invitationService.saveInvitation(invitation);
