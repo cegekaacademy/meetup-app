@@ -1,12 +1,12 @@
 package com.cegeka.academy.service.dto;
 
-public class InvitationForUserChallengeDTO {
+public class InvitationChallengeDTO {
 
     private Long id;
     private String status;
-    private UserForUserChallengeDTO user;
+    private UserDTO user;
 
-    public InvitationForUserChallengeDTO() {
+    public InvitationChallengeDTO() {
     }
 
     public Long getId() {
@@ -25,17 +25,17 @@ public class InvitationForUserChallengeDTO {
         this.status = status;
     }
 
-    public UserForUserChallengeDTO getUser() {
+    public UserDTO getUser() {
         return user;
     }
 
-    public void setUser(UserForUserChallengeDTO user) {
+    public void setUser(UserDTO user) {
         this.user = user;
     }
 
     @Override
     public String toString() {
-        return "InvitationForUserChallengeDTO{" +
+        return "InvitationChallengeDTO{" +
                 "id=" + id +
                 ", status='" + status + '\'' +
                 ", user=" + user +

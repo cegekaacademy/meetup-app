@@ -5,9 +5,9 @@ import java.util.Date;
 public class UserChallengeDTO {
 
     private Long id;
-    private UserForUserChallengeDTO user;
-    private InvitationForUserChallengeDTO invitation;
-    private ChallengeForUserChallengeDTO challenge;
+    private UserDTO user;
+    private InvitationChallengeDTO invitation;
+    private ChallengeDTO challenge;
     private String status;
     private double points;
     private Date startTime;
@@ -24,27 +24,27 @@ public class UserChallengeDTO {
         this.id = id;
     }
 
-    public UserForUserChallengeDTO getUser() {
+    public UserDTO getUser() {
         return user;
     }
 
-    public void setUser(UserForUserChallengeDTO user) {
+    public void setUser(UserDTO user) {
         this.user = user;
     }
 
-    public InvitationForUserChallengeDTO getInvitation() {
+    public InvitationChallengeDTO getInvitation() {
         return invitation;
     }
 
-    public void setInvitation(InvitationForUserChallengeDTO invitation) {
+    public void setInvitation(InvitationChallengeDTO invitation) {
         this.invitation = invitation;
     }
 
-    public ChallengeForUserChallengeDTO getChallenge() {
+    public ChallengeDTO getChallenge() {
         return challenge;
     }
 
-    public void setChallenge(ChallengeForUserChallengeDTO challenge) {
+    public void setChallenge(ChallengeDTO challenge) {
         this.challenge = challenge;
     }
 

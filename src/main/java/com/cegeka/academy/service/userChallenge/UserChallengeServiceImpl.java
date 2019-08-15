@@ -3,7 +3,7 @@ package com.cegeka.academy.service.userChallenge;
 import com.cegeka.academy.domain.UserChallenge;
 import com.cegeka.academy.repository.UserChallengeRepository;
 import com.cegeka.academy.service.dto.*;
-import com.cegeka.academy.service.util.UserChallengeMapper;
+import com.cegeka.academy.service.mapper.UserChallengeMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
