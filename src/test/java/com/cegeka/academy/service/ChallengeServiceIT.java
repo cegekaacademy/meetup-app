@@ -1,4 +1,4 @@
-package com.cegeka.academy.web.rest;
+package com.cegeka.academy.service;
 
 import com.cegeka.academy.AcademyProjectApp;
 import com.cegeka.academy.domain.Challenge;
@@ -7,30 +7,23 @@ import com.cegeka.academy.domain.User;
 import com.cegeka.academy.repository.ChallengeCategoryRepository;
 import com.cegeka.academy.repository.ChallengeRepository;
 import com.cegeka.academy.repository.UserRepository;
+import com.cegeka.academy.service.challenge.ChallengeServiceImp;
+import com.cegeka.academy.web.rest.ChallengeController;
+import javassist.NotFoundException;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MockMvcBuilder;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.junit.jupiter.api.*;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import java.util.Date;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-
 @SpringBootTest(classes = AcademyProjectApp.class)
-public class ChallengeControllerIT {
-
-    private MockMvc restMockMvc;
+public class ChallengeServiceIT {
 
     @Autowired
     private UserRepository userRepository;
-
-    @Autowired
-    private ChallengeController challengeController;
 
     @Autowired
     private ChallengeCategoryRepository challengeCategoryRepository;
@@ -38,14 +31,15 @@ public class ChallengeControllerIT {
     @Autowired
     private ChallengeRepository challengeRepository;
 
+    @Autowired
+    private ChallengeServiceImp challengeServiceImp;
+
+
     @BeforeEach
     void setUp() {
-
         challengeRepository.deleteAll();
         userRepository.deleteAll();
         challengeCategoryRepository.deleteAll();
-
-        restMockMvc = MockMvcBuilders.standaloneSetup(challengeController).build();
 
         User user = new User();
 
@@ -56,7 +50,6 @@ public class ChallengeControllerIT {
         user.setLogin("gigel@purcel.com");
 
         userRepository.saveAndFlush(user);
-
 
         ChallengeCategory challengeCategory = new ChallengeCategory();
         challengeCategory.setDescription("Categoria speciala");
@@ -78,13 +71,13 @@ public class ChallengeControllerIT {
     }
 
     @Test
-    void testDeleteChallengeException() throws Exception {
-        restMockMvc.perform(delete("/challenge/0")).andExpect(status().isNotFound());
+    void NotFoundExceptionTest() {
+        Assertions.assertThrows(NotFoundException.class,() -> {challengeServiceImp.deleteChallenge(0);});
     }
 
     @Test
-    void testDeleteChallenge() throws Exception {
-        long id = challengeRepository.findAll().get(0).getId();
-        restMockMvc.perform(delete("/challenge/"+id)).andExpect(status().isOk());
+    void DeleteTest() throws NotFoundException {
+        challengeServiceImp.deleteChallenge(1);
+        Assertions.assertFalse(challengeRepository.findById(1l).isPresent());
     }
 }
