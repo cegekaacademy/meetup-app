@@ -1,6 +1,6 @@
 package com.cegeka.academy.service.dto;
 
-public class InvitationDisplayDTO {
+public class InvitationDTO {
 
 
     private String description;
@@ -45,7 +45,7 @@ public class InvitationDisplayDTO {
 
     @Override
     public String toString() {
-        return "InvitationDisplayDTO{" +
+        return "InvitationDTO{" +
                 "description='" + description + '\'' +
                 ", status='" + status + '\'' +
                 ", userName='" + userName + '\'' +
