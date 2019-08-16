@@ -2,8 +2,8 @@ package com.cegeka.academy.service.invitation;
 
 import com.cegeka.academy.domain.Invitation;
 import com.cegeka.academy.repository.InvitationRepository;
-import com.cegeka.academy.service.dto.InvitationDisplayDTO;
-import com.cegeka.academy.service.util.InvitationMapper;
+import com.cegeka.academy.service.dto.InvitationDTO;
+import com.cegeka.academy.service.mapper.InvitationMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,12 +27,12 @@ public class InvitationServiceImpl implements InvitationService {
     }
 
     @Override
-    public List<InvitationDisplayDTO> getAllInvitations() {
+    public List<InvitationDTO> getAllInvitations() {
 
-        List<InvitationDisplayDTO>listToShow = new ArrayList<>();
+        List<InvitationDTO>listToShow = new ArrayList<>();
         List<Invitation>list = invitationRepository.findAll();
         for (Invitation invitation : list) {
-            InvitationDisplayDTO aux = InvitationMapper.convertInvitationEntityToInvitationDisplayDTO(invitation);
+            InvitationDTO aux = InvitationMapper.convertInvitationEntityToInvitationDTO(invitation);
             listToShow.add(aux);
         }
 

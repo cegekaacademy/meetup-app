@@ -18,10 +18,14 @@ public class ChallengeMapper {
         challenge.setPoints(challengeDTO.getPoints());
         challenge.setStatus(challengeDTO.getStatus());
         challenge.setEndDate(challengeDTO.getEndDate());
+
         if (challengeDTO.getCreator() != null) {
+
             challenge.setCreator(new UserMapper().userDTOToUser(challengeDTO.getCreator()));
         }
+
         if(challengeDTO.getChallengeCategory() != null) {
+
             challenge.setChallengeCategory(convertChallengeCategoryDTOToChallengeCategory(challengeDTO.getChallengeCategory()));
         }
 
@@ -42,6 +46,24 @@ public class ChallengeMapper {
             challengeCategory.setDescription(challengeCategoryDTO.getDescription());
 
             return challengeCategory;
+        }
+
+    }
+
+    public static ChallengeCategoryDTO convertChallengeCategoryToChallengeCategoryDTO(ChallengeCategory challengeCategory){
+
+        if(challengeCategory == null){
+
+            return null;
+
+        } else {
+
+            ChallengeCategoryDTO challengeCategoryDTO = new ChallengeCategoryDTO();
+            challengeCategoryDTO.setId(challengeCategory.getId());
+            challengeCategoryDTO.setName(challengeCategory.getName());
+            challengeCategoryDTO.setDescription(challengeCategory.getDescription());
+
+            return challengeCategoryDTO;
         }
 
     }

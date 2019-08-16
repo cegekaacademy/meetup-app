@@ -43,6 +43,10 @@ public class Challenge {
         return id;
     }
 
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     public User getCreator() {
         return creator;
     }

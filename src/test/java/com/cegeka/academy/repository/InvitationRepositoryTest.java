@@ -19,9 +19,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Transactional
 public class InvitationRepositoryTest {
 
-    private @Autowired InvitationRepository invitationRepository;
-    private @Autowired EventRepository eventRepository;
-    private @Autowired UserRepository userRepository;
+    @Autowired
+    private InvitationRepository invitationRepository;
+
+    @Autowired
+    private EventRepository eventRepository;
+
+    @Autowired
+    private UserRepository userRepository;
 
     @Test
     public void testAddInvitation(){
