@@ -1,7 +1,7 @@
 package com.cegeka.academy.web.rest;
 
 import com.cegeka.academy.domain.Invitation;
-import com.cegeka.academy.service.dto.InvitationDisplayDTO;
+import com.cegeka.academy.service.dto.InvitationDTO;
 import com.cegeka.academy.service.invitation.InvitationService;
 import com.cegeka.academy.service.invitation.ValidationAccessService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +24,7 @@ public class InvitationController {
     }
 
     @GetMapping("/all")
-    public List<InvitationDisplayDTO> getAllInvitations(){
+    public List<InvitationDTO> getAllInvitations(){
 
         return invitationService.getAllInvitations();
     }
