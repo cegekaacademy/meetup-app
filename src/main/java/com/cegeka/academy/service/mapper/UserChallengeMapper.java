@@ -66,7 +66,7 @@ public class UserChallengeMapper {
     public static Challenge convertChallengeDTOToChallenge(ChallengeDTO challengeDTO){
 
         Challenge challenge = new Challenge();
-        challenge.setId(challenge.getId());
+        challenge.setId(challengeDTO.getId());
         challenge.setCreator(new UserMapper().userDTOToUser(challengeDTO.getCreator()));
         challenge.setStartDate(challengeDTO.getStartDate());
         challenge.setEndDate(challengeDTO.getEndDate());
