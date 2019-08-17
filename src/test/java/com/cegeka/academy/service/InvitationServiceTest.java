@@ -1,9 +1,11 @@
 package com.cegeka.academy.service;
 
 import com.cegeka.academy.AcademyProjectApp;
+import com.cegeka.academy.domain.Address;
 import com.cegeka.academy.domain.Event;
 import com.cegeka.academy.domain.Invitation;
 import com.cegeka.academy.domain.User;
+import com.cegeka.academy.repository.AddressRepository;
 import com.cegeka.academy.repository.EventRepository;
 import com.cegeka.academy.repository.InvitationRepository;
 import com.cegeka.academy.repository.UserRepository;
@@ -24,6 +26,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Transactional
 public class InvitationServiceTest {
 
+
     @Autowired
     private EventRepository eventRepository;
 
@@ -35,18 +38,24 @@ public class InvitationServiceTest {
 
     @Autowired
     private InvitationRepository invitationRepository;
+  
+    @Autowired
+    private AddressRepository addressRepository;
 
     private User user;
     private Event event;
     private Invitation invitation;
+    private Address address;
 
     @BeforeEach
     public void init() {
 
         user = TestsRepositoryUtil.createUser("login", "anaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaana");
-        userRepository.save(user);
-        event = TestsRepositoryUtil.createEvent("Ana are mere!", "KFC Krushers Party", true);
-        eventRepository.save(event);
+        userRepository.saveAndFlush(user);
+        address = TestsRepositoryUtil.createAddress("Romania", "Bucuresti", "Splai", "333", "Casa", "Casa magica");
+        addressRepository.saveAndFlush(address);
+        event = TestsRepositoryUtil.createEvent("Ana are mere!", "KFC Krushers Party", true, address, user);
+        eventRepository.saveAndFlush(event);
         invitation = TestsRepositoryUtil.createInvitation("pending", "ana are mere", event, user);
         invitationService.saveInvitation(invitation);
     }
