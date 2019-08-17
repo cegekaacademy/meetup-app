@@ -39,7 +39,39 @@ public class ChallengeAnswerRepositoryTest {
     @Test
     public void testSaveChallengeAnswer(){
 
-        assertThat(challengeAnswerRepository.save(challengeAnswer)).isEqualTo(challengeAnswerRepository.findAll().get(challengeAnswerRepository.findAll().size() - 1));
+        assertThat(challengeAnswerRepository.save(challengeAnswer)).isEqualTo(challengeAnswerRepository.findAll().get(0));
+
+    }
+
+    @Test
+    public void testFindChallengeAnswerByImagePath(){
+
+        challengeAnswerRepository.save(challengeAnswer);
+        assertThat(challengeAnswerRepository.findByImagePath("imagePath")).isEqualTo(challengeAnswerRepository.findAll().get(0));
+
+    }
+
+    @Test
+    public void testFindChallengeAnswerByImagePathWithNoResult(){
+
+        challengeAnswerRepository.save(challengeAnswer);
+        assertThat(challengeAnswerRepository.findByImagePath("imagePath1")).isEqualTo(null);
+
+    }
+
+    @Test
+    public void testFindChallengeAnswerByVideoAt(){
+
+        challengeAnswerRepository.save(challengeAnswer);
+        assertThat(challengeAnswerRepository.findByVideoAt("videoAt")).isEqualTo(challengeAnswerRepository.findAll().get(0));
+
+    }
+
+    @Test
+    public void testFindChallengeAnswerByVideoAtWithNoResult(){
+
+        challengeAnswerRepository.save(challengeAnswer);
+        assertThat(challengeAnswerRepository.findByImagePath("videoAt1")).isEqualTo(null);
 
     }
 
