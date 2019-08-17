@@ -11,7 +11,7 @@ import com.cegeka.academy.repository.InvitationRepository;
 import com.cegeka.academy.repository.UserRepository;
 import com.cegeka.academy.repository.util.TestsRepositoryUtil;
 import com.cegeka.academy.service.invitation.InvitationService;
-import com.cegeka.academy.service.invitation.ValidationAccessService;
+import com.cegeka.academy.service.serviceValidation.ValidationAccessService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
