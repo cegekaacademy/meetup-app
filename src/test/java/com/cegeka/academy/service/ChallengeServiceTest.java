@@ -89,7 +89,6 @@ public class ChallengeServiceTest {
         challenge.setDescription("Nimic");
         challenge.setPoints(10);
         challenge.setChallengeCategory(challengeCategory);
-        defaultChallengeId = challengeRepository.save(challenge).getId();
     }
 
     @Test
@@ -97,15 +96,13 @@ public class ChallengeServiceTest {
 
        challengeService.saveChallenge(challengeDTO);
 
-       int lastItemIndex = (int)challengeRepository.count() - 1;
-
-       assertThat(challengeRepository.findAll().get(lastItemIndex).getCreator()).isEqualTo(new UserMapper().userDTOToUser(challengeDTO.getCreator()));
-       assertThat(challengeRepository.findAll().get(lastItemIndex).getChallengeCategory()).isEqualTo(ChallengeMapper.convertChallengeCategoryDTOToChallengeCategory(challengeDTO.getChallengeCategory()));
-       assertThat(challengeRepository.findAll().get(lastItemIndex).getDescription()).isEqualTo(challengeDTO.getDescription());
-       assertThat(challengeRepository.findAll().get(lastItemIndex).getStartDate()).isEqualTo(challengeDTO.getStartDate());
-       assertThat(challengeRepository.findAll().get(lastItemIndex).getEndDate()).isEqualTo(challengeDTO.getEndDate());
-       assertThat(challengeRepository.findAll().get(lastItemIndex).getStatus()).isEqualTo(challengeDTO.getStatus());
-       assertThat(challengeRepository.findAll().get(lastItemIndex).getPoints()).isEqualTo(challengeDTO.getPoints());
+       assertThat(challengeRepository.findAll().get(0).getCreator()).isEqualTo(new UserMapper().userDTOToUser(challengeDTO.getCreator()));
+       assertThat(challengeRepository.findAll().get(0).getChallengeCategory()).isEqualTo(ChallengeMapper.convertChallengeCategoryDTOToChallengeCategory(challengeDTO.getChallengeCategory()));
+       assertThat(challengeRepository.findAll().get(0).getDescription()).isEqualTo(challengeDTO.getDescription());
+       assertThat(challengeRepository.findAll().get(0).getStartDate()).isEqualTo(challengeDTO.getStartDate());
+       assertThat(challengeRepository.findAll().get(0).getEndDate()).isEqualTo(challengeDTO.getEndDate());
+       assertThat(challengeRepository.findAll().get(0).getStatus()).isEqualTo(challengeDTO.getStatus());
+       assertThat(challengeRepository.findAll().get(0).getPoints()).isEqualTo(challengeDTO.getPoints());
 
     }
 
@@ -116,6 +113,7 @@ public class ChallengeServiceTest {
 
     @Test
     void deleteTest() throws NotFoundException {
+        defaultChallengeId = challengeRepository.save(challenge).getId();
         challengeService.deleteChallenge(defaultChallengeId);
         Assertions.assertFalse(challengeRepository.findById(defaultChallengeId).isPresent());
     }
