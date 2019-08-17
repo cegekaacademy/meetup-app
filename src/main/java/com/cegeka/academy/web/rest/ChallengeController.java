@@ -1,10 +1,6 @@
 package com.cegeka.academy.web.rest;
 
-import javassist.NotFoundException;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.http.converter.HttpMessageConverter;
-import org.springframework.stereotype.Controller;
+import com.cegeka.academy.web.rest.errors.NotFoundException;
 import org.springframework.web.bind.annotation.*;
 import com.cegeka.academy.service.challenge.ChallengeServiceImp;
 import com.cegeka.academy.service.dto.ChallengeDTO;
@@ -24,12 +20,6 @@ public class ChallengeController {
     @RequestMapping(value = "/{id}",method = RequestMethod.DELETE)
     public void delete(@PathVariable long id) throws NotFoundException {
         challengeServiceImp.deleteChallenge(id);
-    }
-
-    @ExceptionHandler(value = NotFoundException.class)
-    public ResponseEntity<String> handle(NotFoundException ex)
-    {
-        return new ResponseEntity<String>("Challange-ul cu id-ul selectat nu exista", HttpStatus.NOT_FOUND);
     }
 
     @PostMapping

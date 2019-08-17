@@ -3,9 +3,8 @@ package com.cegeka.academy.service.challenge;
 import com.cegeka.academy.domain.Challenge;
 import com.cegeka.academy.repository.ChallengeRepository;
 import com.cegeka.academy.repository.GroupUserRoleRepository;
-import javassist.NotFoundException;
+import com.cegeka.academy.web.rest.errors.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.crossstore.ChangeSetPersister;
 import com.cegeka.academy.service.dto.ChallengeDTO;
 import com.cegeka.academy.service.mapper.ChallengeMapper;
 
@@ -31,7 +30,7 @@ public class ChallengeServiceImp implements ChallengeService {
                 challengeRepository.deleteById(id);
             }
             else {
-                throw new NotFoundException("");
+                throw new NotFoundException().setMessage("Nu exista challenge cu id-ul: " + id);
             }
     }
 

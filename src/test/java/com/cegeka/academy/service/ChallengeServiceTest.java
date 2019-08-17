@@ -1,6 +1,8 @@
 package com.cegeka.academy.service;
 
 import com.cegeka.academy.AcademyProjectApp;
+import com.cegeka.academy.domain.Challenge;
+import com.cegeka.academy.domain.ChallengeCategory;
 import com.cegeka.academy.domain.User;
 import com.cegeka.academy.repository.ChallengeCategoryRepository;
 import com.cegeka.academy.repository.ChallengeRepository;
@@ -11,10 +13,13 @@ import com.cegeka.academy.service.dto.ChallengeDTO;
 import com.cegeka.academy.service.dto.UserDTO;
 import com.cegeka.academy.service.mapper.ChallengeMapper;
 import com.cegeka.academy.service.mapper.UserMapper;
+import com.cegeka.academy.web.rest.errors.NotFoundException;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,25 +40,35 @@ public class ChallengeServiceTest {
     @Autowired
     private ChallengeRepository challengeRepository;
 
+    private ChallengeCategory challengeCategory;
+    private Challenge challenge;
+    private User user;
+
     private ChallengeDTO challengeDTO;
     private UserDTO userDTO;
     private ChallengeCategoryDTO challengeCategoryDTO;
 
+    long defaultChallengeId;
+
     @BeforeEach
     public void init(){
 
-        User aux = new User();
-        aux.setLogin("login");
-        aux.setPassword("anaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaana");
-        Long idUser = userRepository.save(aux).getId();
+        user = new User();
+        user.setLogin("login");
+        user.setPassword("anaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaana");
+        Long idUser = userRepository.save(user).getId();
 
-        userDTO = new UserDTO(aux);
+        userDTO = new UserDTO(user);
         userDTO.setId(idUser);
 
         challengeCategoryDTO = new ChallengeCategoryDTO();
         challengeCategoryDTO.setDescription("description");
         challengeCategoryDTO.setName("name");
-        Long challengeCategoryId = challengeCategoryRepository.save(ChallengeMapper.convertChallengeCategoryDTOToChallengeCategory(challengeCategoryDTO)).getId();
+
+        challengeCategory = ChallengeMapper.convertChallengeCategoryDTOToChallengeCategory(challengeCategoryDTO);
+
+        Long challengeCategoryId = challengeCategoryRepository.save(challengeCategory).getId();
+
         challengeCategoryDTO.setId(challengeCategoryId);
 
         challengeDTO = new ChallengeDTO();
@@ -64,36 +79,52 @@ public class ChallengeServiceTest {
         challengeDTO.setStartDate(new Date());
         challengeDTO.setPoints(22);
         challengeDTO.setStatus("status");
+
+        challenge = new Challenge();
+
+        challenge.setCreator(user);
+        challenge.setStartDate(new Date(System.currentTimeMillis()));
+        challenge.setEndDate(new Date(System.currentTimeMillis()));
+        challenge.setStatus("Activa");
+        challenge.setDescription("Nimic");
+        challenge.setPoints(10);
+        challenge.setChallengeCategory(challengeCategory);
+        defaultChallengeId = challengeRepository.save(challenge).getId();
     }
 
     @Test
     public void testSaveChallenge(){
 
-      challengeService.saveChallenge(challengeDTO);
+       challengeService.saveChallenge(challengeDTO);
 
-       assertThat(challengeRepository.findAll().get(0).getCreator()).isEqualTo(new UserMapper().userDTOToUser(challengeDTO.getCreator()));
-       assertThat(challengeRepository.findAll().get(0).getChallengeCategory()).isEqualTo(ChallengeMapper.convertChallengeCategoryDTOToChallengeCategory(challengeDTO.getChallengeCategory()));
-       assertThat(challengeRepository.findAll().get(0).getDescription()).isEqualTo(challengeDTO.getDescription());
-       assertThat(challengeRepository.findAll().get(0).getStartDate()).isEqualTo(challengeDTO.getStartDate());
-       assertThat(challengeRepository.findAll().get(0).getEndDate()).isEqualTo(challengeDTO.getEndDate());
-       assertThat(challengeRepository.findAll().get(0).getStatus()).isEqualTo(challengeDTO.getStatus());
-       assertThat(challengeRepository.findAll().get(0).getPoints()).isEqualTo(challengeDTO.getPoints());
+       int lastItemIndex = (int)challengeRepository.count() - 1;
 
+       assertThat(challengeRepository.findAll().get(lastItemIndex).getCreator()).isEqualTo(new UserMapper().userDTOToUser(challengeDTO.getCreator()));
+       assertThat(challengeRepository.findAll().get(lastItemIndex).getChallengeCategory()).isEqualTo(ChallengeMapper.convertChallengeCategoryDTOToChallengeCategory(challengeDTO.getChallengeCategory()));
+       assertThat(challengeRepository.findAll().get(lastItemIndex).getDescription()).isEqualTo(challengeDTO.getDescription());
+       assertThat(challengeRepository.findAll().get(lastItemIndex).getStartDate()).isEqualTo(challengeDTO.getStartDate());
+       assertThat(challengeRepository.findAll().get(lastItemIndex).getEndDate()).isEqualTo(challengeDTO.getEndDate());
+       assertThat(challengeRepository.findAll().get(lastItemIndex).getStatus()).isEqualTo(challengeDTO.getStatus());
+       assertThat(challengeRepository.findAll().get(lastItemIndex).getPoints()).isEqualTo(challengeDTO.getPoints());
+
+    }
+
+    @Test
+    void NotFoundExceptionTest() {
+        Assertions.assertThrows(NotFoundException.class,() -> {challengeService.deleteChallenge(0);});
+    }
+
+    @Test
+    void DeleteTest() throws NotFoundException {
+        challengeService.deleteChallenge(defaultChallengeId);
+        Assertions.assertFalse(challengeRepository.findById(defaultChallengeId).isPresent());
     }
 
     @AfterEach
     public void destroy(){
-        if(userDTO != null){
-            userRepository.delete(new UserMapper().userDTOToUser(userDTO));
-        }
-
-        if(challengeCategoryDTO != null){
-            challengeCategoryRepository.delete(ChallengeMapper.convertChallengeCategoryDTOToChallengeCategory(challengeCategoryDTO));
-        }
-
-        if(challengeDTO != null){
-            challengeRepository.delete(ChallengeMapper.convertChallengeDTOToChallenge(challengeDTO));
-        }
+        challengeRepository.deleteAll();
+        challengeCategoryRepository.deleteAll();
+        userRepository.deleteAll();
     }
 
 }
