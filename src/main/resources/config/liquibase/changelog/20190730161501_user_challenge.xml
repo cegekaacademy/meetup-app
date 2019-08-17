@@ -35,4 +35,18 @@
         </createTable>
     </changeSet>
 
+    <changeSet author="iuliana" id="20190730161502">
+        <addColumn tableName="user_challenge">
+            <column name="challenge_answer_id" type="bigint"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet author="iuliana" id="20190730161503">
+        <addForeignKeyConstraint baseColumnNames="challenge_answer_id"
+                                 baseTableName="user_challenge"
+                                 constraintName="fk_challenge_answer"
+                                 referencedColumnNames="id"
+                                 referencedTableName="challenge_answer"/>
+    </changeSet>
+
 </databaseChangeLog>
