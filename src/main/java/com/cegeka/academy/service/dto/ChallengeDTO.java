@@ -1,43 +1,25 @@
-package com.cegeka.academy.domain;
+package com.cegeka.academy.service.dto;
 
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
 
-import javax.persistence.*;
-import javax.validation.constraints.Size;
 import java.util.Date;
-import java.util.Objects;
 
-@Entity
-@Table(name = "challenge")
-@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class Challenge {
+public class ChallengeDTO {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "creator")
-    private User creator;
+    private UserDTO creator;
 
-    @Column(name = "start_date")
     private Date startDate;
 
-    @Column(name = "end_date")
     private Date endDate;
 
-    @Size(min = 1, max = 50)
     private String status;
 
     private double points;
 
-    @Column(name = "description")
     private String description;
 
-    @ManyToOne
-    @JoinColumn(name = "category_id", referencedColumnName = "id")
-    private ChallengeCategory challengeCategory;
+    private ChallengeCategoryDTO challengeCategory;
 
     public Long getId() {
         return id;
@@ -47,11 +29,11 @@ public class Challenge {
         this.id = id;
     }
 
-    public User getCreator() {
+    public UserDTO getCreator() {
         return creator;
     }
 
-    public void setCreator(User creator) {
+    public void setCreator(UserDTO creator) {
         this.creator = creator;
     }
 
@@ -95,30 +77,17 @@ public class Challenge {
         this.description = description;
     }
 
-    public ChallengeCategory getChallengeCategory() {
+    public ChallengeCategoryDTO getChallengeCategory() {
         return challengeCategory;
     }
 
-    public void setChallengeCategory(ChallengeCategory challengeCategory) {
+    public void setChallengeCategory(ChallengeCategoryDTO challengeCategory) {
         this.challengeCategory = challengeCategory;
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Challenge challenge = (Challenge) o;
-        return id.equals(challenge.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
-    }
-
-    @Override
     public String toString() {
-        return "Challenge{" +
+        return "ChallengeDTO{" +
                 "id=" + id +
                 ", creator=" + creator +
                 ", startDate=" + startDate +
