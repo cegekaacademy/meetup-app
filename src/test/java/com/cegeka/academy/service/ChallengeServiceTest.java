@@ -115,7 +115,7 @@ public class ChallengeServiceTest {
     }
 
     @Test
-    void DeleteTest() throws NotFoundException {
+    void deleteTest() throws NotFoundException {
         challengeService.deleteChallenge(defaultChallengeId);
         Assertions.assertFalse(challengeRepository.findById(defaultChallengeId).isPresent());
     }
