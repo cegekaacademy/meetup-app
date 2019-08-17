@@ -37,7 +37,7 @@ public class GeneralExceptionHandler extends HttpResponseExceptionHandler {
     public ResponseEntity<ErrorResponse> handleUnauthorizedAccessInvitation(Invitation invitation) {
         List<String> detailsList = new ArrayList<>();
         detailsList.add("idInvitation: " + invitation.getId());
-        detailsList.add("eventDescription: " + invitation.getDescription());
+        detailsList.add("invitationDescription: " + invitation.getDescription());
         return getErrorResponseEntity(
                 ErrorCode.UNAUTHORIZED_ACCESS.getMessage(),
                 ErrorCode.UNAUTHORIZED_ACCESS.getCode(),
