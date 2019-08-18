@@ -3,15 +3,14 @@ package com.cegeka.academy.service.challenge;
 import com.cegeka.academy.domain.Challenge;
 import com.cegeka.academy.repository.ChallengeRepository;
 import com.cegeka.academy.repository.GroupUserRoleRepository;
-import com.cegeka.academy.web.rest.errors.NotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
 import com.cegeka.academy.service.dto.ChallengeDTO;
 import com.cegeka.academy.service.mapper.ChallengeMapper;
-
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import com.cegeka.academy.web.rest.errors.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 
 @Service
