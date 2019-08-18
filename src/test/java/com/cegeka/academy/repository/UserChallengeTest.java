@@ -60,10 +60,21 @@ public class UserChallengeTest {
     @AfterEach
     public void destroy(){
 
-        userRepository.deleteAll();
-        invitationRepository.deleteAll();
-        challengeRepository.deleteAll();
-        challengeAnswerRepository.deleteAll();
+        if(user != null) {
+            userRepository.delete(user);
+        }
+
+        if(invitation != null){
+            invitationRepository.delete(invitation);
+        }
+
+        if(challenge != null){
+            challengeRepository.delete(challenge);
+        }
+
+        if(challengeAnswer != null){
+            challengeAnswerRepository.delete(challengeAnswer);
+        }
 
     }
 
