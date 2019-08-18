@@ -3,14 +3,14 @@ package com.cegeka.academy.repository;
 import com.cegeka.academy.AcademyProjectApp;
 import com.cegeka.academy.domain.Interest;
 import com.cegeka.academy.domain.User;
-import com.cegeka.academy.domain.User_;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -45,6 +45,7 @@ public class InterestTest {
         user.setLastName("Momaie");
         user.setPassword("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
         user.setLogin("gigel@purcel.com");
+        userRepository.save(user);
 
         interest1  = new Interest();
         interest1.setName("interest1");
@@ -66,7 +67,7 @@ public class InterestTest {
 
         interestRepository.save(interest1);
         interestRepository.save(interest2);
-        userRepository.save(user);
+
     }
 
     @AfterEach
