@@ -26,7 +26,7 @@
                                  baseTableName="User_Event"
                                  constraintName="fk_eventId"
                                  referencedColumnNames="id"
-                                 referencedTableName="Event"/>
+                                 referencedTableName="event"/>
 
 
     </changeSet>
