@@ -1,6 +1,7 @@
 package com.cegeka.academy.repository;
 
 import com.cegeka.academy.AcademyProjectApp;
+import com.cegeka.academy.domain.Address;
 import com.cegeka.academy.domain.Event;
 import com.cegeka.academy.domain.User;
 import com.cegeka.academy.repository.util.TestsRepositoryUtil;
@@ -21,11 +22,17 @@ public class EventRepositoryTest {
     private EventRepository eventRepository;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private AddressRepository addressRepository;
 
 
     @Test
     public void testAddEvent() {
-        Event event = TestsRepositoryUtil.createEvent("Ana are mere!", "KFC Krushers Party", true);
+        User user = TestsRepositoryUtil.createUser("login", "anaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaana");
+        userRepository.save(user);
+        Address address = TestsRepositoryUtil.createAddress("Romania", "Bucuresti", "Splai", "333", "Casa", "Casa magica");
+        addressRepository.saveAndFlush(address);
+        Event event = TestsRepositoryUtil.createEvent("Ana are mere!", "KFC Krushers Party", true, address, user);
         eventRepository.save(event);
         Event eventTest = eventRepository.findAllByIsPublicIsTrue().get(0);
         assertThat(eventTest.getPublic()).isEqualTo(true);
@@ -36,7 +43,11 @@ public class EventRepositoryTest {
     public void testFindAllByIsPublicIsTrue() {
 
         for (int i = 0; i < 5; i++) {
-            Event event = TestsRepositoryUtil.createEvent("Ana are mere!", "KFC Krushers Party", true);
+            User user = TestsRepositoryUtil.createUser("login", "anaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaana");
+            userRepository.save(user);
+            Address address = TestsRepositoryUtil.createAddress("Romania", "Bucuresti", "Splai", "333", "Casa", "Casa magica");
+            addressRepository.saveAndFlush(address);
+            Event event = TestsRepositoryUtil.createEvent("Ana are mere!", "KFC Krushers Party", true, address, user);
             if (i % 2 == 0) {
                 event.setPublic(true);
             } else {
@@ -53,13 +64,14 @@ public class EventRepositoryTest {
     public void testFindByUsers_id() {
 
         User user = TestsRepositoryUtil.createUser("login", "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
-
-        Event event = TestsRepositoryUtil.createEvent("Ana are mere!", "KFC Krushers Party", true);
+        Address address = TestsRepositoryUtil.createAddress("Romania", "Bucuresti", "Splai", "333", "Casa", "Casa magica");
+        addressRepository.saveAndFlush(address);
+        Event event = TestsRepositoryUtil.createEvent("Ana are mere!", "KFC Krushers Party", true, address, user);
         eventRepository.save(event);
         user.getEvents().add(event);
         userRepository.save(user);
 
-        Event event1 = TestsRepositoryUtil.createEvent("Ana are mere!", "KFC Krushers Party", true);
+        Event event1 = TestsRepositoryUtil.createEvent("Ana are mere!", "KFC Krushers Party", true, address, user);
         eventRepository.save(event1);
         user.getEvents().add(event1);
         userRepository.save(user);
@@ -77,7 +89,11 @@ public class EventRepositoryTest {
 
         User user1 = TestsRepositoryUtil.createUser("login2", "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa2");
 
-        Event event = TestsRepositoryUtil.createEvent("Ana are mere!", "KFC Krushers Party", true);
+
+        Address address = TestsRepositoryUtil.createAddress("Romania", "Bucuresti", "Splai", "333", "Casa", "Casa magica");
+        addressRepository.saveAndFlush(address);
+
+        Event event = TestsRepositoryUtil.createEvent("Ana are mere!", "KFC Krushers Party", true, address, user);
         eventRepository.save(event);
 
         user.getEvents().add(event);

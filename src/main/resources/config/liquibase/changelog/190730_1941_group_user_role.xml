@@ -44,7 +44,7 @@
                                  baseTableName="group_user_role"
                                  constraintName="fk_groups"
                                  referencedColumnNames="id"
-                                 referencedTableName="groups"/>
+                                 referencedTableName="Groups"/>
     </changeSet>
 
 
@@ -53,7 +53,7 @@
                                  baseTableName="group_user_role"
                                  constraintName="fk_roles"
                                  referencedColumnNames="id"
-                                 referencedTableName="roles"/>
+                                 referencedTableName="Roles"/>
     </changeSet>
 
 </databaseChangeLog>

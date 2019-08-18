@@ -1,14 +1,16 @@
 package com.cegeka.academy.service;
 
 import com.cegeka.academy.AcademyProjectApp;
+import com.cegeka.academy.domain.Address;
 import com.cegeka.academy.domain.Event;
 import com.cegeka.academy.domain.Invitation;
 import com.cegeka.academy.domain.User;
+import com.cegeka.academy.repository.AddressRepository;
 import com.cegeka.academy.repository.EventRepository;
 import com.cegeka.academy.repository.InvitationRepository;
 import com.cegeka.academy.repository.UserRepository;
 import com.cegeka.academy.repository.util.TestsRepositoryUtil;
-import com.cegeka.academy.service.dto.InvitationDisplayDTO;
+import com.cegeka.academy.service.dto.InvitationDTO;
 import com.cegeka.academy.service.invitation.InvitationService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -24,25 +26,35 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Transactional
 public class InvitationServiceTest {
 
-    private @Autowired
-    EventRepository eventRepository;
-    private @Autowired
-    UserRepository userRepository;
-    private @Autowired
-    InvitationService invitationService;
-    private @Autowired
-    InvitationRepository invitationRepository;
+
+    @Autowired
+    private EventRepository eventRepository;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private InvitationService invitationService;
+
+    @Autowired
+    private InvitationRepository invitationRepository;
+  
+    @Autowired
+    private AddressRepository addressRepository;
 
     private User user;
     private Event event;
     private Invitation invitation;
+    private Address address;
 
     @BeforeEach
     public void init() {
 
         user = TestsRepositoryUtil.createUser("login", "anaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaana");
         userRepository.saveAndFlush(user);
-        event = TestsRepositoryUtil.createEvent("Ana are mere!", "KFC Krushers Party", true);
+        address = TestsRepositoryUtil.createAddress("Romania", "Bucuresti", "Splai", "333", "Casa", "Casa magica");
+        addressRepository.saveAndFlush(address);
+        event = TestsRepositoryUtil.createEvent("Ana are mere!", "KFC Krushers Party", true, address, user);
         eventRepository.saveAndFlush(event);
         invitation = TestsRepositoryUtil.createInvitation("pending", "ana are mere", event, user);
         invitationService.saveInvitation(invitation);
@@ -52,7 +64,7 @@ public class InvitationServiceTest {
     @Transactional
     public void assertThatSaveInvitationIsWorking() {
 
-        List<InvitationDisplayDTO> list = invitationService.getAllInvitations();
+        List<InvitationDTO> list = invitationService.getAllInvitations();
         assertThat(list.size()).isEqualTo(1);
         assertThat(list.get(0).getStatus()).isEqualTo(invitation.getStatus());
         assertThat(list.get(0).getDescription()).isEqualTo(invitation.getDescription());
@@ -90,7 +102,7 @@ public class InvitationServiceTest {
     public void assertThatDeleteInvitationIsWorkingWithInvalidId() {
 
         invitationService.deleteInvitationById(100L);
-        List<InvitationDisplayDTO> list = invitationService.getAllInvitations();
+        List<InvitationDTO> list = invitationService.getAllInvitations();
         assertThat(list.size()).isEqualTo(1);
     }
 
