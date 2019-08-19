@@ -109,20 +109,9 @@ public class InvitationServiceTest {
 
     @Test
     public void assertThatGetPendingInvitationsByUserIdIsWorking() {
-        Invitation invitation2;
-        invitation2 = TestsRepositoryUtil.createInvitation(InvitationStatus.ACCEPTED.name(), "ana are mere", event, user);
-        invitationService.saveInvitation(invitation2);
         List<InvitationDTO> pendingListUser = invitationService.getPendingInvitationsByUserId(user.getId());
         assertThat(pendingListUser.size()).isEqualTo(1);
 
-        User user1;
-        user1 = TestsRepositoryUtil.createUser("login2", "bnaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaana");
-        userRepository.saveAndFlush(user1);
-        Invitation invitation3;
-        invitation3 = TestsRepositoryUtil.createInvitation(InvitationStatus.PENDING.name(), "ana are mere", event, user1);
-        invitationService.saveInvitation(invitation3);
-        List<InvitationDTO> pendingListUser1 = invitationService.getPendingInvitationsByUserId(user1.getId());
-        assertThat(pendingListUser1.size()).isEqualTo(1);
     }
 
 
