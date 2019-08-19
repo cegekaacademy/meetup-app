@@ -11,6 +11,7 @@ import com.cegeka.academy.web.rest.errors.UnauthorizedUserException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
@@ -38,7 +39,7 @@ public class EventController {
     }
 
     @PostMapping
-    public void createEvent(@RequestBody Event event) {
+    public void createEvent(@Valid @RequestBody Event event) {
 
         eventService.createEvent(event);
     }
