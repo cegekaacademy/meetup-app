@@ -5,6 +5,7 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.Objects;
 
@@ -17,11 +18,13 @@ public class Invitation {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Size(max = 45)
+    @Size(max = 45, message = "Description length must have max 45 letters")
     @Column(name = "description", length = 45)
     private String description;
 
-    @Size(max = 45)
+
+    @NotNull(message = "Status must not be null")
+    @Size(max = 15, message = "Status length must have max 15 letters")
     @Column(name = "status", length = 45)
     private String status;
 

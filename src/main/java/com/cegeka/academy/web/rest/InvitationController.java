@@ -10,6 +10,7 @@ import com.cegeka.academy.web.rest.errors.UnauthorizedUserException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
@@ -37,7 +38,7 @@ public class InvitationController {
     }
 
     @PostMapping
-    public void saveInvitation(@RequestBody Invitation newInvitation){
+    public void saveInvitation(@Valid @RequestBody Invitation newInvitation) {
 
          invitationService.saveInvitation(newInvitation);
     }
