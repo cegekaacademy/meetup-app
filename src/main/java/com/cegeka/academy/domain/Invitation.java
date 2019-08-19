@@ -18,13 +18,13 @@ public class Invitation {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Size(max = 45, message = "Description length must have max 45 letters")
+    @Size(max = 45, message = "Description size must have max 45 letters")
     @Column(name = "description", length = 45)
     private String description;
 
 
     @NotNull(message = "Status must not be null")
-    @Size(max = 15, message = "Status length must have max 15 letters")
+    @Size(max = 15, message = "Status size must have max 15 letters")
     @Column(name = "status", length = 45)
     private String status;
 
