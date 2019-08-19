@@ -7,6 +7,7 @@ import com.cegeka.academy.service.challengeAnswer.ChallengeAnswerService;
 import com.cegeka.academy.service.mapper.ChallengeAnswerMapper;
 import com.cegeka.academy.web.rest.errors.NotFoundException;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -113,6 +114,35 @@ public class ChallengeAnswerServiceTest {
         challengeAnswer.setAnswer("answer");
     }
 
+    @AfterEach
+    public void destroy(){
+
+        if(invitation != null){
+            invitationRepository.delete(invitation);
+        }
+
+        if(user != null){
+            userRepository.delete(user);
+        }
+
+        if(challengeCategory != null){
+            challengeCategoryRepository.delete(challengeCategory);
+        }
+
+        if(challenge != null){
+            challengeRepository.delete(challenge);
+        }
+
+        if(userChallenge != null){
+            userChallengeRepository.delete(userChallenge);
+        }
+
+        if(challengeAnswer != null){
+            challengeAnswerRepository.delete(challengeAnswer);
+        }
+    }
+
+
     @Test
     public void testSaveChallengeAnswer(){
 
@@ -168,5 +198,7 @@ public class ChallengeAnswerServiceTest {
             challengeAnswerService.deleteChallengeAnswer(100L,120L);
         });
     }
+
+
 
 }
