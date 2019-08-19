@@ -1,10 +1,8 @@
 package com.cegeka.academy.repository;
 
 import com.cegeka.academy.AcademyProjectApp;
-import com.cegeka.academy.domain.Challenge;
-import com.cegeka.academy.domain.Invitation;
-import com.cegeka.academy.domain.User;
-import com.cegeka.academy.domain.UserChallenge;
+import com.cegeka.academy.domain.*;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,9 +29,13 @@ public class UserChallengeTest {
     @Autowired
     private ChallengeRepository challengeRepository;
 
+    @Autowired
+    private ChallengeAnswerRepository challengeAnswerRepository;
+
     private Invitation invitation = new Invitation();
     private User user = new User();
     private Challenge challenge = new Challenge();
+    private ChallengeAnswer challengeAnswer = new ChallengeAnswer();
 
     @BeforeEach
     public void init() {
@@ -48,6 +50,32 @@ public class UserChallengeTest {
         challenge.setStatus("Active");
         challenge.setCreator(user);
         challengeRepository.save(challenge);
+
+        challengeAnswer.setImagePath("imagePath");
+        challengeAnswer.setVideoAt("videoAt");
+        challengeAnswer.setAnswer("answer");
+        challengeAnswerRepository.save(challengeAnswer);
+    }
+
+    @AfterEach
+    public void destroy(){
+
+        if(user != null) {
+            userRepository.delete(user);
+        }
+
+        if(invitation != null){
+            invitationRepository.delete(invitation);
+        }
+
+        if(challenge != null){
+            challengeRepository.delete(challenge);
+        }
+
+        if(challengeAnswer != null){
+            challengeAnswerRepository.delete(challengeAnswer);
+        }
+
     }
 
     public UserChallenge initObject() {
@@ -59,6 +87,7 @@ public class UserChallengeTest {
         userChallenge.setPoints(0);
         userChallenge.setStartTime(new Date());
         userChallenge.setEndTime(new Date());
+        userChallenge.setChallengeAnswer(challengeAnswer);
 
         return userChallenge;
     }
@@ -66,10 +95,12 @@ public class UserChallengeTest {
     @Test
     public void testAddUserChallenge() {
 
-        userChallengeRepository.save(initObject());
-        userChallengeRepository.save(initObject());
-        userChallengeRepository.save(initObject());
+        UserChallenge result = userChallengeRepository.save(initObject());
 
-        assertThat(userChallengeRepository.findAll().size()).isEqualTo(3);
+        assertThat(userChallengeRepository.findAll().size()).isEqualTo(1);
+        assertThat(userChallengeRepository.findAll().get(0)).isEqualTo(result);
+        assertThat(userChallengeRepository.findAll().get(0).getChallengeAnswer()).isEqualTo(challengeAnswerRepository.findAll().get(0));
+
     }
+
 }

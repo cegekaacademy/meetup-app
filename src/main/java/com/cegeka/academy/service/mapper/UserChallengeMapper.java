@@ -1,6 +1,7 @@
 package com.cegeka.academy.service.mapper;
 
 import com.cegeka.academy.domain.Challenge;
+import com.cegeka.academy.domain.ChallengeAnswer;
 import com.cegeka.academy.domain.Invitation;
 import com.cegeka.academy.domain.UserChallenge;
 import com.cegeka.academy.service.dto.*;
@@ -21,6 +22,7 @@ public class UserChallengeMapper {
             userChallenge.setPoints(userChallengeDTO.getPoints());
             userChallenge.setStartTime(userChallengeDTO.getStartTime());
             userChallenge.setEndTime(userChallengeDTO.getEndTime());
+            userChallenge.setChallengeAnswer(convertChallengeAnswerDTOToChallengeAnswer(userChallengeDTO.getChallengeAnswer()));
 
             return userChallenge;
         }
@@ -41,6 +43,7 @@ public class UserChallengeMapper {
             userChallengeDTO.setPoints(userChallenge.getPoints());
             userChallengeDTO.setStartTime(userChallenge.getStartTime());
             userChallengeDTO.setEndTime(userChallenge.getEndTime());
+            userChallengeDTO.setChallengeAnswer(convertChallengeAnswerToChallengeAnswerDTO(userChallenge.getChallengeAnswer()));
 
             return userChallengeDTO;
         }
@@ -96,6 +99,44 @@ public class UserChallengeMapper {
         invitation.setStatus(invitationChallengeDTO.getStatus());
 
         return invitation;
+    }
+
+    public static ChallengeAnswer convertChallengeAnswerDTOToChallengeAnswer(ChallengeAnswerDTO challengeAnswerDTO){
+
+        if(challengeAnswerDTO == null){
+
+            return null;
+
+        } else {
+
+            ChallengeAnswer challengeAnswer = new ChallengeAnswer();
+            challengeAnswer.setId(challengeAnswerDTO.getId());
+            challengeAnswer.setImagePath(challengeAnswerDTO.getImagePath());
+            challengeAnswer.setVideoAt(challengeAnswerDTO.getVideoAt());
+            challengeAnswer.setAnswer(challengeAnswerDTO.getAnswer());
+
+            return challengeAnswer;
+
+        }
+    }
+
+    public static ChallengeAnswerDTO convertChallengeAnswerToChallengeAnswerDTO(ChallengeAnswer challengeAnswer){
+
+        if(challengeAnswer == null){
+
+            return null;
+
+        } else {
+
+            ChallengeAnswerDTO challengeAnswerDTO = new ChallengeAnswerDTO();
+            challengeAnswerDTO.setId(challengeAnswer.getId());
+            challengeAnswerDTO.setImagePath(challengeAnswer.getImagePath());
+            challengeAnswerDTO.setVideoAt(challengeAnswer.getVideoAt());
+            challengeAnswerDTO.setAnswer(challengeAnswer.getAnswer());
+
+            return challengeAnswerDTO;
+
+        }
     }
 
 }
