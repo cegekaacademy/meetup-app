@@ -15,7 +15,7 @@ import java.util.List;
 
 @Order(Ordered.HIGHEST_PRECEDENCE)
 @ControllerAdvice
-public class GlobalExceptionHandler extends HttpResponseExceptionHandler {
+public class GeneralExceptionHandler extends HttpResponseExceptionHandler {
 
     @ExceptionHandler(value = ExpiredObjectException.class)
     public ResponseEntity<ErrorResponse> handleExpiredEvent(ExpiredObjectException e) {
