@@ -12,6 +12,7 @@ public class UserChallengeDTO {
     private double points;
     private Date startTime;
     private Date endTime;
+    private ChallengeAnswerDTO challengeAnswer;
 
     public UserChallengeDTO() {
     }
@@ -80,6 +81,14 @@ public class UserChallengeDTO {
         this.endTime = endTime;
     }
 
+    public ChallengeAnswerDTO getChallengeAnswer() {
+        return challengeAnswer;
+    }
+
+    public void setChallengeAnswer(ChallengeAnswerDTO challengeAnswer) {
+        this.challengeAnswer = challengeAnswer;
+    }
+
     @Override
     public String toString() {
         return "UserChallengeDTO{" +
@@ -91,6 +100,7 @@ public class UserChallengeDTO {
                 ", points=" + points +
                 ", startTime=" + startTime +
                 ", endTime=" + endTime +
+                ", challengeAnswer=" + challengeAnswer +
                 '}';
     }
 }
