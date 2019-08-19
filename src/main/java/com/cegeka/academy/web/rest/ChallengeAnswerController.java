@@ -26,10 +26,10 @@ public class ChallengeAnswerController {
         return ResponseEntity.ok("Challenge answer has been saved.");
     }
 
-    @PutMapping
-    public ResponseEntity<String> updateChallengeAnswer(@Valid @RequestBody ChallengeAnswerDTO challengeAnswerDTO) throws NotFoundException {
+    @PutMapping("/{id}")
+    public ResponseEntity<String> updateChallengeAnswer(@PathVariable(value = "id") Long id, @Valid @RequestBody ChallengeAnswerDTO challengeAnswerDTO) throws NotFoundException {
 
-        challengeAnswerService.updateChallengeAnswer(challengeAnswerDTO);
+        challengeAnswerService.updateChallengeAnswer(id, challengeAnswerDTO);
 
         return ResponseEntity.ok("Challenge answer was updated.");
 
@@ -43,8 +43,6 @@ public class ChallengeAnswerController {
         return ResponseEntity.ok("Challenge answer was deleted.");
 
     }
-
-
 
 }
 

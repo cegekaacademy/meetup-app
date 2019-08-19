@@ -28,18 +28,24 @@ public class ChallengeAnswerServiceImp implements ChallengeAnswerService {
     @Override
     public void saveChallengeAnswer(ChallengeAnswerDTO challengeAnswerDTO) {
 
-        logger.info("Challenge answer with id: " + challengeAnswerRepository.save(ChallengeAnswerMapper.convertChallengeAnswerDTOToChallengeAnswer(challengeAnswerDTO)).getId() + " has been saved.");
+        Long id = challengeAnswerRepository.save(ChallengeAnswerMapper.convertChallengeAnswerDTOToChallengeAnswer(challengeAnswerDTO)).getId();
+
+        logger.info("Challenge answer with id: " + id + " has been saved.");
     }
 
     @Override
-    public void updateChallengeAnswer(ChallengeAnswerDTO challengeAnswerDTO) throws NotFoundException {
+    public void updateChallengeAnswer(Long id, ChallengeAnswerDTO challengeAnswerDTO) throws NotFoundException {
 
-        if(challengeAnswerDTO.getId() == null || !challengeAnswerRepository.findById(challengeAnswerDTO.getId()).isPresent()){
 
-            throw new NotFoundException().setMessage("Challenge answer not exists.");
-        }
+        ChallengeAnswer challengeAnswer = challengeAnswerRepository.findById(id).orElseThrow(()-> new NotFoundException().setMessage("Challenge answer not exists."));
 
-        logger.info("Challenge answer with id: " + challengeAnswerRepository.save(ChallengeAnswerMapper.convertChallengeAnswerDTOToChallengeAnswer(challengeAnswerDTO)).getId() + " was updated.");
+        challengeAnswer.setAnswer(challengeAnswerDTO.getAnswer());
+        challengeAnswer.setVideoAt(challengeAnswerDTO.getVideoAt());
+        challengeAnswer.setImagePath(challengeAnswerDTO.getImagePath());
+
+        Long updateChallengeAnswerId =  challengeAnswerRepository.save(ChallengeAnswerMapper.convertChallengeAnswerDTOToChallengeAnswer(ChallengeAnswerMapper.convertChallengeAnswerToChallengeAnswerDTO(challengeAnswer))).getId();
+
+        logger.info("Challenge answer with id: " + updateChallengeAnswerId + " was updated.");
 
     }
 
@@ -56,6 +62,7 @@ public class ChallengeAnswerServiceImp implements ChallengeAnswerService {
         ChallengeAnswer deleteChallengeAnswer = userChallenge.getChallengeAnswer();
 
         userChallenge.setChallengeAnswer(null);
+
         userChallengeRepository.save(userChallenge);
 
         challengeAnswerRepository.delete(deleteChallengeAnswer);

@@ -161,7 +161,7 @@ public class ChallengeAnswerServiceTest {
         ChallengeAnswer existingChallenge = challengeAnswerRepository.findAll().get(0);
         existingChallenge.setAnswer("answer2");
 
-        challengeAnswerService.updateChallengeAnswer(ChallengeAnswerMapper.convertChallengeAnswerToChallengeAnswerDTO(existingChallenge));
+        challengeAnswerService.updateChallengeAnswer(existingChallenge.getId(), ChallengeAnswerMapper.convertChallengeAnswerToChallengeAnswerDTO(existingChallenge));
 
         assertThat(challengeAnswerRepository.findAll().get(0).getAnswer()).isEqualTo(existingChallenge.getAnswer());
         assertThat(challengeAnswerRepository.findAll().get(0).getImagePath()).isEqualTo(existingChallenge.getImagePath());
@@ -173,7 +173,7 @@ public class ChallengeAnswerServiceTest {
     public void testUpdateNoExistingChallengeAnswer() {
 
         Assertions.assertThrows(NotFoundException.class, () -> {
-            challengeAnswerService.updateChallengeAnswer(ChallengeAnswerMapper.convertChallengeAnswerToChallengeAnswerDTO(challengeAnswer));
+            challengeAnswerService.updateChallengeAnswer( 22L, ChallengeAnswerMapper.convertChallengeAnswerToChallengeAnswerDTO(challengeAnswer));
 
         });
 

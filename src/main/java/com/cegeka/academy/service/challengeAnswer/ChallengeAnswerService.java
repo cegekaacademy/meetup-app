@@ -7,7 +7,7 @@ public interface ChallengeAnswerService {
 
     void saveChallengeAnswer(ChallengeAnswerDTO challengeAnswerDTO);
 
-    void updateChallengeAnswer(ChallengeAnswerDTO challengeAnswerDTO) throws NotFoundException;
+    void updateChallengeAnswer(Long id, ChallengeAnswerDTO challengeAnswerDTO) throws NotFoundException;
 
     void deleteChallengeAnswer(Long userId, Long challengeId) throws NotFoundException;
 }

@@ -28,7 +28,7 @@ public class GlobalExceptionHandler{
             errors.add(errorMessage);
         });
 
-        return new ResponseEntity(errors.toString(), HttpStatus.NOT_FOUND);
+        return new ResponseEntity(errors.toString(), HttpStatus.BAD_REQUEST);
 
     }
 
