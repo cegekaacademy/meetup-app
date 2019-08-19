@@ -28,24 +28,26 @@ public class ChallengeAnswerServiceImp implements ChallengeAnswerService {
     @Override
     public void saveChallengeAnswer(ChallengeAnswerDTO challengeAnswerDTO) {
 
-        Long id = challengeAnswerRepository.save(ChallengeAnswerMapper.convertChallengeAnswerDTOToChallengeAnswer(challengeAnswerDTO)).getId();
+        ChallengeAnswer saveChallengeAnswer = ChallengeAnswerMapper.convertChallengeAnswerDTOToChallengeAnswer(challengeAnswerDTO);
 
-        logger.info("Challenge answer with id: " + id + " has been saved.");
+        ChallengeAnswer result = challengeAnswerRepository.save(saveChallengeAnswer);
+
+        logger.info("Challenge answer with id: " + result.getId() + " has been saved.");
     }
 
     @Override
     public void updateChallengeAnswer(Long id, ChallengeAnswerDTO challengeAnswerDTO) throws NotFoundException {
 
-
-        ChallengeAnswer challengeAnswer = challengeAnswerRepository.findById(id).orElseThrow(()-> new NotFoundException().setMessage("Challenge answer not exists."));
+        ChallengeAnswer challengeAnswer = challengeAnswerRepository.findById(id)
+                .orElseThrow(()-> new NotFoundException().setMessage("Challenge answer not exists."));
 
         challengeAnswer.setAnswer(challengeAnswerDTO.getAnswer());
         challengeAnswer.setVideoAt(challengeAnswerDTO.getVideoAt());
         challengeAnswer.setImagePath(challengeAnswerDTO.getImagePath());
 
-        Long updateChallengeAnswerId =  challengeAnswerRepository.save(ChallengeAnswerMapper.convertChallengeAnswerDTOToChallengeAnswer(ChallengeAnswerMapper.convertChallengeAnswerToChallengeAnswerDTO(challengeAnswer))).getId();
+        ChallengeAnswer result =  challengeAnswerRepository.save(challengeAnswer);
 
-        logger.info("Challenge answer with id: " + updateChallengeAnswerId + " was updated.");
+        logger.info("Challenge answer with id: " + result.getId() + " was updated.");
 
     }
 
@@ -54,9 +56,17 @@ public class ChallengeAnswerServiceImp implements ChallengeAnswerService {
 
         UserChallenge userChallenge = userChallengeRepository.findAllByUserIdAndChallengeId(userId, challengeId);
 
-        if (userChallenge == null || userChallenge.getChallengeAnswer() == null || !challengeAnswerRepository.findById(userChallenge.getChallengeAnswer().getId()).isPresent()){
+        if (userChallenge == null || userChallenge.getChallengeAnswer() == null){
 
             throw new NotFoundException().setMessage("Challenge answer not exists.");
+        }
+
+        boolean isChallengeAnswerValid = challengeAnswerRepository.findById(userChallenge.getChallengeAnswer().getId()).isPresent();
+
+        if( !isChallengeAnswerValid ){
+
+            throw new NotFoundException().setMessage("Challenge answer not exists.");
+
         }
 
         ChallengeAnswer deleteChallengeAnswer = userChallenge.getChallengeAnswer();
