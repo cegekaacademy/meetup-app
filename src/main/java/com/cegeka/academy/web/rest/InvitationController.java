@@ -5,11 +5,9 @@ import com.cegeka.academy.repository.InvitationRepository;
 import com.cegeka.academy.service.dto.InvitationDTO;
 import com.cegeka.academy.service.invitation.InvitationService;
 import com.cegeka.academy.service.serviceValidation.ValidationAccessService;
-import com.cegeka.academy.web.rest.errors.controllerException.ErrorResponse;
-import com.cegeka.academy.web.rest.errors.controllerException.GeneralExceptionHandler;
+import com.cegeka.academy.web.rest.errors.NotFoundException;
+import com.cegeka.academy.web.rest.errors.UnauthorizedUserException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -45,22 +43,29 @@ public class InvitationController {
     }
 
     @PutMapping
-    public ResponseEntity<ErrorResponse> replaceInvitation(@RequestBody Invitation newInvitation) {
+    public void replaceInvitation(@RequestBody Invitation newInvitation) throws NotFoundException {
 
-        if(validationAccessService.verifyUserAccessForInvitationEntity(newInvitation.getId())) {
-            invitationService.updateInvitation(newInvitation);
+        Optional<Invitation> updateInvitation = invitationRepository.findById(newInvitation.getId());
+
+        if (updateInvitation.isPresent()) {
+
+            if (validationAccessService.verifyUserAccessForInvitationEntity(newInvitation.getId())) {
+
+                invitationService.updateInvitation(newInvitation);
+
+            } else {
+
+                throw new UnauthorizedUserException();
+            }
 
         } else {
 
-            return new GeneralExceptionHandler().handleUnauthorizedAccessInvitation(newInvitation);
+            throw new NotFoundException();
         }
-
-        return new ResponseEntity<>(HttpStatus.OK);
-
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<ErrorResponse> deleteInvitation(@PathVariable Long id) {
+    public void deleteInvitation(@PathVariable Long id) throws NotFoundException {
 
         Optional<Invitation> deleteInvitation = invitationRepository.findById(id);
 
@@ -72,15 +77,12 @@ public class InvitationController {
 
             } else {
 
-                return new GeneralExceptionHandler().handleUnauthorizedAccessInvitation(deleteInvitation.get());
+                throw new UnauthorizedUserException();
             }
         } else {
 
-            return new GeneralExceptionHandler().handleNotFoundInvitation(id);
+            throw new NotFoundException();
         }
-
-        return new ResponseEntity<>(HttpStatus.OK);
-
     }
 
 }

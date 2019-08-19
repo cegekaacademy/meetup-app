@@ -5,11 +5,10 @@ import com.cegeka.academy.repository.EventRepository;
 import com.cegeka.academy.service.event.EventService;
 import com.cegeka.academy.service.serviceValidation.ExpirationCheckService;
 import com.cegeka.academy.service.serviceValidation.ValidationAccessService;
-import com.cegeka.academy.web.rest.errors.controllerException.ErrorResponse;
-import com.cegeka.academy.web.rest.errors.controllerException.GeneralExceptionHandler;
+import com.cegeka.academy.web.rest.errors.ExpiredObjectException;
+import com.cegeka.academy.web.rest.errors.NotFoundException;
+import com.cegeka.academy.web.rest.errors.UnauthorizedUserException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -45,47 +44,52 @@ public class EventController {
     }
 
     @PutMapping
-    public ResponseEntity<ErrorResponse> updateEvent(@RequestBody Event event) {
+    public void updateEvent(@RequestBody Event event) throws NotFoundException {
 
-        if (validationAccessService.verifyUserAccessForEventEntity(event.getId()) && expirationCheckService.availabilityCheck(event.getEndDate())) {
+        Optional<Event> eventUpdate = eventRepository.findById(event.getId());
 
-            eventService.updateEvent(event);
+        if (eventUpdate.isPresent()) {
 
-        } else if (!validationAccessService.verifyUserAccessForEventEntity(event.getId())) {
+            if (validationAccessService.verifyUserAccessForEventEntity(event.getId()) && expirationCheckService.availabilityCheck(event.getEndDate())) {
 
-            return new GeneralExceptionHandler().handleUnauthorizedAccessEvent(event);
+                eventService.updateEvent(event);
 
-        } else if (!expirationCheckService.availabilityCheck(event.getEndDate())) {
+            } else if (!validationAccessService.verifyUserAccessForEventEntity(event.getId())) {
 
-            return new GeneralExceptionHandler().handleExpiredEvent(event);
+                throw new UnauthorizedUserException();
 
+            } else if (!expirationCheckService.availabilityCheck(event.getEndDate())) {
+
+                throw new ExpiredObjectException();
+
+            }
+        } else {
+
+            throw new NotFoundException();
         }
-
-        return new ResponseEntity<>(HttpStatus.OK);
 
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<ErrorResponse> deleteEvent(@PathVariable Long id) {
+    public void deleteEvent(@PathVariable Long id) throws NotFoundException {
 
         Optional<Event> event = eventRepository.findById(id);
 
         if (event.isPresent()) {
 
             if (validationAccessService.verifyUserAccessForEventEntity(id)) {
+
                 eventService.deleteEventById(id);
 
             } else {
 
-                return new GeneralExceptionHandler().handleUnauthorizedAccessEvent(event.get());
+                throw new UnauthorizedUserException();
 
             }
         } else {
 
-            return new GeneralExceptionHandler().handleNotFoundEvent(id);
+            throw new NotFoundException();
         }
-
-        return new ResponseEntity<>(HttpStatus.OK);
 
     }
 
