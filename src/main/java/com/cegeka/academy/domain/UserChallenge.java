@@ -1,6 +1,5 @@
 package com.cegeka.academy.domain;
 
-import com.mysql.cj.x.protobuf.MysqlxDatatypes;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -51,6 +50,10 @@ public class UserChallenge implements Serializable {
     @Column(name = "end_time")
     private Date endTime;
 
+    @ManyToOne
+    @JoinColumn(name = "challenge_answer_id", referencedColumnName = "id")
+    private ChallengeAnswer challengeAnswer;
+
     public Long getId() {
         return id;
     }
@@ -87,17 +90,33 @@ public class UserChallenge implements Serializable {
 
     public void setEndTime(Date endTime) { this.endTime = endTime; }
 
+    public ChallengeAnswer getChallengeAnswer() {
+        return challengeAnswer;
+    }
+
+    public void setChallengeAnswer(ChallengeAnswer challengeAnswer) {
+        this.challengeAnswer = challengeAnswer;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof UserChallenge)) return false;
         UserChallenge that = (UserChallenge) o;
-        return id.equals(that.id);
+        return Double.compare(that.getPoints(), getPoints()) == 0 &&
+                getId().equals(that.getId()) &&
+                Objects.equals(getUser(), that.getUser()) &&
+                Objects.equals(getInvitation(), that.getInvitation()) &&
+                Objects.equals(getChallenge(), that.getChallenge()) &&
+                Objects.equals(getStatus(), that.getStatus()) &&
+                Objects.equals(getStartTime(), that.getStartTime()) &&
+                Objects.equals(getEndTime(), that.getEndTime()) &&
+                Objects.equals(getChallengeAnswer(), that.getChallengeAnswer());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id);
+        return Objects.hash(getId(), getUser(), getInvitation(), getChallenge(), getStatus(), getPoints(), getStartTime(), getEndTime(), getChallengeAnswer());
     }
 
     @Override
@@ -106,10 +125,12 @@ public class UserChallenge implements Serializable {
                 "id=" + id +
                 ", user=" + user +
                 ", invitation=" + invitation +
-                ", status=" + status +
+                ", challenge=" + challenge +
+                ", status='" + status + '\'' +
                 ", points=" + points +
                 ", startTime=" + startTime +
                 ", endTime=" + endTime +
+                ", challengeAnswer=" + challengeAnswer +
                 '}';
     }
 }
