@@ -22,7 +22,7 @@ import java.util.Set;
  * A group.
  */
 @Entity
-@Table(name = "Groups")
+@Table(name = "academyproject_groups")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class Group implements Serializable {
 
