@@ -60,4 +60,22 @@ public class InvitationController {
         return invitationService.getPendingInvitationsByUserId(userId);
     }
 
+    @PutMapping("/accept")
+    public void acceptInvitation(@RequestBody Invitation newInvitation) {
+
+        if (validationAccessService.verifyUserAccessForInvitationEntity(newInvitation.getId())) {
+            invitationService.acceptInvitation(newInvitation);
+
+        }
+    }
+
+    @PutMapping("/reject")
+    public void rejectInvitation(@RequestBody Invitation newInvitation) {
+
+        if (validationAccessService.verifyUserAccessForInvitationEntity(newInvitation.getId())) {
+            invitationService.rejectInvitation(newInvitation);
+
+        }
+    }
+
 }

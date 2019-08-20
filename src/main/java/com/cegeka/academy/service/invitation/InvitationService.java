@@ -14,4 +14,8 @@ public interface InvitationService {
 
     List<InvitationDTO> getPendingInvitationsByUserId(Long userId);
 
+    void acceptInvitation(Invitation invitation);
+
+    void rejectInvitation(Invitation invitation);
+
 }

@@ -68,6 +68,7 @@ public class InvitationServiceTest {
         List<InvitationDTO> list = invitationService.getAllInvitations();
         assertThat(list.size()).isEqualTo(1);
         assertThat(list.get(0).getStatus()).isEqualTo(invitation.getStatus());
+        assertThat(list.get(0).getStatus()).isEqualTo(InvitationStatus.PENDING.name());
         assertThat(list.get(0).getDescription()).isEqualTo(invitation.getDescription());
         assertThat(list.get(0).getUserName()).isEqualTo(invitation.getUser().getFirstName() + " " + invitation.getUser().getLastName());
         assertThat(list.get(0).getEventName()).isEqualTo(invitation.getEvent().getName());
@@ -114,5 +115,29 @@ public class InvitationServiceTest {
 
     }
 
+    @Test
+    public void assertThatAcceptInvitationIsWorking() {
+        List<Invitation> list = invitationRepository.findAll();
+        invitationService.acceptInvitation(invitation);
+        assertThat(list.size()).isEqualTo(1);
+        assertThat(list.get(0).getStatus()).isEqualTo(invitation.getStatus());
+        assertThat(list.get(0).getStatus()).isEqualTo(InvitationStatus.ACCEPTED.name());
+        assertThat(list.get(0).getDescription()).isEqualTo(invitation.getDescription());
+        assertThat(list.get(0).getUser()).isEqualTo(invitation.getUser());
+        assertThat(list.get(0).getEvent()).isEqualTo(invitation.getEvent());
+    }
+
+    @Test
+    public void assertThatRejectInvitationIsWorking() {
+        List<Invitation> list = invitationRepository.findAll();
+        invitation.setStatus(InvitationStatus.PENDING.name());
+        invitationService.rejectInvitation(invitation);
+        assertThat(list.size()).isEqualTo(1);
+        assertThat(list.get(0).getStatus()).isEqualTo(invitation.getStatus());
+        assertThat(list.get(0).getStatus()).isEqualTo(InvitationStatus.REJECTED.name());
+        assertThat(list.get(0).getDescription()).isEqualTo(invitation.getDescription());
+        assertThat(list.get(0).getUser()).isEqualTo(invitation.getUser());
+        assertThat(list.get(0).getEvent()).isEqualTo(invitation.getEvent());
+    }
 
 }
