@@ -7,23 +7,24 @@ import com.cegeka.academy.domain.User;
 
 public class TestsRepositoryUtil {
 
-    public static Address createAddress(Long id, String country, String city, String street, String number, String details, String name) {
+    public static Address createAddress(String country, String city, String street, String number, String details, String name) {
         Address address = new Address();
-        address.setId(id);
         address.setCity(city);
         address.setCountry(country);
         address.setStreet(street);
         address.setDetails(details);
         address.setNumber(number);
-        address.setName(number);
+        address.setName(name);
         return address;
     }
 
-    public static Event createEvent(Long id, String description, String name, boolean isPublic) {
+    public static Event createEvent(String description, String name, boolean isPublic, Address address, User user) {
         Event event = new Event();
         event.setDescription(description);
         event.setName(name);
         event.setPublic(isPublic);
+        event.setOwner(user);
+        event.setAddressId(address);
         return event;
     }
 
@@ -38,9 +39,10 @@ public class TestsRepositoryUtil {
         Invitation invitation = new Invitation();
         invitation.setStatus(status);
         invitation.setDescription(description);
-        invitation.setInvitedUser(user);
-        invitation.setInvitationEvent(event);
+        invitation.setUser(user);
+        invitation.setEvent(event);
         return invitation;
     }
+
 
 }
