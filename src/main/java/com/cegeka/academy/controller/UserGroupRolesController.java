@@ -1,5 +1,5 @@
 package com.cegeka.academy.controller;
-
+import com.cegeka.academy.domain.User;
 import com.cegeka.academy.domain.Group;
 import com.cegeka.academy.domain.GroupUserRole;
 import com.cegeka.academy.domain.Role;
@@ -7,6 +7,8 @@ import com.cegeka.academy.service.UserGroupRolesService;
 import com.cegeka.academy.service.dto.GroupDTO;
 import com.cegeka.academy.service.dto.GroupUserRoleDTO;
 import com.cegeka.academy.service.dto.RoleDTO;
+import com.cegeka.academy.service.dto.UserDTO;
+import com.cegeka.academy.service.group.GroupService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,9 +30,18 @@ public class UserGroupRolesController {
     @Autowired
     private ModelMapper modelMapper;
 
+    @Autowired
+    private GroupService groupService;
+
     private GroupUserRoleDTO convertToDTO(GroupUserRole groupUserRole){
         GroupUserRoleDTO groupUserRoleDTO = modelMapper.map(groupUserRole, GroupUserRoleDTO.class);
         return groupUserRoleDTO;
+    }
+
+
+    private UserDTO convertToUserDTO(User user){
+        UserDTO userDTO = modelMapper.map(user, UserDTO.class);
+        return userDTO;
     }
 
     @GetMapping("/getGroups/{id}")
@@ -41,5 +52,19 @@ public class UserGroupRolesController {
             result.add(convertToDTO(g));
         }
         return result;
+    }
+
+    @GetMapping("getUsersByGroup/{id}")
+    public List<UserDTO> getUsersByGroup(@PathVariable Long id)
+    {
+        List<User> users = groupService.getAllUsersByGroup(id);
+        List<UserDTO> userDTOS = new ArrayList<>();
+
+        for(User user : users)
+        {
+            userDTOS.add(convertToUserDTO((user)));
+        }
+
+        return userDTOS;
     }
 }

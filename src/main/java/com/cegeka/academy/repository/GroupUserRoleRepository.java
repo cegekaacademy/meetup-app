@@ -13,4 +13,8 @@ public interface GroupUserRoleRepository extends JpaRepository<GroupUserRole, Lo
 
     @Query("SELECT u FROM GroupUserRole u WHERE u.user.id=?1")
     List<GroupUserRole> findAllByUserId(Long id);
+
+
+    List<GroupUserRole> findAllByGroupId(Long groupId);
+
 }
