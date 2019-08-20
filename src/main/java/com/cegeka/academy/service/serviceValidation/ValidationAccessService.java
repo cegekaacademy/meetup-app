@@ -1,5 +1,6 @@
-package com.cegeka.academy.service.invitation;
+package com.cegeka.academy.service.serviceValidation;
 
+import com.cegeka.academy.domain.Event;
 import com.cegeka.academy.domain.Invitation;
 import com.cegeka.academy.domain.User;
 import com.cegeka.academy.repository.EventRepository;
@@ -8,6 +9,7 @@ import com.cegeka.academy.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import java.util.Optional;
 
 
@@ -63,15 +65,22 @@ public class ValidationAccessService {
     }
 
     public boolean verifyUserAccessForEventEntity(Long eventId) {
-        if (eventId == null)
+        if (eventId == null) {
+
             return false;
-        if (userService.getUserWithAuthorities().isPresent()) {
+        }
 
-            User userLogged = userService.getUserWithAuthorities().get();
+        Optional<User> user = userService.getUserWithAuthorities();
 
-            if (eventRepository.findById(eventId).isPresent()) {
+        if (user.isPresent()) {
 
-                User eventOwner = eventRepository.findById(eventId).get().getOwner();
+            User userLogged = user.get();
+
+            Optional<Event> event = eventRepository.findById(eventId);
+
+            if (event.isPresent()) {
+
+                User eventOwner = event.get().getOwner();
 
                 return eventOwner != null && userLogged.getId() == eventOwner.getId();
             }

@@ -15,11 +15,11 @@ public class Event {
     @Column(name = "id")
     private Long id;
 
-    @Size(max = 45)
+    @Size(max = 45, message = "Name size must have max 45 letters")
     @Column(name = "name", length = 45)
     private String name;
 
-    @Size(max = 250)
+    @Size(max = 250, message = "Description size must have max 250 letters")
     @Column(name = "description", length = 250)
     private String description;
 
