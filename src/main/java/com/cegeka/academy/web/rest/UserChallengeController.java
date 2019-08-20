@@ -3,6 +3,7 @@ package com.cegeka.academy.web.rest;
 import com.cegeka.academy.service.dto.UserChallengeDTO;
 import com.cegeka.academy.service.userChallenge.UserChallengeService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.query.Param;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,6 +20,12 @@ public class UserChallengeController {
     public List<UserChallengeDTO> getChallengesByUserId(@PathVariable("userId") Long userId){
 
         return userChallengeService.getUserChallengesByUserId(userId);
+    }
+
+    @PutMapping(value = "/rate")
+    public String rateUser(@RequestBody UserChallengeDTO userChallengeDTO, @Param("ownerId") Long ownerId) {
+
+        return userChallengeService.rateUser(userChallengeDTO, ownerId);
     }
 
 }
