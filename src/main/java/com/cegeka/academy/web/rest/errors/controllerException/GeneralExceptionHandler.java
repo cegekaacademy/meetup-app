@@ -1,8 +1,11 @@
 package com.cegeka.academy.web.rest.errors.controllerException;
 
+import com.cegeka.academy.service.invitation.InvitationServiceImpl;
 import com.cegeka.academy.web.rest.errors.ExpiredObjectException;
 import com.cegeka.academy.web.rest.errors.NotFoundException;
 import com.cegeka.academy.web.rest.errors.UnauthorizedUserException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
@@ -19,23 +22,31 @@ import java.util.List;
 @ControllerAdvice
 public class GeneralExceptionHandler extends HttpResponseExceptionHandler {
 
+    private Logger logger = LoggerFactory.getLogger(InvitationServiceImpl.class);
+
+
     @ExceptionHandler(value = ExpiredObjectException.class)
     public ResponseEntity<ErrorResponse> handleExpiredEvent(ExpiredObjectException e) {
         List<String> detailsList = new ArrayList<>();
         detailsList.add("ErrorMessage: " + e.getMessage());
-        detailsList.add("ErrorCause: " + e.getCause());
+
+        logger.info(e.getCause() + "");
+
         return getErrorResponseEntity(
                 ErrorCode.EVENT_EXPIRED.getMessage(),
                 ErrorCode.EVENT_EXPIRED.getCode(),
                 detailsList,
                 HttpStatus.GONE);
+
     }
 
     @ExceptionHandler(value = UnauthorizedUserException.class)
     public ResponseEntity<ErrorResponse> handleUnauthorizedAccess(UnauthorizedUserException e) {
         List<String> detailsList = new ArrayList<>();
         detailsList.add("ErrorMessage: " + e.getMessage());
-        detailsList.add("ErrorCause: " + e.getCause());
+
+        logger.info(e.getCause() + "");
+
         return getErrorResponseEntity(
                 ErrorCode.UNAUTHORIZED_ACCESS.getMessage(),
                 ErrorCode.UNAUTHORIZED_ACCESS.getCode(),
@@ -47,7 +58,9 @@ public class GeneralExceptionHandler extends HttpResponseExceptionHandler {
     public ResponseEntity<ErrorResponse> handleNotFoundException(NotFoundException e) {
         List<String> detailsList = new ArrayList<>();
         detailsList.add("ErrorMessage: " + e.getMessage());
-        detailsList.add("ErrorCause: " + e.getCause());
+
+        logger.info(e.getCause() + "");
+
         return getErrorResponseEntity(
                 ErrorCode.NOT_FOUND.getMessage(),
                 ErrorCode.NOT_FOUND.getCode(),
@@ -65,6 +78,9 @@ public class GeneralExceptionHandler extends HttpResponseExceptionHandler {
             detailsList.add("errorMessage: " + errorMessage);
 
         });
+
+        logger.info(ex.getCause() + "");
+
         return getErrorResponseEntity(
                 ErrorCode.INVALID_ARGUMENT.getMessage(),
                 ErrorCode.INVALID_ARGUMENT.getCode(),
