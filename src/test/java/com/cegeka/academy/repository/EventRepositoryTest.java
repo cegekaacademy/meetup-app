@@ -107,5 +107,31 @@ public class EventRepositoryTest {
 
     }
 
+    @Test
+    public void testFindAllByOwnerId(){
+
+        for (int i = 0; i < 3; i++) {
+            User owner = new User();
+            owner.setId(1L);
+            Event event = new Event();
+            event.setDescription("Ana are mere!");
+            event.setId(1234L);
+            event.setOwner(owner);
+            event.setName("KFC Krushers Party");
+            if (i % 2 == 0)
+                event.setPublic(true);
+            else
+                event.setPublic(false);
+            eventRepository.save(event);
+        }
+        User user = new User();
+        user.setId(2L);
+        Event event = new Event();
+        event.setOwner(user);
+        eventRepository.save(event);
+
+        List<Event> events = eventRepository.findAllByOwner_Id(1L);
+        assertThat(events.size()).isEqualTo(3);
+    }
 
 }

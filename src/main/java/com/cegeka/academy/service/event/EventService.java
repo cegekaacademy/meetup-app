@@ -8,7 +8,7 @@ import java.util.Optional;
 
 public interface EventService {
 
-    public List<Event> getAllPubicEvents();
+    List<Event> getAllPubicEvents();
 
     List<Event> getAllByUser(User owner);
 
@@ -19,4 +19,6 @@ public interface EventService {
     void updateEvent(Event event);
 
     void deleteEventById(Long id);
+
+    List<Event> findAllEventsByOwnerID(Long id);
 }

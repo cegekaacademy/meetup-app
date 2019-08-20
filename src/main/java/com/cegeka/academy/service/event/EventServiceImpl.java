@@ -66,4 +66,8 @@ public class EventServiceImpl implements EventService {
         eventRepository.findById(id).ifPresent(eventRepository::delete);
     }
 
+    @Override
+    public List<Event> findAllEventsByOwnerID(Long id) {
+        return eventRepository.findAllByOwner_Id(id);
+    }
 }

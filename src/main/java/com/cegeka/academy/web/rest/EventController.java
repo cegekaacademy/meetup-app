@@ -31,10 +31,9 @@ public class EventController {
         eventService.createEvent(event);
     }
 
-    @PutMapping
-    public void updateEvent(@RequestBody Event event) {
-        if (validationAccessService.verifyUserAccessForEventEntity(event.getId()))
-            eventService.updateEvent(event);
+    @GetMapping()
+    public List<Event> getEventsByOwnerId(@RequestParam Long ownerId) {
+        return eventService.findAllEventsByOwnerID(ownerId);
     }
 
     @DeleteMapping("/{id}")
