@@ -28,9 +28,6 @@ public class ChallengeServiceImp implements ChallengeService {
     private ChallengeRepository challengeRepository;
 
     @Autowired
-    private GroupUserRoleRepository groupUserRoleRepository;
-
-    @Autowired
     private UserChallengeRepository userChallengeRepository;
 
     @Override
