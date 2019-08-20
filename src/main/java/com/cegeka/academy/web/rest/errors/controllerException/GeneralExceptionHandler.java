@@ -30,14 +30,13 @@ public class GeneralExceptionHandler extends HttpResponseExceptionHandler {
         List<String> detailsList = new ArrayList<>();
         detailsList.add("ErrorMessage: " + e.getMessage());
 
-        logger.info(e.getCause() + "");
+        logger.info(e + "");
 
         return getErrorResponseEntity(
                 ErrorCode.EVENT_EXPIRED.getMessage(),
                 ErrorCode.EVENT_EXPIRED.getCode(),
                 detailsList,
                 HttpStatus.GONE);
-
     }
 
     @ExceptionHandler(value = UnauthorizedUserException.class)
@@ -45,7 +44,7 @@ public class GeneralExceptionHandler extends HttpResponseExceptionHandler {
         List<String> detailsList = new ArrayList<>();
         detailsList.add("ErrorMessage: " + e.getMessage());
 
-        logger.info(e.getCause() + "");
+        logger.info(e + "");
 
         return getErrorResponseEntity(
                 ErrorCode.UNAUTHORIZED_ACCESS.getMessage(),
@@ -59,7 +58,7 @@ public class GeneralExceptionHandler extends HttpResponseExceptionHandler {
         List<String> detailsList = new ArrayList<>();
         detailsList.add("ErrorMessage: " + e.getMessage());
 
-        logger.info(e.getCause() + "");
+        logger.info(e + "");
 
         return getErrorResponseEntity(
                 ErrorCode.NOT_FOUND.getMessage(),
@@ -79,7 +78,7 @@ public class GeneralExceptionHandler extends HttpResponseExceptionHandler {
 
         });
 
-        logger.info(ex.getCause() + "");
+        logger.info(ex + "");
 
         return getErrorResponseEntity(
                 ErrorCode.INVALID_ARGUMENT.getMessage(),
