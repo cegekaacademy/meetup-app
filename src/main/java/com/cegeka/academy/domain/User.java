@@ -114,7 +114,6 @@ public class User extends AbstractAuditingEntity implements Serializable {
     private Set<Interest> userInterests;
 
 
-
     public Long getId() {
         return id;
     }
