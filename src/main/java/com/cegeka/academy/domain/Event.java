@@ -4,6 +4,8 @@ package com.cegeka.academy.domain;
 import javax.persistence.*;
 import javax.validation.constraints.Size;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table
@@ -37,8 +39,12 @@ public class Event {
     @Column(name = "is_public")
     private Boolean isPublic;
 
-    @Column(name = "address_id")
-    private Long addressId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "address_id", referencedColumnName = "id")
+    private Address addressId;
+
+    @ManyToMany(mappedBy = "events")
+    private Set<User> users = new HashSet<>();
 
     public Long getId() {
         return id;
@@ -104,12 +110,38 @@ public class Event {
         isPublic = aPublic;
     }
 
-    public Long getAddressId() {
+    public Address getAddressId() {
         return addressId;
     }
 
-    public void setAddressId(Long addressId) {
+    public void setAddressId(Address addressId) {
         this.addressId = addressId;
+    }
+
+    public Set<User> getUsers() {
+        return users;
+    }
+
+    public void setUsers(Set<User> users) {
+        this.users = users;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Event event = (Event) o;
+
+        if (!id.equals(event.id)) return false;
+        return name.equals(event.name);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = id.hashCode();
+        result = 31 * result + name.hashCode();
+        return result;
     }
 
     @Override
