@@ -1,10 +1,14 @@
 package com.cegeka.academy.service.dto;
 
+
+import javax.validation.constraints.NotNull;
+
 public class ChallengeAnswerDTO {
 
     private Long id;
     private String videoAt;
     private String imagePath;
+    @NotNull(message = "Answer must not be null.")
     private String answer;
 
     public Long getId() {
