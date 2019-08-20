@@ -5,7 +5,6 @@ import com.cegeka.academy.domain.UserChallenge;
 import com.cegeka.academy.repository.ChallengeRepository;
 import com.cegeka.academy.repository.GroupUserRoleRepository;
 import com.cegeka.academy.repository.UserChallengeRepository;
-import com.cegeka.academy.web.rest.errors.EmptyChallengeSetException;
 import com.cegeka.academy.web.rest.errors.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.cegeka.academy.service.dto.ChallengeDTO;
@@ -17,7 +16,10 @@ import org.slf4j.LoggerFactory;
 
 import javax.transaction.Transactional;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -53,19 +55,19 @@ public class ChallengeServiceImp implements ChallengeService {
     }
 
     @Override
-    public Set<ChallengeDTO> getChallengesByUserId(long id) throws EmptyChallengeSetException {
+    public Set<ChallengeDTO> getChallengesByUserId(long id) throws NotFoundException {
 
-        Set<ChallengeDTO> userChallengesSet = new LinkedHashSet<>();
+        List<UserChallenge> userChallengesList = userChallengeRepository.findAllByUserId(id);
 
-        for(UserChallenge userChallenge : userChallengeRepository.findAllByUserId(id))
-        {
+        LinkedHashSet userChallengesSet = userChallengesList.stream().map(userChallenge -> {
             Challenge challenge = userChallenge.getChallenge();
-            userChallengesSet.add(ChallengeMapper.convertChallengeToChallengeDTO(challenge));
-        }
+            return ChallengeMapper.convertChallengeToChallengeDTO(challenge);
+        }).collect(Collectors.toCollection(LinkedHashSet::new));
+
 
         if(userChallengesSet.size() == 0)
         {
-            throw new EmptyChallengeSetException().setMessage("User-ul cu id-ul " + id + "nu a fost asociat cu nicio provocare");
+            throw new NotFoundException().setMessage("User-ul cu id-ul " + id + "nu a fost asociat cu nicio provocare");
         }
 
         return userChallengesSet;

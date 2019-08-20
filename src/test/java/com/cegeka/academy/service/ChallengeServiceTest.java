@@ -9,14 +9,12 @@ import com.cegeka.academy.service.dto.ChallengeDTO;
 import com.cegeka.academy.service.dto.UserDTO;
 import com.cegeka.academy.service.mapper.ChallengeMapper;
 import com.cegeka.academy.service.mapper.UserMapper;
-import com.cegeka.academy.web.rest.errors.EmptyChallengeSetException;
 import com.cegeka.academy.web.rest.errors.NotFoundException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -162,11 +160,11 @@ public class ChallengeServiceTest {
     @Test
     void EmptyChallengeSetException()
     {
-        Assertions.assertThrows(EmptyChallengeSetException.class,()->{ challengeService.getChallengesByUserId(0); });
+        Assertions.assertThrows(NotFoundException.class,()->{ challengeService.getChallengesByUserId(0); });
     }
 
     @Test
-    void getChallengesByUserIdTest() throws EmptyChallengeSetException {
+    void getChallengesByUserIdTest() throws NotFoundException {
 
         invitationRepository.save(invitation);
         challengeRepository.save(challenge);

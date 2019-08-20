@@ -1,7 +1,6 @@
 package com.cegeka.academy.web.rest;
 
 import com.cegeka.academy.service.challenge.ChallengeService;
-import com.cegeka.academy.web.rest.errors.EmptyChallengeSetException;
 import com.cegeka.academy.web.rest.errors.NotFoundException;
 import org.springframework.web.bind.annotation.*;
 import com.cegeka.academy.service.dto.ChallengeDTO;
@@ -26,7 +25,7 @@ public class ChallengeController {
     }
 
     @GetMapping(path = "/user/{id}")
-    public Set<ChallengeDTO> getUserChallengesByUserId(@PathVariable long id) throws EmptyChallengeSetException {
+    public Set<ChallengeDTO> getUserChallengesByUserId(@PathVariable long id) throws NotFoundException {
         return challengeService.getChallengesByUserId(id);
     }
 

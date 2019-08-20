@@ -1,7 +1,6 @@
 package com.cegeka.academy.service.challenge;
 
 import com.cegeka.academy.service.dto.ChallengeDTO;
-import com.cegeka.academy.web.rest.errors.EmptyChallengeSetException;
 import com.cegeka.academy.web.rest.errors.NotFoundException;
 
 import java.util.Set;
@@ -11,5 +10,5 @@ public interface ChallengeService {
 
     void saveChallenge(ChallengeDTO challenge);
 
-    Set<ChallengeDTO> getChallengesByUserId(long id) throws EmptyChallengeSetException;
+    Set<ChallengeDTO> getChallengesByUserId(long id) throws NotFoundException;
 }
