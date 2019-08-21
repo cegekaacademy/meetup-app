@@ -48,6 +48,7 @@ public class ChallengeServiceImp implements ChallengeService {
         Challenge challenge = ChallengeMapper.convertChallengeDTOToChallenge(challengeDTO);
 
         logger.info("Challenge with id: " + challengeRepository.save(challenge).getId() + " has been saved");
+        
     }
 
     @Override
@@ -55,10 +56,9 @@ public class ChallengeServiceImp implements ChallengeService {
 
         List<UserChallenge> userChallengesList = userChallengeRepository.findAllByUserId(id);
 
-        LinkedHashSet userChallengesSet = userChallengesList.stream().map(userChallenge -> {
-            Challenge challenge = userChallenge.getChallenge();
-            return ChallengeMapper.convertChallengeToChallengeDTO(challenge);
-        }).collect(Collectors.toCollection(LinkedHashSet::new));
+        LinkedHashSet userChallengesSet = userChallengesList.stream()
+                .map(userChallenge -> getChallengeDTOFromUserChallenge(userChallenge))
+                .collect(Collectors.toCollection(LinkedHashSet::new));
 
 
         if(userChallengesSet.size() == 0)
@@ -69,5 +69,10 @@ public class ChallengeServiceImp implements ChallengeService {
         return userChallengesSet;
     }
 
+    private ChallengeDTO getChallengeDTOFromUserChallenge(UserChallenge userChallenge)
+    {
+        Challenge challenge = userChallenge.getChallenge();
+        return ChallengeMapper.convertChallengeToChallengeDTO(challenge);
+    }
 
 }
