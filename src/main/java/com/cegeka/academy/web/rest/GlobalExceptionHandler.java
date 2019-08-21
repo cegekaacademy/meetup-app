@@ -15,7 +15,7 @@ import java.util.List;
 public class GlobalExceptionHandler{
 
     @ExceptionHandler(value = NotFoundException.class)
-    public ResponseEntity<String> handle(NotFoundException exception)
+    public ResponseEntity<String> handleNotFoundException(NotFoundException exception)
     {
         return new ResponseEntity<String>(exception.getMessage(), HttpStatus.NOT_FOUND);
     }

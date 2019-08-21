@@ -32,6 +32,30 @@ public class ChallengeMapper {
         return challenge;
     }
 
+    public static ChallengeDTO convertChallengeToChallengeDTO(Challenge challenge)
+    {
+        if(challenge == null) {
+
+            return null;
+
+        } else {
+
+            ChallengeDTO challengeDTO = new ChallengeDTO();
+
+            challengeDTO.setId(challenge.getId());
+            challengeDTO.setChallengeCategory(convertChallengeCategoryToChallengeCategoryDTO(challenge.getChallengeCategory()));
+            challengeDTO.setCreator(new UserMapper().userToUserDTO(challenge.getCreator()));
+            challengeDTO.setDescription(challenge.getDescription());
+            challengeDTO.setStartDate(challenge.getStartDate());
+            challengeDTO.setEndDate(challenge.getEndDate());
+            challengeDTO.setPoints(challenge.getPoints());
+            challengeDTO.setStatus(challenge.getStatus());
+
+            return challengeDTO;
+        }
+
+    }
+
     public static ChallengeCategory convertChallengeCategoryDTOToChallengeCategory(ChallengeCategoryDTO challengeCategoryDTO){
 
         if(challengeCategoryDTO == null){
