@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -67,6 +68,19 @@ public class ChallengeServiceImp implements ChallengeService {
         }
 
         return userChallengesSet;
+    }
+
+    @Override
+    public ChallengeDTO getChallengeById(long id) throws NotFoundException {
+
+        Optional<Challenge> challengeOptional = challengeRepository.findById(id);
+
+        if(!challengeOptional.isPresent())
+            throw new NotFoundException().setMessage("Nu exista provocarea cu id-ul: " + id);
+
+        Challenge challenge = challengeOptional.get();
+
+        return ChallengeMapper.convertChallengeToChallengeDTO(challenge);
     }
 
     private ChallengeDTO getChallengeDTOFromUserChallenge(UserChallenge userChallenge)
