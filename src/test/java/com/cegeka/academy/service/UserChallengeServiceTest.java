@@ -3,9 +3,12 @@ package com.cegeka.academy.service;
 import com.cegeka.academy.AcademyProjectApp;
 import com.cegeka.academy.domain.*;
 import com.cegeka.academy.repository.*;
-import com.cegeka.academy.service.dto.UserChallengeDTO;
-import com.cegeka.academy.service.userChallenge.UserChallengeService;
+import com.cegeka.academy.service.dto.*;
+import com.cegeka.academy.service.mapper.ChallengeMapper;
+import com.cegeka.academy.service.mapper.InvitationMapper;
 import com.cegeka.academy.service.mapper.UserChallengeMapper;
+import com.cegeka.academy.service.mapper.UserMapper;
+import com.cegeka.academy.service.userChallenge.UserChallengeService;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -45,6 +48,7 @@ public class UserChallengeServiceTest  {
     private User user;
     private Challenge challenge;
     private ChallengeCategory challengeCategory;
+    private UserChallengeDTO userChallengeDTO;
     private UserChallenge userChallenge;
     private User usedUser;
 
@@ -87,7 +91,6 @@ public class UserChallengeServiceTest  {
         challenge.setChallengeCategory(challengeCategoryRepository.findAll().get(0));
         challengeRepository.save(challenge);
 
-
         userChallenge = new UserChallenge();
         userChallenge.setUser(usedUser);
         userChallenge.setInvitation(invitationRepository.findAll().get(0));
@@ -97,6 +100,8 @@ public class UserChallengeServiceTest  {
         userChallenge.setStartTime(new Date());
         userChallenge.setEndTime(new Date());
         userChallengeRepository.save(userChallenge);
+
+        userChallengeDTO = UserChallengeMapper.convertUserChallengeToUserChallengeDTO(userChallenge);
 
     }
 
@@ -140,5 +145,13 @@ public class UserChallengeServiceTest  {
 
     }
 
+    @Test
+    public void testRateUserByOwner() {
+        userChallengeDTO.setPoints(49);
+        challenge.getCreator().setId((long)4);
+        userChallengeDTO.getUser().setId((long)3);
+        assertThat(userChallengeDTO.getPoints() ==
+                userChallengeService.rateUser(userChallengeDTO, (long)4, (long)1).getPoints());
+    }
 
 }

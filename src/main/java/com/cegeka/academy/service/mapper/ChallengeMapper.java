@@ -69,4 +69,27 @@ public class ChallengeMapper {
     }
 
 
+    public static ChallengeDTO convertChallengeToChallengeDTO(Challenge challenge) {
+        ChallengeDTO challengeDTO = new ChallengeDTO();
+        challengeDTO.setEndDate(challenge.getEndDate());
+        challengeDTO.setStartDate(challenge.getStartDate());
+        challengeDTO.setDescription(challenge.getDescription());
+        challengeDTO.setPoints(challenge.getPoints());
+        challengeDTO.setStatus(challenge.getStatus());
+        challengeDTO.setEndDate(challenge.getEndDate());
+
+        if (challenge.getCreator() != null) {
+
+            challengeDTO.setCreator(new UserMapper().userToUserDTO(challenge.getCreator()));
+        }
+
+        if(challenge.getChallengeCategory() != null) {
+
+            challengeDTO.setChallengeCategory(
+                    convertChallengeCategoryToChallengeCategoryDTO(
+                            challenge.getChallengeCategory()));
+        }
+
+        return challengeDTO;
+    }
 }

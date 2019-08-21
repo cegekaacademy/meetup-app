@@ -33,20 +33,19 @@ public class UserChallengeServiceImpl implements UserChallengeService {
     }
 
     @Override
-    public String rateUser(UserChallengeDTO userChallengeDTO, Long ownerId) {
+    public UserChallenge rateUser(UserChallengeDTO userChallengeDTO, Long ownerId, Long userChallengeId) {
 
-        System.out.println(userChallengeDTO.toString());
+        userChallengeDTO.setId(userChallengeId);
+        UserChallenge userChallenge = userChallengeRepository.findById(userChallengeDTO.getId()).get();
+        userChallenge.setPoints(userChallengeDTO.getPoints());
 
-        UserChallenge userChallenge = UserChallengeMapper.convertUserChallengeDTOToUserChallenge(userChallengeDTO);
         Challenge challenge = challengeRepository.findById(userChallenge.getChallenge().getId()).get();
 
-        System.out.println(userChallenge.toString());
-
-        if(challenge.getCreator().getId() == ownerId) {
-            System.out.println("OKE");
-            userChallengeRepository.saveAndFlush(userChallenge);
+        if(challenge.getCreator().getId().equals(ownerId)) {
+            return userChallengeRepository.save(userChallenge);
+        } else {
+            return null;
         }
 
-        return "User with id " + userChallenge.getUser().getId() + " has been rated with " + userChallenge.getPoints() + " points by the owner of this challenge";
     }
 }

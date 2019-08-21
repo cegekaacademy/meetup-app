@@ -1,5 +1,6 @@
 package com.cegeka.academy.web.rest;
 
+import com.cegeka.academy.domain.UserChallenge;
 import com.cegeka.academy.service.dto.UserChallengeDTO;
 import com.cegeka.academy.service.userChallenge.UserChallengeService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,9 +24,10 @@ public class UserChallengeController {
     }
 
     @PutMapping(value = "/rate")
-    public String rateUser(@RequestBody UserChallengeDTO userChallengeDTO, @Param("ownerId") Long ownerId) {
+    public UserChallenge rateUser(@RequestBody UserChallengeDTO userChallengeDTO, @Param("ownerId") Long ownerId,
+                                  @Param("userChallengeId") Long userChallengeId) {
 
-        return userChallengeService.rateUser(userChallengeDTO, ownerId);
+        return userChallengeService.rateUser(userChallengeDTO, ownerId, userChallengeId);
     }
 
 }
