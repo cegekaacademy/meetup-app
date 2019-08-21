@@ -14,4 +14,8 @@ public interface EventRepository extends JpaRepository<Event, Long> {
     List<Event> findAllByIsPublicIsTrue();
 
     List<Event> findByUsers_id(Long userId);
+
+    List<Event> findAllByCategories_id(Long categoryId);
+
+
 }

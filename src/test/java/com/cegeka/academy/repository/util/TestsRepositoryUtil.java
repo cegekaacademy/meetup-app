@@ -1,9 +1,6 @@
 package com.cegeka.academy.repository.util;
 
-import com.cegeka.academy.domain.Address;
-import com.cegeka.academy.domain.Event;
-import com.cegeka.academy.domain.Invitation;
-import com.cegeka.academy.domain.User;
+import com.cegeka.academy.domain.*;
 
 public class TestsRepositoryUtil {
 
@@ -33,6 +30,12 @@ public class TestsRepositoryUtil {
         user.setLogin(login);
         user.setPassword(password);
         return user;
+    }
+    public static Category createCategory(String name,String description){
+        Category category=new Category();
+        category.setName(name);
+        category.setDescription(description);
+        return category;
     }
 
     public static Invitation createInvitation(String status, String description, Event event, User user) {

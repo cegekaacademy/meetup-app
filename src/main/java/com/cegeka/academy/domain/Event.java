@@ -46,6 +46,13 @@ public class Event {
     @ManyToMany(mappedBy = "events")
     private Set<User> users = new HashSet<>();
 
+    @ManyToMany
+    @JoinTable(
+            name = "event_category",
+            joinColumns = @JoinColumn(name = "event_id"),
+            inverseJoinColumns = @JoinColumn(name = "category_id"))
+    private Set<Category>categories=new HashSet<>();
+
     public Long getId() {
         return id;
     }
@@ -124,6 +131,14 @@ public class Event {
 
     public void setUsers(Set<User> users) {
         this.users = users;
+    }
+
+    public Set<Category> getCategories() {
+        return categories;
+    }
+
+    public void setCategories(Set<Category> categories) {
+        this.categories = categories;
     }
 
     @Override
