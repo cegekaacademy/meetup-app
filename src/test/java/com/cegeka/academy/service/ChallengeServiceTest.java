@@ -106,7 +106,7 @@ public class ChallengeServiceTest {
 
         invitation = new Invitation();
         invitation.setDescription("invitationDescription");
-        invitation.setStatus("invitationStatus");
+        invitation.setStatus("invitationStat");
         invitation.setUser(user);
         invitation.setEvent(null);
 

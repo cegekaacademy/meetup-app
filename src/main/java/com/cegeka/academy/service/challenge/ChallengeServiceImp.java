@@ -75,8 +75,7 @@ public class ChallengeServiceImp implements ChallengeService {
 
         Optional<Challenge> challengeOptional = challengeRepository.findById(id);
 
-        if(!challengeOptional.isPresent())
-            throw new NotFoundException().setMessage("Nu exista provocarea cu id-ul: " + id);
+        challengeOptional.orElseThrow(NotFoundException::new);
 
         Challenge challenge = challengeOptional.get();
 
