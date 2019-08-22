@@ -59,31 +59,7 @@ public class EventRepositoryTest {
         List<Event>events=eventRepository.findAllByCategories_id(category1.getId());
         assertThat(events.size()).isEqualTo(1);
     }
-    @Test
-    public void testFindAllByEventId()
-    {
-        User user = TestsRepositoryUtil.createUser("login", "anaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaana");
-        userRepository.save(user);
-        Address address = TestsRepositoryUtil.createAddress("Romania", "Bucuresti", "Splai", "333", "Casa", "Casa magica");
-        addressRepository.saveAndFlush(address);
-        Event event = TestsRepositoryUtil.createEvent("Ana are mere!", "KFC Krushers Party", true, address, user);
-        eventRepository.save(event);
-        Category category1=TestsRepositoryUtil.createCategory("Ana","description");
-        categoryRepository.save(category1);
-        event.getCategories().add(category1);
-        eventRepository.save(event);
-        Category category2=TestsRepositoryUtil.createCategory("Dana","description");
-        categoryRepository.save(category2);
-        event.getCategories().add(category2);
-        eventRepository.save(event);
-        Category category3=TestsRepositoryUtil.createCategory("Doriana","description");
-        categoryRepository.save(category3);
-        event.getCategories().add(category3);
-        eventRepository.save(event);
-        List<Category>categories=categoryRepository.findAllByEvents_id(event.getId());
-        assertThat(categories.size()).isEqualTo(3);
 
-    }
 
     @Test
     public void testFindAllByIsPublicIsTrue() {
