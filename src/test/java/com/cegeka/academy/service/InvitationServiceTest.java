@@ -140,4 +140,5 @@ public class InvitationServiceTest {
         assertThat(list.get(0).getEvent()).isEqualTo(invitation.getEvent());
     }
 
+
 }
