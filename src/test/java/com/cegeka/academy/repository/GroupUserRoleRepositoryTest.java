@@ -49,6 +49,14 @@ public class GroupUserRoleRepositoryTest {
     }
 
     @Test
+    public void testSave() {
+
+        List<GroupUserRole> list = groupUserRoleRepository.findAll();
+        assertThat(list.size()).isEqualTo(2);
+        assertThat(list.get(0).getGroup()).isEqualTo(groupRepository.findAll().get(0));
+    }
+
+    @Test
     public void testFindAllByGroupId() {
 
         Long idGroup = groupRepository.findAll().get(0).getId();
