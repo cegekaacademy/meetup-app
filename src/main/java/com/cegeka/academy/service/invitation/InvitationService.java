@@ -12,4 +12,10 @@ public interface InvitationService {
     void updateInvitation(Invitation invitation);
     void deleteInvitationById(Long id);
 
+    List<InvitationDTO> getPendingInvitationsByUserId(Long userId);
+
+    void acceptInvitation(Invitation invitation);
+
+    void rejectInvitation(Invitation invitation);
+
 }

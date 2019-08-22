@@ -5,6 +5,7 @@ import com.cegeka.academy.domain.Address;
 import com.cegeka.academy.domain.Event;
 import com.cegeka.academy.domain.Invitation;
 import com.cegeka.academy.domain.User;
+import com.cegeka.academy.domain.enums.InvitationStatus;
 import com.cegeka.academy.repository.AddressRepository;
 import com.cegeka.academy.repository.EventRepository;
 import com.cegeka.academy.repository.InvitationRepository;
@@ -38,7 +39,7 @@ public class InvitationServiceTest {
 
     @Autowired
     private InvitationRepository invitationRepository;
-  
+
     @Autowired
     private AddressRepository addressRepository;
 
@@ -56,7 +57,7 @@ public class InvitationServiceTest {
         addressRepository.saveAndFlush(address);
         event = TestsRepositoryUtil.createEvent("Ana are mere!", "KFC Krushers Party", true, address, user);
         eventRepository.saveAndFlush(event);
-        invitation = TestsRepositoryUtil.createInvitation("pending", "ana are mere", event, user);
+        invitation = TestsRepositoryUtil.createInvitation(InvitationStatus.PENDING.name(), "ana are mere", event, user);
         invitationService.saveInvitation(invitation);
     }
 
@@ -67,6 +68,7 @@ public class InvitationServiceTest {
         List<InvitationDTO> list = invitationService.getAllInvitations();
         assertThat(list.size()).isEqualTo(1);
         assertThat(list.get(0).getStatus()).isEqualTo(invitation.getStatus());
+        assertThat(list.get(0).getStatus()).isEqualTo(InvitationStatus.PENDING.name());
         assertThat(list.get(0).getDescription()).isEqualTo(invitation.getDescription());
         assertThat(list.get(0).getUserName()).isEqualTo(invitation.getUser().getFirstName() + " " + invitation.getUser().getLastName());
         assertThat(list.get(0).getEventName()).isEqualTo(invitation.getEvent().getName());
@@ -76,7 +78,7 @@ public class InvitationServiceTest {
     @Transactional
     public void assertThatUpdateInvitationIsWorking() {
         List<Invitation> list = invitationRepository.findAll();
-        invitation.setStatus("am modificat status-ul");
+        invitation.setStatus(InvitationStatus.ACCEPTED.name());
         invitation.setId(list.get(0).getId());
         invitationService.updateInvitation(invitation);
         System.out.println(invitation.getId() + "");
@@ -104,6 +106,38 @@ public class InvitationServiceTest {
         invitationService.deleteInvitationById(100L);
         List<InvitationDTO> list = invitationService.getAllInvitations();
         assertThat(list.size()).isEqualTo(1);
+    }
+
+    @Test
+    public void assertThatGetPendingInvitationsByUserIdIsWorking() {
+        List<InvitationDTO> pendingListUser = invitationService.getPendingInvitationsByUserId(user.getId());
+        assertThat(pendingListUser.size()).isEqualTo(1);
+
+    }
+
+    @Test
+    public void assertThatAcceptInvitationIsWorking() {
+        List<Invitation> list = invitationRepository.findAll();
+        invitationService.acceptInvitation(invitation);
+        assertThat(list.size()).isEqualTo(1);
+        assertThat(list.get(0).getStatus()).isEqualTo(invitation.getStatus());
+        assertThat(list.get(0).getStatus()).isEqualTo(InvitationStatus.ACCEPTED.name());
+        assertThat(list.get(0).getDescription()).isEqualTo(invitation.getDescription());
+        assertThat(list.get(0).getUser()).isEqualTo(invitation.getUser());
+        assertThat(list.get(0).getEvent()).isEqualTo(invitation.getEvent());
+    }
+
+    @Test
+    public void assertThatRejectInvitationIsWorking() {
+        List<Invitation> list = invitationRepository.findAll();
+        invitation.setStatus(InvitationStatus.PENDING.name());
+        invitationService.rejectInvitation(invitation);
+        assertThat(list.size()).isEqualTo(1);
+        assertThat(list.get(0).getStatus()).isEqualTo(invitation.getStatus());
+        assertThat(list.get(0).getStatus()).isEqualTo(InvitationStatus.REJECTED.name());
+        assertThat(list.get(0).getDescription()).isEqualTo(invitation.getDescription());
+        assertThat(list.get(0).getUser()).isEqualTo(invitation.getUser());
+        assertThat(list.get(0).getEvent()).isEqualTo(invitation.getEvent());
     }
 
 

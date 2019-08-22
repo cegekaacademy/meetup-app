@@ -10,4 +10,6 @@ import java.util.List;
 public interface InvitationRepository extends JpaRepository<Invitation, Long> {
 
      List<Invitation> findByStatus(String status);
+
+     List<Invitation> findByUser_IdAndStatusIgnoreCase(Long userId, String status);
 }
