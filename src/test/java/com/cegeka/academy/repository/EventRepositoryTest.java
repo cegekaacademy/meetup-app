@@ -44,8 +44,7 @@ public class EventRepositoryTest {
 
         for (int i = 0; i < 5; i++) {
 
-            User user = TestsRepositoryUtil.createUser("abcd" + i, "anaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaana");
-
+            User user = TestsRepositoryUtil.createUser("login" + i, "anaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaana");
             userRepository.save(user);
             Address address = TestsRepositoryUtil.createAddress("Romania", "Bucuresti", "Splai", "333", "Casa", "Casa magica");
             addressRepository.saveAndFlush(address);

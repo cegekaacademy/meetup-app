@@ -26,4 +26,9 @@
 
     </changeSet>
 
+
+    <changeSet id="10292008193502" author="bianca">
+        <renameColumn tableName="Category" oldColumnName="category_id" newColumnName="id" columnDataType="bigint"></renameColumn>
+    </changeSet>
+
 </databaseChangeLog>
