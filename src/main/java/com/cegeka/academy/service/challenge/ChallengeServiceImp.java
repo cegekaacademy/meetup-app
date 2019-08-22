@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -77,13 +78,13 @@ public class ChallengeServiceImp implements ChallengeService {
 
         List<Challenge> challenges = challengeRepository.findAllByCreatorId(creatorId);
 
-        if(challenges == null || challenges.size() == 0){
+        List<ChallengeDTO> challengeDTOList = challenges.stream().map(challenge -> ChallengeMapper.convertChallengeToChallengeDTO(challenge)).collect(Collectors.toList());
 
-            throw new NotFoundException().setMessage("List is empty");
+        Optional<List<ChallengeDTO>> opt = challengeDTOList.isEmpty() ? Optional.empty() : Optional.of(challengeDTOList);
 
-        }
+        opt.orElseThrow(()-> new NotFoundException().setMessage("List is empty."));
 
-        return challenges.stream().map(challenge -> ChallengeMapper.convertChallengeToChallengeDTO(challenge)).collect(Collectors.toList());
+        return opt.get();
 
     }
 

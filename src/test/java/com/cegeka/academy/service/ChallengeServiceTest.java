@@ -87,8 +87,7 @@ public class ChallengeServiceTest {
         challengeDTO.setStatus("status");
 
         challenge = new Challenge();
-
-        challenge.setCreator(userRepository.findAll().get(0));
+        challenge.setCreator(user);
         challenge.setStartDate(new Date(System.currentTimeMillis()));
         challenge.setEndDate(new Date(System.currentTimeMillis()));
         challenge.setStatus("Activa");
@@ -185,7 +184,7 @@ public class ChallengeServiceTest {
         Challenge savedChallenge = challengeRepository.save(challenge);
         ChallengeDTO savedChallengeDTO = ChallengeMapper.convertChallengeToChallengeDTO(savedChallenge);
 
-        List<ChallengeDTO> challengeDTOList = challengeService.getChallengesByCreatorId(userRepository.findAll().get(0).getId());
+        List<ChallengeDTO> challengeDTOList = challengeService.getChallengesByCreatorId(savedChallengeDTO.getCreator().getId());
 
         assertThat(challengeDTOList.size()).isEqualTo(1);
         assertThat(challengeDTOList.get(0)).isEqualTo(savedChallengeDTO);
