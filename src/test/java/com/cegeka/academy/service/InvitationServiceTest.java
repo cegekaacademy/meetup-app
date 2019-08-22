@@ -45,8 +45,8 @@ public class InvitationServiceTest {
     private AddressRepository addressRepository;
 
     private User user;
-    private Event event;
-    private Invitation invitation,invitation2;
+    private Event event,event2;
+    private Invitation invitation,invitation2,invitation3;
     private Address address;
 
     @BeforeEach
@@ -64,21 +64,6 @@ public class InvitationServiceTest {
     }
     @Test
     @Transactional
-    public void assertThatSaveInvitationAndModifyEventIsWorking() {
-        assertThat(event.getPendingInvitations().size()).isEqualTo(1);
-
-    }
-    @Test
-    @Transactional
-    public void assertThatUpdateInvitationAndModifyEventInvitationListIsWorking() {
-        invitation.setStatus("accepted");
-        invitationService.updateInvitation(invitation);
-        assertThat(event.getPendingInvitations().size()).isEqualTo(0);
-
-
-    }
-    @Test
-    @Transactional
     public void assertThatSaveInvitationIsWorking() {
 
         List<InvitationDTO> list = invitationService.getAllInvitations();
@@ -89,7 +74,28 @@ public class InvitationServiceTest {
         assertThat(list.get(0).getUserName()).isEqualTo(invitation.getUser().getFirstName() + " " + invitation.getUser().getLastName());
         assertThat(list.get(0).getEventName()).isEqualTo(invitation.getEvent().getName());
     }
+    @Test
+    @Transactional
+    public void assertThatSaveInvitationToListIsWorking() {
 
+        assertThat(event.getPendingInvitations().size()).isEqualTo(1);
+        invitation2 = TestsRepositoryUtil.createInvitation(InvitationStatus.PENDING.name(), "ana are mere", event, user);
+        invitationService.saveInvitation(invitation2);
+        assertThat(event.getPendingInvitations().size()).isEqualTo(2);
+
+    }
+    @Test
+    @Transactional
+    public void assertThatSaveUserToParticipationListAfterAcceptInvitationIsWorking() {
+        event2 = TestsRepositoryUtil.createEvent("Dana Dana!", "KFC Krushers Party", true, address, user);
+        eventRepository.save(event2);
+        invitation3 = TestsRepositoryUtil.createInvitation(InvitationStatus.PENDING.name(), "ana are mere", event2, user);
+        invitationService.saveInvitation(invitation3);
+        invitationService.acceptInvitation(invitation3);
+        assertThat(event2.getUsers().size()).isEqualTo(1);
+        assertThat(event.getUsers().size()).isEqualTo(0);
+
+    }
     @Test
     @Transactional
     public void assertThatUpdateInvitationIsWorking() {
@@ -141,6 +147,8 @@ public class InvitationServiceTest {
         assertThat(list.get(0).getDescription()).isEqualTo(invitation.getDescription());
         assertThat(list.get(0).getUser()).isEqualTo(invitation.getUser());
         assertThat(list.get(0).getEvent()).isEqualTo(invitation.getEvent());
+        assertThat(event.getPendingInvitations().size()).isEqualTo(0);
+        assertThat(event.getUsers().size()).isEqualTo(1);
     }
 
     @Test

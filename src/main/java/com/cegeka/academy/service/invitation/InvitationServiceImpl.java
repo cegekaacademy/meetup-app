@@ -1,12 +1,12 @@
 package com.cegeka.academy.service.invitation;
 
-import com.cegeka.academy.domain.Event;
 import com.cegeka.academy.domain.Invitation;
+import com.cegeka.academy.domain.User;
 import com.cegeka.academy.repository.EventRepository;
 import com.cegeka.academy.domain.enums.InvitationStatus;
 import com.cegeka.academy.repository.InvitationRepository;
+import com.cegeka.academy.repository.UserRepository;
 import com.cegeka.academy.service.dto.InvitationDTO;
-import com.cegeka.academy.service.event.EventService;
 import com.cegeka.academy.service.mapper.InvitationMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,15 +22,15 @@ public class InvitationServiceImpl implements InvitationService {
 
     private final InvitationRepository invitationRepository;
     private final EventRepository eventRepository;
-    private final EventService eventService;
+
 
     private Logger logger =  LoggerFactory.getLogger(InvitationServiceImpl.class);
 
     @Autowired
-    public InvitationServiceImpl(InvitationRepository invitationRepository, EventRepository eventRepository, EventService eventService) {
+    public InvitationServiceImpl(InvitationRepository invitationRepository, EventRepository eventRepository) {
         this.invitationRepository = invitationRepository;
         this.eventRepository = eventRepository;
-        this.eventService = eventService;
+
     }
 
     @Override
@@ -61,13 +61,7 @@ public class InvitationServiceImpl implements InvitationService {
     public void updateInvitation(Invitation invitation) {
 
         logger.info("Invitation with id: "+ invitationRepository.save(invitation).getId() +"  was updated into database.");
-        if(invitation.getStatus().toLowerCase().equals("accepted"))
-        {
-            eventRepository.findById(invitation.getEvent().getId()).ifPresent(event -> {
-                event.getPendingInvitations().remove(invitation);
-                eventRepository.save(event);
-            });
-        }
+
     }
 
     @Override
@@ -94,6 +88,12 @@ public class InvitationServiceImpl implements InvitationService {
 
         invitation.setStatus(InvitationStatus.ACCEPTED.name());
         logger.info("Invitation with id: " + invitationRepository.save(invitation).getId() + "  was accepted by the user.");
+        eventRepository.findById(invitation.getEvent().getId()).ifPresent(event -> {
+            event.getPendingInvitations().remove(invitation);
+            event.getUsers().add(invitation.getUser());
+            eventRepository.save(event);
+        });
+
 
     }
 
