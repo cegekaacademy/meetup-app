@@ -82,9 +82,9 @@ public class ChallengeServiceImp implements ChallengeService {
 
         Optional<List<ChallengeDTO>> opt = challengeDTOList.isEmpty() ? Optional.empty() : Optional.of(challengeDTOList);
 
-        opt.orElseThrow(()-> new NotFoundException().setMessage("List is empty."));
+       return (Optional.ofNullable(opt).get()
+               .orElseThrow(()-> new NotFoundException().setMessage("List is empty.")));
 
-        return opt.get();
 
     }
 
