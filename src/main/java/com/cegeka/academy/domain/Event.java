@@ -53,6 +53,11 @@ public class Event {
             inverseJoinColumns = @JoinColumn(name = "category_id"))
     private Set<Category>categories=new HashSet<>();
 
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_invitation_user",referencedColumnName = "id")
+    Set<Invitation>pendingInvitations=new HashSet<>();
+
+
     public Long getId() {
         return id;
     }
@@ -159,6 +164,14 @@ public class Event {
         return result;
     }
 
+    public Set<Invitation> getPendingInvitations() {
+        return pendingInvitations;
+    }
+
+    public void setPendingInvitations(Set<Invitation> pendingInvitations) {
+        this.pendingInvitations = pendingInvitations;
+    }
+
     @Override
     public String toString() {
         return "Event{" +
@@ -173,4 +186,5 @@ public class Event {
                 ", addressId=" + addressId +
                 '}';
     }
+
 }

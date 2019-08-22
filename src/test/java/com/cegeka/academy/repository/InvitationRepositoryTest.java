@@ -12,6 +12,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -81,5 +82,25 @@ public class InvitationRepositoryTest {
         invitationRepository.save(invitation2);
         List<Invitation> list = invitationRepository.findByStatus("invited");
         assertThat(list.size()).isEqualTo(0);
+    }
+    @Test
+    public void testFindByEventId() {
+        User user = TestsRepositoryUtil.createUser("login", "anaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaana");
+        userRepository.save(user);
+        Address address = TestsRepositoryUtil.createAddress("Romania", "Bucuresti", "Splai", "333", "Casa", "Casa magica");
+        addressRepository.saveAndFlush(address);
+        Event event = TestsRepositoryUtil.createEvent("Ana are mere!", "KFC Krushers Party", true, address, user);
+        eventRepository.save(event);
+        Invitation invitation1 = TestsRepositoryUtil.createInvitation("pending", "description1", event, user);
+        invitationRepository.save(invitation1);
+        event.getPendingInvitations().add(invitation1);
+        eventRepository.save(event);
+        Invitation invitation2 = TestsRepositoryUtil.createInvitation("pending", "description2", event, user);
+        invitationRepository.save(invitation2);
+        event.getPendingInvitations().add(invitation2);
+        eventRepository.save(event);
+        Set<Invitation> invitationList=invitationRepository.findAllByEvent_id(event.getId());
+        assertThat(invitationList.size()).isEqualTo(2);
+
     }
 }

@@ -16,6 +16,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -44,7 +45,7 @@ public class InvitationServiceTest {
 
     private User user;
     private Event event;
-    private Invitation invitation;
+    private Invitation invitation,invitation2;
     private Address address;
 
     @BeforeEach
@@ -55,11 +56,26 @@ public class InvitationServiceTest {
         address = TestsRepositoryUtil.createAddress("Romania", "Bucuresti", "Splai", "333", "Casa", "Casa magica");
         addressRepository.saveAndFlush(address);
         event = TestsRepositoryUtil.createEvent("Ana are mere!", "KFC Krushers Party", true, address, user);
-        eventRepository.saveAndFlush(event);
+        eventRepository.save(event);
         invitation = TestsRepositoryUtil.createInvitation("pending", "ana are mere", event, user);
         invitationService.saveInvitation(invitation);
-    }
 
+    }
+    @Test
+    @Transactional
+    public void assertThatSaveInvitationAndModifyEventIsWorking() {
+        assertThat(event.getPendingInvitations().size()).isEqualTo(1);
+
+    }
+    @Test
+    @Transactional
+    public void assertThatUpdateInvitationAndModifyEventInvitationListIsWorking() {
+        invitation.setStatus("accepted");
+        invitationService.updateInvitation(invitation);
+        assertThat(event.getPendingInvitations().size()).isEqualTo(0);
+
+
+    }
     @Test
     @Transactional
     public void assertThatSaveInvitationIsWorking() {
@@ -97,7 +113,7 @@ public class InvitationServiceTest {
         assertThat(listAfterDelete.size()).isEqualTo(0);
     }
 
-    @Test
+    @Test()
     @Transactional
     public void assertThatDeleteInvitationIsWorkingWithInvalidId() {
 
@@ -105,6 +121,7 @@ public class InvitationServiceTest {
         List<InvitationDTO> list = invitationService.getAllInvitations();
         assertThat(list.size()).isEqualTo(1);
     }
+
 
 
 }
