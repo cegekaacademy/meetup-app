@@ -4,19 +4,17 @@ import com.cegeka.academy.domain.Challenge;
 import com.cegeka.academy.domain.User;
 import com.cegeka.academy.domain.UserChallenge;
 import com.cegeka.academy.repository.ChallengeRepository;
-import com.cegeka.academy.repository.GroupUserRoleRepository;
 import com.cegeka.academy.repository.UserChallengeRepository;
 import com.cegeka.academy.service.mapper.UserChallengeMapper;
 import com.cegeka.academy.web.rest.errors.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.cegeka.academy.service.dto.ChallengeDTO;
 import com.cegeka.academy.service.mapper.ChallengeMapper;
-import com.cegeka.academy.web.rest.errors.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -86,6 +84,20 @@ public class ChallengeServiceImp implements ChallengeService {
                .orElseThrow(()-> new NotFoundException().setMessage("List is empty.")));
 
 
+    }
+
+    @Override
+    public ChallengeDTO getChallengeById(long id) throws NotFoundException {
+
+        Optional<Challenge> challengeOptional = challengeRepository.findById(id);
+
+        challengeOptional.orElseThrow(
+                () -> new NotFoundException().setMessage("Provocarea cu id-ul: " + id + " nu exista")
+        );
+
+        Challenge challenge = challengeOptional.get();
+
+        return ChallengeMapper.convertChallengeToChallengeDTO(challenge);
     }
 
     private ChallengeDTO getChallengeDTOFromUserChallenge(UserChallenge userChallenge)

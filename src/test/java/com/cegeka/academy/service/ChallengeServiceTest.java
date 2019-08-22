@@ -107,6 +107,7 @@ public class ChallengeServiceTest {
         invitation = new Invitation();
         invitation.setDescription("invitationDescription");
         invitation.setStatus("status");
+        invitation.setStatus("invitationStat");
         invitation.setUser(user);
         invitation.setEvent(null);
 
@@ -146,7 +147,7 @@ public class ChallengeServiceTest {
     }
 
     @Test
-    void NotFoundExceptionTest() {
+    void notFoundExceptionTest() {
         Assertions.assertThrows(NotFoundException.class,() -> {challengeService.deleteChallenge(0);});
     }
 
@@ -158,7 +159,7 @@ public class ChallengeServiceTest {
     }
 
     @Test
-    void EmptyChallengeSetException()
+    void emptyChallengeSetException()
     {
         Assertions.assertThrows(NotFoundException.class,()->{ challengeService.getChallengesByUserId(0); });
     }
@@ -198,6 +199,23 @@ public class ChallengeServiceTest {
             challengeService.getChallengesByCreatorId(100L);
         });
 
+    }
+
+    @Test
+    void getChallengebyIdWhenNoSuchElementException()
+    {
+        Assertions.assertThrows(NotFoundException.class, ()->{ challengeService.getChallengeById(0); });
+    }
+
+    @Test
+    void getChallengeById() throws NotFoundException {
+        Challenge expectedChallenge = challengeRepository.save(challenge);
+
+        ChallengeDTO challengeDTO = challengeService.getChallengeById(expectedChallenge.getId());
+
+        Challenge actualChallenge = ChallengeMapper.convertChallengeDTOToChallenge(challengeDTO);
+
+        Assertions.assertEquals(expectedChallenge, actualChallenge);
     }
 
     @AfterEach

@@ -20,6 +20,12 @@ public class ChallengeController {
     @Autowired
     private ChallengeService challengeService;
 
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+    public ChallengeDTO getChallengeById(@PathVariable long id) throws NotFoundException {
+        return challengeService.getChallengeById(id);
+    }
+
+
     @RequestMapping(value = "/{id}",method = RequestMethod.DELETE)
     public void delete(@PathVariable long id) throws NotFoundException {
         challengeService.deleteChallenge(id);

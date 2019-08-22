@@ -12,6 +12,7 @@ public class ChallengeMapper {
     public static Challenge convertChallengeDTOToChallenge(ChallengeDTO challengeDTO){
 
         Challenge challenge = new Challenge();
+        challenge.setId(challengeDTO.getId());
         challenge.setEndDate(challengeDTO.getEndDate());
         challenge.setStartDate(challengeDTO.getStartDate());
         challenge.setDescription(challengeDTO.getDescription());
