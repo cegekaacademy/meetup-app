@@ -43,6 +43,7 @@ public class EventRepositoryTest {
     public void testFindAllByIsPublicIsTrue() {
 
         for (int i = 0; i < 5; i++) {
+
             User user = TestsRepositoryUtil.createUser("login" + i, "anaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaana");
             userRepository.save(user);
             Address address = TestsRepositoryUtil.createAddress("Romania", "Bucuresti", "Splai", "333", "Casa", "Casa magica");

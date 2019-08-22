@@ -1,6 +1,7 @@
 package com.cegeka.academy.service.invitation;
 
 import com.cegeka.academy.domain.Invitation;
+import com.cegeka.academy.domain.enums.InvitationStatus;
 import com.cegeka.academy.repository.InvitationRepository;
 import com.cegeka.academy.service.dto.InvitationDTO;
 import com.cegeka.academy.service.mapper.InvitationMapper;
@@ -42,6 +43,7 @@ public class InvitationServiceImpl implements InvitationService {
     @Override
     public void saveInvitation(Invitation invitation) {
 
+        invitation.setStatus(InvitationStatus.PENDING.name());
         logger.info("Invitation with id: "+ invitationRepository.save(invitation).getId() +"  was saved to database.");
     }
 
@@ -56,4 +58,34 @@ public class InvitationServiceImpl implements InvitationService {
 
         invitationRepository.findById(id).ifPresent(invitation -> invitationRepository.delete(invitation));
     }
+
+    @Override
+    public List<InvitationDTO> getPendingInvitationsByUserId(Long userId) {
+
+        List<InvitationDTO> pendingInvitations = new ArrayList<>();
+        List<Invitation> list = invitationRepository.findByUser_IdAndStatusIgnoreCase(userId, InvitationStatus.PENDING.name());
+        for (Invitation invitation : list) {
+            InvitationDTO aux = InvitationMapper.convertInvitationEntityToInvitationDTO(invitation);
+            pendingInvitations.add(aux);
+        }
+
+        return pendingInvitations;
+    }
+
+    @Override
+    public void acceptInvitation(Invitation invitation) {
+
+        invitation.setStatus(InvitationStatus.ACCEPTED.name());
+        logger.info("Invitation with id: " + invitationRepository.save(invitation).getId() + "  was accepted by the user.");
+
+    }
+
+    @Override
+    public void rejectInvitation(Invitation invitation) {
+
+        invitation.setStatus(InvitationStatus.REJECTED.name());
+        logger.info("Invitation with id: " + invitationRepository.save(invitation).getId() + "  was rejected by the user.");
+
+    }
+
 }
