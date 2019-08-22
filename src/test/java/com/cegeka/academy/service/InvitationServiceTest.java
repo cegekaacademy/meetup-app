@@ -1,17 +1,13 @@
 package com.cegeka.academy.service;
 
 import com.cegeka.academy.AcademyProjectApp;
-import com.cegeka.academy.domain.Address;
-import com.cegeka.academy.domain.Event;
-import com.cegeka.academy.domain.Invitation;
-import com.cegeka.academy.domain.User;
-import com.cegeka.academy.repository.AddressRepository;
-import com.cegeka.academy.repository.EventRepository;
-import com.cegeka.academy.repository.InvitationRepository;
-import com.cegeka.academy.repository.UserRepository;
+import com.cegeka.academy.domain.*;
+import com.cegeka.academy.domain.enums.InvitationStatus;
+import com.cegeka.academy.repository.*;
 import com.cegeka.academy.repository.util.TestsRepositoryUtil;
 import com.cegeka.academy.service.dto.InvitationDTO;
 import com.cegeka.academy.service.invitation.InvitationService;
+import com.cegeka.academy.web.rest.errors.NotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,26 +34,45 @@ public class InvitationServiceTest {
 
     @Autowired
     private InvitationRepository invitationRepository;
-  
+
     @Autowired
     private AddressRepository addressRepository;
 
-    private User user;
+    @Autowired
+    private GroupRepository groupRepository;
+
+    @Autowired
+    private GroupUserRoleRepository groupUserRoleRepository;
+
+
+    private User user, user1;
     private Event event;
-    private Invitation invitation;
+    private Invitation invitation, invitationSendToGroup;
     private Address address;
+    private Group group;
+    private GroupUserRole groupUserRole1, groupUserRole2;
 
     @BeforeEach
     public void init() {
-
-        user = TestsRepositoryUtil.createUser("login", "anaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaana");
-        userRepository.saveAndFlush(user);
+        userRepository.deleteAll();
+        user = TestsRepositoryUtil.createUser("login1", "anaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaana");
+        userRepository.save(user);
+        user1 = TestsRepositoryUtil.createUser("login2", "anaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaaka");
+        userRepository.save(user1);
         address = TestsRepositoryUtil.createAddress("Romania", "Bucuresti", "Splai", "333", "Casa", "Casa magica");
         addressRepository.saveAndFlush(address);
-        event = TestsRepositoryUtil.createEvent("Ana are mere!", "KFC Krushers Party", true, address, user);
+        event = TestsRepositoryUtil.createEvent("Ana are mere!", "KFC Krushers Party", false, address, user);
         eventRepository.saveAndFlush(event);
-        invitation = TestsRepositoryUtil.createInvitation("pending", "ana are mere", event, user);
+        invitation = TestsRepositoryUtil.createInvitation(InvitationStatus.PENDING.name(), "ana are mere", event, user);
         invitationService.saveInvitation(invitation);
+        group = TestsRepositoryUtil.createGroup("gr1", "descriere grup");
+        groupRepository.save(group);
+        groupUserRole1 = TestsRepositoryUtil.createGroupUserRole(userRepository.findAll().get(0), groupRepository.findAll().get(0), null);
+        groupUserRoleRepository.save(groupUserRole1);
+        groupUserRole2 = TestsRepositoryUtil.createGroupUserRole(userRepository.findAll().get(1), groupRepository.findAll().get(0), null);
+        groupUserRoleRepository.save(groupUserRole2);
+        invitationSendToGroup = TestsRepositoryUtil.createInvitation(InvitationStatus.PENDING.name(), "aaaa", eventRepository.findAll().get(0), null);
+
     }
 
     @Test
@@ -67,6 +82,7 @@ public class InvitationServiceTest {
         List<InvitationDTO> list = invitationService.getAllInvitations();
         assertThat(list.size()).isEqualTo(1);
         assertThat(list.get(0).getStatus()).isEqualTo(invitation.getStatus());
+        assertThat(list.get(0).getStatus()).isEqualTo(InvitationStatus.PENDING.name());
         assertThat(list.get(0).getDescription()).isEqualTo(invitation.getDescription());
         assertThat(list.get(0).getUserName()).isEqualTo(invitation.getUser().getFirstName() + " " + invitation.getUser().getLastName());
         assertThat(list.get(0).getEventName()).isEqualTo(invitation.getEvent().getName());
@@ -76,10 +92,9 @@ public class InvitationServiceTest {
     @Transactional
     public void assertThatUpdateInvitationIsWorking() {
         List<Invitation> list = invitationRepository.findAll();
-        invitation.setStatus("am modificat status-ul");
+        invitation.setStatus(InvitationStatus.ACCEPTED.name());
         invitation.setId(list.get(0).getId());
         invitationService.updateInvitation(invitation);
-        System.out.println(invitation.getId() + "");
         assertThat(list.size()).isEqualTo(1);
         assertThat(list.get(0).getStatus()).isEqualTo(invitation.getStatus());
         assertThat(list.get(0).getDescription()).isEqualTo(invitation.getDescription());
@@ -106,5 +121,62 @@ public class InvitationServiceTest {
         assertThat(list.size()).isEqualTo(1);
     }
 
+    @Test
+    public void assertThatGetPendingInvitationsByUserIdIsWorking() {
+        List<InvitationDTO> pendingListUser = invitationService.getPendingInvitationsByUserId(user.getId());
+        assertThat(pendingListUser.size()).isEqualTo(1);
 
+    }
+
+    @Test
+    public void assertThatAcceptInvitationIsWorking() {
+        List<Invitation> list = invitationRepository.findAll();
+        invitationService.acceptInvitation(invitation);
+        assertThat(list.size()).isEqualTo(1);
+        assertThat(list.get(0).getStatus()).isEqualTo(invitation.getStatus());
+        assertThat(list.get(0).getStatus()).isEqualTo(InvitationStatus.ACCEPTED.name());
+        assertThat(list.get(0).getDescription()).isEqualTo(invitation.getDescription());
+        assertThat(list.get(0).getUser()).isEqualTo(invitation.getUser());
+        assertThat(list.get(0).getEvent()).isEqualTo(invitation.getEvent());
+    }
+
+    @Test
+    public void assertThatRejectInvitationIsWorking() {
+        List<Invitation> list = invitationRepository.findAll();
+        invitation.setStatus(InvitationStatus.PENDING.name());
+        invitationService.rejectInvitation(invitation);
+        assertThat(list.size()).isEqualTo(1);
+        assertThat(list.get(0).getStatus()).isEqualTo(invitation.getStatus());
+        assertThat(list.get(0).getStatus()).isEqualTo(InvitationStatus.REJECTED.name());
+        assertThat(list.get(0).getDescription()).isEqualTo(invitation.getDescription());
+        assertThat(list.get(0).getUser()).isEqualTo(invitation.getUser());
+        assertThat(list.get(0).getEvent()).isEqualTo(invitation.getEvent());
+    }
+
+    @Test
+    public void assertThatSendGroupInvitationToPrivateEventIsWorking() throws NotFoundException {
+
+        Long idGroup = groupRepository.findAll().get(0).getId();
+        invitationService.sendGroupInvitationsToPrivateEvents(idGroup, invitationSendToGroup);
+        List<Invitation> list = invitationRepository.findAll();
+        assertThat(list.size()).isEqualTo(2);
+        assertThat(list.get(list.size() - 1).getUser()).isEqualTo(userRepository.findAll().get(1));
+        assertThat(list.get(list.size() - 1).getEvent()).isEqualTo(eventRepository.findAll().get(0));
+    }
+
+    @Test
+    public void assertThatSendGroupInvitationToPrivateEventIsWorkingWithNullIdGroup() throws NotFoundException {
+
+        invitationService.sendGroupInvitationsToPrivateEvents(null, invitationSendToGroup);
+        List<Invitation> list = invitationRepository.findAll();
+        assertThat(list.size()).isEqualTo(1);
+    }
+
+    @Test
+    public void assertThatSendGroupInvitationToPrivateEventIsWorkingWithInvalidIdGroup() throws NotFoundException {
+
+        invitationService.sendGroupInvitationsToPrivateEvents(100L, invitationSendToGroup);
+        List<Invitation> list = invitationRepository.findAll();
+        assertThat(list.size()).isEqualTo(1);
+    }
 }

@@ -86,4 +86,35 @@ public class InvitationController {
         }
     }
 
+    @GetMapping("/pending/{id}")
+    public List<InvitationDTO> getPendingInvitationsByUserId(@PathVariable Long userId) {
+
+        return invitationService.getPendingInvitationsByUserId(userId);
+    }
+
+    @PutMapping("/accept")
+    public void acceptInvitation(@RequestBody Invitation newInvitation) {
+
+        if (validationAccessService.verifyUserAccessForInvitationEntity(newInvitation.getId())) {
+            invitationService.acceptInvitation(newInvitation);
+
+        }
+    }
+
+    @PutMapping("/reject")
+    public void rejectInvitation(@RequestBody Invitation newInvitation) {
+
+        if (validationAccessService.verifyUserAccessForInvitationEntity(newInvitation.getId())) {
+            invitationService.rejectInvitation(newInvitation);
+
+        }
+    }
+
+    @PostMapping("/send/{idGroup}")
+    public void sendGroupInvitationsToPrivateEvents(@PathVariable Long idGroup,
+                                                    @Valid @RequestBody Invitation newInvitation) throws NotFoundException {
+
+        invitationService.sendGroupInvitationsToPrivateEvents(idGroup, newInvitation);
+    }
+
 }

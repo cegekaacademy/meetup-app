@@ -56,4 +56,18 @@ public class GroupUserRoleRepositoryTest {
         assertThat(list.size()).isEqualTo(2);
     }
 
+    @Test
+    public void testFindAllByGroupIdWithNullInput() {
+
+        List<GroupUserRole> list = groupUserRoleRepository.findAllByGroupId(null);
+        assertThat(list.size()).isEqualTo(0);
+    }
+
+    @Test
+    public void testFindAllByGroupIdWithInvalidInput() {
+
+        List<GroupUserRole> list = groupUserRoleRepository.findAllByGroupId(100L);
+        assertThat(list.size()).isEqualTo(0);
+    }
+
 }
