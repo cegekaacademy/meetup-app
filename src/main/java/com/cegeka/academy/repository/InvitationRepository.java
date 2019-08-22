@@ -14,4 +14,6 @@ public interface InvitationRepository extends JpaRepository<Invitation, Long> {
      List<Invitation> findByStatus(String status);
 
      Set<Invitation> findAllByEvent_id(Long eventId);
+
+     List<Invitation> findByUser_IdAndStatusIgnoreCase(Long userId, String status);
 }
