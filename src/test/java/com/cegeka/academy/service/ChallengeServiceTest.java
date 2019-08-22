@@ -19,6 +19,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -87,7 +88,7 @@ public class ChallengeServiceTest {
 
         challenge = new Challenge();
 
-        challenge.setCreator(user);
+        challenge.setCreator(userRepository.findAll().get(0));
         challenge.setStartDate(new Date(System.currentTimeMillis()));
         challenge.setEndDate(new Date(System.currentTimeMillis()));
         challenge.setStatus("Activa");
@@ -106,7 +107,7 @@ public class ChallengeServiceTest {
 
         invitation = new Invitation();
         invitation.setDescription("invitationDescription");
-        invitation.setStatus("invitationStatus");
+        invitation.setStatus("status");
         invitation.setUser(user);
         invitation.setEvent(null);
 
@@ -176,6 +177,28 @@ public class ChallengeServiceTest {
 
         Assertions.assertTrue(challengeDTOSet.contains(ChallengeMapper.convertChallengeToChallengeDTO(challenge)));
         Assertions.assertTrue(challengeDTOSet.contains(ChallengeMapper.convertChallengeToChallengeDTO(challenge2)));
+    }
+
+    @Test
+    public void testGetChallengesByCreatorId() throws NotFoundException {
+
+        Challenge savedChallenge = challengeRepository.save(challenge);
+        ChallengeDTO savedChallengeDTO = ChallengeMapper.convertChallengeToChallengeDTO(savedChallenge);
+
+        List<ChallengeDTO> challengeDTOList = challengeService.getChallengesByCreatorId(userRepository.findAll().get(0).getId());
+
+        assertThat(challengeDTOList.size()).isEqualTo(1);
+        assertThat(challengeDTOList.get(0)).isEqualTo(savedChallengeDTO);
+
+    }
+
+    @Test
+    public void testGetChallengesByCreatorIdEmptyList() {
+
+        Assertions.assertThrows(NotFoundException.class, () -> {
+            challengeService.getChallengesByCreatorId(100L);
+        });
+
     }
 
     @AfterEach
