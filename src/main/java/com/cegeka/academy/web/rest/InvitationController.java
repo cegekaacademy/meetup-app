@@ -86,4 +86,10 @@ public class InvitationController {
         }
     }
 
+    @GetMapping("/pending/{id}")
+    public List<InvitationDTO> getPendingInvitationsByUserId(@PathVariable Long userId) {
+
+        return invitationService.getPendingInvitationsByUserId(userId);
+    }
+
 }

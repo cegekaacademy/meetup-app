@@ -1,6 +1,7 @@
 package com.cegeka.academy.service.invitation;
 
 import com.cegeka.academy.domain.Invitation;
+import com.cegeka.academy.domain.enums.InvitationStatus;
 import com.cegeka.academy.repository.InvitationRepository;
 import com.cegeka.academy.service.dto.InvitationDTO;
 import com.cegeka.academy.service.mapper.InvitationMapper;
@@ -56,4 +57,18 @@ public class InvitationServiceImpl implements InvitationService {
 
         invitationRepository.findById(id).ifPresent(invitation -> invitationRepository.delete(invitation));
     }
+
+    @Override
+    public List<InvitationDTO> getPendingInvitationsByUserId(Long userId) {
+
+        List<InvitationDTO> pendingInvitations = new ArrayList<>();
+        List<Invitation> list = invitationRepository.findByUser_IdAndStatusIgnoreCase(userId, InvitationStatus.PENDING.name());
+        for (Invitation invitation : list) {
+            InvitationDTO aux = InvitationMapper.convertInvitationEntityToInvitationDTO(invitation);
+            pendingInvitations.add(aux);
+        }
+
+        return pendingInvitations;
+    }
+
 }
