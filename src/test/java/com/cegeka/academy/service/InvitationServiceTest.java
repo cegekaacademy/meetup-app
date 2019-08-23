@@ -172,8 +172,8 @@ public class InvitationServiceTest {
         Long idGroup = groupRepository.findAll().get(0).getId();
         invitationService.sendGroupInvitationsToPrivateEvents(idGroup, invitationSendToGroup);
         List<Invitation> list = invitationRepository.findAll();
-        Optional<User> findUser = userRepository.findById(list.get(list.size() - 1).getUser().getId());
-        Optional<User> findEvent = userRepository.findById(list.get(list.size() - 1).getEvent().getId());
+        Optional<User> findUser = userRepository.findById(list.get(list.lastIndexOf(invitationSendToGroup)).getUser().getId());
+        Optional<Event> findEvent = eventRepository.findById(list.get(list.lastIndexOf(invitationSendToGroup)).getEvent().getId());
 
         assertThat(list.size()).isEqualTo(2);
         Assert.assertTrue(findUser.isPresent());
