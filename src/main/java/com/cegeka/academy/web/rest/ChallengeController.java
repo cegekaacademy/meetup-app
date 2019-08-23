@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
 import java.util.Set;
 
 @RestController
@@ -18,6 +19,12 @@ public class ChallengeController {
 
     @Autowired
     private ChallengeService challengeService;
+
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+    public ChallengeDTO getChallengeById(@PathVariable long id) throws NotFoundException {
+        return challengeService.getChallengeById(id);
+    }
+
 
     @RequestMapping(value = "/{id}",method = RequestMethod.DELETE)
     public void delete(@PathVariable long id) throws NotFoundException {
@@ -34,6 +41,13 @@ public class ChallengeController {
     public void saveChallenge(@RequestBody ChallengeDTO challenge) {
 
         challengeService.saveChallenge(challenge);
+
+    }
+
+    @GetMapping("/creator/{creatorId}")
+    public List<ChallengeDTO> getChallengesByCreatorId(@PathVariable(value = "creatorId") Long creatorId) throws NotFoundException {
+
+        return challengeService.getChallengesByCreatorId(creatorId);
 
     }
 }

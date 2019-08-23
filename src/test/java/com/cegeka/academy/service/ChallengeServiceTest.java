@@ -19,6 +19,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -106,7 +107,7 @@ public class ChallengeServiceTest {
 
         invitation = new Invitation();
         invitation.setDescription("invitationDescription");
-        invitation.setStatus("invitationStatus");
+        invitation.setStatus("invitationStat");
         invitation.setUser(user);
         invitation.setEvent(null);
 
@@ -146,7 +147,7 @@ public class ChallengeServiceTest {
     }
 
     @Test
-    void NotFoundExceptionTest() {
+    void notFoundExceptionTest() {
         Assertions.assertThrows(NotFoundException.class,() -> {challengeService.deleteChallenge(0);});
     }
 
@@ -158,7 +159,7 @@ public class ChallengeServiceTest {
     }
 
     @Test
-    void EmptyChallengeSetException()
+    void emptyChallengeSetException()
     {
         Assertions.assertThrows(NotFoundException.class,()->{ challengeService.getChallengesByUserId(0); });
     }
@@ -178,6 +179,23 @@ public class ChallengeServiceTest {
         Assertions.assertTrue(challengeDTOSet.contains(ChallengeMapper.convertChallengeToChallengeDTO(challenge2)));
     }
 
+    @Test
+    void getChallengebyIdWhenNoSuchElementException()
+    {
+        Assertions.assertThrows(NotFoundException.class, ()->{ challengeService.getChallengeById(0); });
+    }
+
+    @Test
+    void getChallengeById() throws NotFoundException {
+        Challenge expectedChallenge = challengeRepository.save(challenge);
+
+        ChallengeDTO challengeDTO = challengeService.getChallengeById(expectedChallenge.getId());
+
+        Challenge actualChallenge = ChallengeMapper.convertChallengeDTOToChallenge(challengeDTO);
+
+        Assertions.assertEquals(expectedChallenge, actualChallenge);
+    }
+
     @AfterEach
     public void destroy(){
         userChallengeRepository.deleteAll();
@@ -185,6 +203,28 @@ public class ChallengeServiceTest {
         challengeCategoryRepository.deleteAll();
         invitationRepository.deleteAll();
         userRepository.deleteAll();
+    }
+
+    @Test
+    public void testGetChallengesByCreatorId() throws NotFoundException {
+
+        Challenge savedChallenge = challengeRepository.save(challenge);
+        ChallengeDTO savedChallengeDTO = ChallengeMapper.convertChallengeToChallengeDTO(savedChallenge);
+
+        List<ChallengeDTO> challengeDTOList = challengeService.getChallengesByCreatorId(savedChallengeDTO.getCreator().getId());
+
+        assertThat(challengeDTOList.size()).isEqualTo(1);
+        assertThat(challengeDTOList.get(0)).isEqualTo(savedChallengeDTO);
+
+    }
+
+    @Test
+    public void testGetChallengesByCreatorIdEmptyList() {
+
+        Assertions.assertThrows(NotFoundException.class, () -> {
+            challengeService.getChallengesByCreatorId(100L);
+        });
+
     }
 
 }

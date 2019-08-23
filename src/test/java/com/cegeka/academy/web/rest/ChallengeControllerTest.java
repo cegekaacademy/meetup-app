@@ -97,4 +97,9 @@ public class ChallengeControllerTest {
     void testGetUserChallengesByUserIdException() throws Exception {
         restMockMvc.perform(get("/challenge/user/0")).andExpect(status().isNotFound());
     }
+
+    @Test
+    void getChallengeByIdException() throws Exception {
+        restMockMvc.perform(get("challenge/0")).andExpect(status().isNotFound());
+    }
 }
