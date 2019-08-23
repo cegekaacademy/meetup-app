@@ -73,30 +73,24 @@ public class InvitationServiceImpl implements InvitationService {
     @Override
     public void sendGroupInvitationsToPrivateEvents(Long idGroup, Invitation invitation) throws NotFoundException {
 
-        if (invitation.getEvent() != null) {
-
-            if (invitation.getEvent().getPublic().equals(false)) {
-
-                List<GroupUserRole> listIdUsers = groupUserRoleRepository.findAllByGroupId(idGroup);
-
-                for (GroupUserRole userGroup : listIdUsers) {
-
-                    Optional<User> user = userRepository.findById(userGroup.getUser().getId());
-
-                    if (user.isPresent()) {
-
-                        invitation.setUser(user.get());
-                        invitationRepository.save(invitation);
-
-                    } else {
-
-                        throw new NotFoundException();
-                    }
-                }
-            }
-        } else {
-
+        if (invitation.getEvent() == null) {
             throw new NotFoundException();
+
+        }
+        if (!invitation.getEvent().isPublic()) {
+
+            List<GroupUserRole> listIdUsers = groupUserRoleRepository.findAllByGroupId(idGroup);
+
+            for (GroupUserRole userGroup : listIdUsers) {
+
+                Optional<User> user = userRepository.findById(userGroup.getUser().getId());
+
+                user.orElseThrow(NotFoundException::new);
+
+                invitation.setUser(user.get());
+                invitationRepository.save(invitation);
+
+            }
         }
     }
 

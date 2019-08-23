@@ -6,6 +6,7 @@ import com.cegeka.academy.domain.GroupUserRole;
 import com.cegeka.academy.domain.Role;
 import com.cegeka.academy.domain.User;
 import com.cegeka.academy.repository.util.TestsRepositoryUtil;
+import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -59,13 +61,21 @@ public class GroupUserRoleRepositoryTest {
     public void testSaveGroupUserRole() {
 
         List<GroupUserRole> list = groupUserRoleRepository.findAll();
+        Optional<Group> findGroup1 = groupRepository.findById(list.get(0).getGroup().getId());
+        Optional<Role> findRole1 = roleRepository.findById(list.get(0).getRole().getId());
+        Optional<User> findUser1 = userRepository.findById(list.get(0).getUser().getId());
+        Optional<Group> findGroup2 = groupRepository.findById(list.get(1).getGroup().getId());
+        Optional<Role> findRole2 = roleRepository.findById(list.get(1).getRole().getId());
+        Optional<User> findUser2 = userRepository.findById(list.get(1).getUser().getId());
+
         assertThat(list.size()).isEqualTo(2);
-        assertThat(list.get(0).getGroup()).isEqualTo(groupRepository.findAll().get(0));
-        assertThat(list.get(0).getRole()).isEqualTo(roleRepository.findAll().get(0));
-        assertThat(list.get(0).getUser()).isEqualTo(userRepository.findAll().get(userRepository.findAll().size() - 2));
-        assertThat(list.get(1).getGroup()).isEqualTo(groupRepository.findAll().get(0));
-        assertThat(list.get(1).getRole()).isEqualTo(roleRepository.findAll().get(0));
-        assertThat(list.get(1).getUser()).isEqualTo(userRepository.findAll().get(userRepository.findAll().size() - 1));
+        Assert.assertTrue(findGroup1.isPresent());
+        Assert.assertTrue(findRole1.isPresent());
+        Assert.assertTrue(findUser1.isPresent());
+        Assert.assertTrue(findGroup2.isPresent());
+        Assert.assertTrue(findRole2.isPresent());
+        Assert.assertTrue(findUser2.isPresent());
+
     }
 
     @Test

@@ -102,7 +102,7 @@ public class Event {
         this.notes = notes;
     }
 
-    public Boolean getPublic() {
+    public Boolean isPublic() {
         return isPublic;
     }
 

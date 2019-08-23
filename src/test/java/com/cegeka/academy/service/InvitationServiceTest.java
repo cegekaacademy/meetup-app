@@ -8,6 +8,7 @@ import com.cegeka.academy.repository.util.TestsRepositoryUtil;
 import com.cegeka.academy.service.dto.InvitationDTO;
 import com.cegeka.academy.service.invitation.InvitationService;
 import com.cegeka.academy.web.rest.errors.NotFoundException;
+import org.junit.Assert;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,6 +17,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -170,9 +172,12 @@ public class InvitationServiceTest {
         Long idGroup = groupRepository.findAll().get(0).getId();
         invitationService.sendGroupInvitationsToPrivateEvents(idGroup, invitationSendToGroup);
         List<Invitation> list = invitationRepository.findAll();
+        Optional<User> findUser = userRepository.findById(list.get(list.size() - 1).getUser().getId());
+        Optional<User> findEvent = userRepository.findById(list.get(list.size() - 1).getEvent().getId());
+
         assertThat(list.size()).isEqualTo(2);
-        assertThat(list.get(list.size() - 1).getUser()).isEqualTo(userRepository.findAll().get(1));
-        assertThat(list.get(list.size() - 1).getEvent()).isEqualTo(eventRepository.findAll().get(0));
+        Assert.assertTrue(findUser.isPresent());
+        Assert.assertTrue(findEvent.isPresent());
     }
 
     @Test
