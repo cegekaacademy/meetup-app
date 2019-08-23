@@ -49,7 +49,7 @@ public class GroupUserRoleRepositoryTest {
     }
 
     @Test
-    public void testSave() {
+    public void testSaveGroupUserRole() {
 
         List<GroupUserRole> list = groupUserRoleRepository.findAll();
         assertThat(list.size()).isEqualTo(2);
