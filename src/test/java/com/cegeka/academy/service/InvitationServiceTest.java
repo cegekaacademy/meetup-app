@@ -17,6 +17,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -44,8 +45,8 @@ public class InvitationServiceTest {
     private AddressRepository addressRepository;
 
     private User user;
-    private Event event;
-    private Invitation invitation;
+    private Event event,event2;
+    private Invitation invitation,invitation2,invitation3;
     private Address address;
 
     @BeforeEach
@@ -59,8 +60,8 @@ public class InvitationServiceTest {
         eventRepository.saveAndFlush(event);
         invitation = TestsRepositoryUtil.createInvitation(InvitationStatus.PENDING.name(), "ana are mere", event, user);
         invitationService.saveInvitation(invitation);
-    }
 
+    }
     @Test
     @Transactional
     public void assertThatSaveInvitationIsWorking() {
@@ -73,7 +74,28 @@ public class InvitationServiceTest {
         assertThat(list.get(0).getUserName()).isEqualTo(invitation.getUser().getFirstName() + " " + invitation.getUser().getLastName());
         assertThat(list.get(0).getEventName()).isEqualTo(invitation.getEvent().getName());
     }
+    @Test
+    @Transactional
+    public void assertThatSaveInvitationToListIsWorking() {
 
+        assertThat(event.getPendingInvitations().size()).isEqualTo(1);
+        invitation2 = TestsRepositoryUtil.createInvitation(InvitationStatus.PENDING.name(), "ana are mere", event, user);
+        invitationService.saveInvitation(invitation2);
+        assertThat(event.getPendingInvitations().size()).isEqualTo(2);
+
+    }
+    @Test
+    @Transactional
+    public void assertThatSaveUserToParticipationListAfterAcceptInvitationIsWorking() {
+        event2 = TestsRepositoryUtil.createEvent("Dana Dana!", "KFC Krushers Party", true, address, user);
+        eventRepository.save(event2);
+        invitation3 = TestsRepositoryUtil.createInvitation(InvitationStatus.PENDING.name(), "ana are mere", event2, user);
+        invitationService.saveInvitation(invitation3);
+        invitationService.acceptInvitation(invitation3);
+        assertThat(event2.getUsers().size()).isEqualTo(1);
+        assertThat(event.getUsers().size()).isEqualTo(0);
+
+    }
     @Test
     @Transactional
     public void assertThatUpdateInvitationIsWorking() {
@@ -99,7 +121,7 @@ public class InvitationServiceTest {
         assertThat(listAfterDelete.size()).isEqualTo(0);
     }
 
-    @Test
+    @Test()
     @Transactional
     public void assertThatDeleteInvitationIsWorkingWithInvalidId() {
 
@@ -125,6 +147,8 @@ public class InvitationServiceTest {
         assertThat(list.get(0).getDescription()).isEqualTo(invitation.getDescription());
         assertThat(list.get(0).getUser()).isEqualTo(invitation.getUser());
         assertThat(list.get(0).getEvent()).isEqualTo(invitation.getEvent());
+        assertThat(event.getPendingInvitations().size()).isEqualTo(0);
+        assertThat(event.getUsers().size()).isEqualTo(1);
     }
 
     @Test
@@ -139,6 +163,7 @@ public class InvitationServiceTest {
         assertThat(list.get(0).getUser()).isEqualTo(invitation.getUser());
         assertThat(list.get(0).getEvent()).isEqualTo(invitation.getEvent());
     }
+
 
 
 }

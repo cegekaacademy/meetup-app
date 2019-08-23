@@ -25,6 +25,8 @@ public class EventRepositoryTest {
     private AddressRepository addressRepository;
     @Autowired
     private CategoryRepository categoryRepository;
+    @Autowired
+    private InvitationRepository invitationRepository;
 
 
 
@@ -39,6 +41,15 @@ public class EventRepositoryTest {
         Event eventTest = eventRepository.findAllByIsPublicIsTrue().get(0);
         assertThat(eventTest.getPublic()).isEqualTo(true);
         assertThat(eventTest.getName()).isEqualTo(event.getName());
+        Invitation invitation1=TestsRepositoryUtil.createInvitation("pending","description",event,user);
+        invitationRepository.save(invitation1);
+        event.getPendingInvitations().add(invitation1);
+        eventRepository.save(event);
+        Invitation invitation2=TestsRepositoryUtil.createInvitation("pending","description2",event,user);
+        invitationRepository.save(invitation2);
+        event.getPendingInvitations().add(invitation2);
+        eventRepository.save(event);
+        assertThat(event.getPendingInvitations().size()).isEqualTo(2);
     }
     @Test
     public void testFindAllByCategoryId() {
