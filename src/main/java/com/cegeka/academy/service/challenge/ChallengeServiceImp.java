@@ -76,13 +76,15 @@ public class ChallengeServiceImp implements ChallengeService {
 
         List<Challenge> challenges = challengeRepository.findAllByCreatorId(creatorId);
 
+        if(challenges == null || challenges.isEmpty()){
+
+            throw new NotFoundException().setMessage("List is empty.");
+        }
+
         List<ChallengeDTO> challengeDTOList = challenges.stream().map(challenge -> ChallengeMapper.convertChallengeToChallengeDTO(challenge)).collect(Collectors.toList());
 
-        Optional<List<ChallengeDTO>> opt = challengeDTOList.isEmpty() ? Optional.empty() : Optional.of(challengeDTOList);
 
-       return (Optional.ofNullable(opt).get()
-               .orElseThrow(()-> new NotFoundException().setMessage("List is empty.")));
-
+       return challengeDTOList;
 
     }
 
