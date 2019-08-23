@@ -1,11 +1,9 @@
 package com.cegeka.academy.service.challenge;
 
 import com.cegeka.academy.domain.Challenge;
-import com.cegeka.academy.domain.User;
 import com.cegeka.academy.domain.UserChallenge;
 import com.cegeka.academy.repository.ChallengeRepository;
 import com.cegeka.academy.repository.UserChallengeRepository;
-import com.cegeka.academy.service.mapper.UserChallengeMapper;
 import com.cegeka.academy.web.rest.errors.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.cegeka.academy.service.dto.ChallengeDTO;
@@ -69,23 +67,6 @@ public class ChallengeServiceImp implements ChallengeService {
         }
 
         return userChallengesSet;
-    }
-
-    @Override
-    public List<ChallengeDTO> getChallengesByCreatorId(Long creatorId) throws NotFoundException {
-
-        List<Challenge> challenges = challengeRepository.findAllByCreatorId(creatorId);
-
-        if(challenges == null || challenges.isEmpty()){
-
-            throw new NotFoundException().setMessage("List is empty.");
-        }
-
-        List<ChallengeDTO> challengeDTOList = challenges.stream().map(challenge -> ChallengeMapper.convertChallengeToChallengeDTO(challenge)).collect(Collectors.toList());
-
-
-       return challengeDTOList;
-
     }
 
     @Override
