@@ -195,6 +195,47 @@ public class ChallengeServiceTest {
         Assertions.assertEquals(expectedChallenge, actualChallenge);
     }
 
+    @Test
+    void updateChallenge() throws NotFoundException {
+        challengeRepository.save(challenge);
+
+        ChallengeDTO challengeDTO = ChallengeMapper.convertChallengeToChallengeDTO(challenge);
+
+        long expectedId = challenge.getId();
+        String expectedStatus = "updatedStatus";
+
+        ChallengeCategory expectedChallengeCategory = new ChallengeCategory();
+        expectedChallengeCategory.setName("updatedCategory");
+        expectedChallengeCategory.setDescription("updatePerformed");
+
+        challengeCategoryRepository.save(expectedChallengeCategory);
+
+        ChallengeCategoryDTO expectedChallengeCategoryDTO;
+        expectedChallengeCategoryDTO  = ChallengeMapper.convertChallengeCategoryToChallengeCategoryDTO(expectedChallengeCategory);
+
+        challengeDTO.setStatus(expectedStatus);
+        challengeDTO.setChallengeCategory(expectedChallengeCategoryDTO);
+
+        ChallengeDTO actualChallengeDTO = challengeService.updateChallenge(challengeDTO);
+
+        Challenge actualChallenge = ChallengeMapper.convertChallengeDTOToChallenge(actualChallengeDTO);
+
+        long actualId = actualChallenge.getId();
+        String actualStatus = actualChallenge.getStatus();
+        ChallengeCategory actualChallengeCategory = actualChallenge.getChallengeCategory();
+
+        Assertions.assertEquals(expectedId, actualId);
+        Assertions.assertEquals(expectedStatus, actualStatus);
+        Assertions.assertEquals(expectedChallengeCategory, actualChallengeCategory);
+    }
+
+    @Test
+    void updateChallengeNotFoundExceptionTest(){
+        challengeDTO.setId(0L);
+        Assertions.assertThrows(NotFoundException.class, ()->challengeService.updateChallenge(challengeDTO));
+    }
+
+
     @AfterEach
     public void destroy(){
         userChallengeRepository.deleteAll();

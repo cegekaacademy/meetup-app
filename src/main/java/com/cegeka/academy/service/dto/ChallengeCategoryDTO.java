@@ -48,4 +48,13 @@ public class ChallengeCategoryDTO {
     public int hashCode() {
         return Objects.hash(getId(), getName(), getDescription());
     }
+
+    @Override
+    public String toString() {
+        return "ChallengeCategoryDTO{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                '}';
+    }
 }

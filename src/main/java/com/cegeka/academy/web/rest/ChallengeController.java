@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
 import java.util.Set;
 
 @RestController
@@ -28,6 +29,11 @@ public class ChallengeController {
     @RequestMapping(value = "/{id}",method = RequestMethod.DELETE)
     public void delete(@PathVariable long id) throws NotFoundException {
         challengeService.deleteChallenge(id);
+    }
+
+    @RequestMapping(value = "/update", method = RequestMethod.PUT)
+    public ChallengeDTO updateChallengeController(@Valid @RequestBody ChallengeDTO challengeDTO) throws NotFoundException {
+        return challengeService.updateChallenge(challengeDTO);
     }
 
     @GetMapping(path = "/user/{id}")

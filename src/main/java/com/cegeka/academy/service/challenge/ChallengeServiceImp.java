@@ -2,8 +2,10 @@ package com.cegeka.academy.service.challenge;
 
 import com.cegeka.academy.domain.Challenge;
 import com.cegeka.academy.domain.UserChallenge;
+import com.cegeka.academy.repository.ChallengeCategoryRepository;
 import com.cegeka.academy.repository.ChallengeRepository;
 import com.cegeka.academy.repository.UserChallengeRepository;
+import com.cegeka.academy.web.rest.errors.InvalidFieldException;
 import com.cegeka.academy.web.rest.errors.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.cegeka.academy.service.dto.ChallengeDTO;
@@ -28,6 +30,9 @@ public class ChallengeServiceImp implements ChallengeService {
     private ChallengeRepository challengeRepository;
 
     @Autowired
+    private ChallengeCategoryRepository challengeCategoryRepository;
+
+    @Autowired
     private UserChallengeRepository userChallengeRepository;
 
     @Override
@@ -49,6 +54,47 @@ public class ChallengeServiceImp implements ChallengeService {
 
         logger.info("Challenge with id: " + challengeRepository.save(challenge).getId() + " has been saved");
         
+    }
+
+    @Override
+    public ChallengeDTO updateChallenge(ChallengeDTO challengeDTO) throws NotFoundException {
+
+        Long userId;
+
+        if(challengeDTO.getCreator().getId() == null)
+        {
+            throw new InvalidFieldException().setMessage("Un challenge trebuie sa aiba un creator");
+        }
+
+        Long challengeCategoryId = challengeDTO.getChallengeCategory().getId();
+
+        Optional<Long> challengeCategoryOptional = Optional.ofNullable(challengeCategoryId);
+
+        challengeCategoryOptional.ifPresent( id -> challengeCategoryRepository.findById(id).
+                        orElseThrow(()-> new InvalidFieldException().setMessage("Categoria aleasa trebuie sa existe"))
+                    );
+
+        if(!challengeCategoryOptional.isPresent())
+        {
+            challengeDTO.setChallengeCategory(null);
+        }
+
+        Long challengeId = challengeDTO.getId();
+
+        Challenge oldChallenge = challengeRepository.findById(challengeId).orElseThrow(
+                ()->new NotFoundException().setMessage("Challenge-ul " + challengeId +" nu exista")
+        );
+
+        userId = challengeDTO.getCreator().getId();
+
+        if(!oldChallenge.getCreator().getId().equals(userId))
+        {
+            throw new InvalidFieldException().setMessage("Creatorul unui challenge nu se poate schimba");
+        }
+
+        Challenge updatedChallenge = challengeRepository.save(ChallengeMapper.convertChallengeDTOToChallenge(challengeDTO));
+
+        return ChallengeMapper.convertChallengeToChallengeDTO(updatedChallenge);
     }
 
     @Override
