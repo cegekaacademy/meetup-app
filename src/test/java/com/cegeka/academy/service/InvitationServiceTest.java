@@ -52,8 +52,8 @@ public class InvitationServiceTest {
 
 
     private User user, user1;
-    private Event event, publicEvent;
-    private Invitation invitation, invitationSendToGroup, invitationWithNullEvent, invitationWithPublicEvent;
+    private Event event, publicEvent, event2;
+    private Invitation invitation, invitationSendToGroup, invitationWithNullEvent, invitationWithPublicEvent, invitation2, invitation3;
     private Address address;
     private Group group;
     private GroupUserRole groupUserRole1, groupUserRole2;
@@ -103,6 +103,29 @@ public class InvitationServiceTest {
 
     @Test
     @Transactional
+    public void assertThatSaveInvitationToListIsWorking() {
+
+        assertThat(event.getPendingInvitations().size()).isEqualTo(1);
+        invitation2 = TestsRepositoryUtil.createInvitation(InvitationStatus.PENDING.name(), "ana are mere", event, user);
+        invitationService.saveInvitation(invitation2);
+        assertThat(event.getPendingInvitations().size()).isEqualTo(2);
+
+    }
+
+    @Test
+    @Transactional
+    public void assertThatSaveUserToParticipationListAfterAcceptInvitationIsWorking() {
+        event2 = TestsRepositoryUtil.createEvent("Dana Dana!", "KFC Krushers Party", true, address, user);
+        eventRepository.save(event2);
+        invitation3 = TestsRepositoryUtil.createInvitation(InvitationStatus.PENDING.name(), "ana are mere", event2, user);
+        invitationService.saveInvitation(invitation3);
+        invitationService.acceptInvitation(invitation3);
+        assertThat(event2.getUsers().size()).isEqualTo(1);
+        assertThat(event.getUsers().size()).isEqualTo(0);
+
+    }
+    @Test
+    @Transactional
     public void assertThatUpdateInvitationIsWorking() {
         List<Invitation> list = invitationRepository.findAll();
         invitation.setStatus(InvitationStatus.ACCEPTED.name());
@@ -125,7 +148,7 @@ public class InvitationServiceTest {
         assertThat(listAfterDelete.size()).isEqualTo(0);
     }
 
-    @Test
+    @Test()
     @Transactional
     public void assertThatDeleteInvitationIsWorkingWithInvalidId() {
 
@@ -151,6 +174,8 @@ public class InvitationServiceTest {
         assertThat(list.get(0).getDescription()).isEqualTo(invitation.getDescription());
         assertThat(list.get(0).getUser()).isEqualTo(invitation.getUser());
         assertThat(list.get(0).getEvent()).isEqualTo(invitation.getEvent());
+        assertThat(event.getPendingInvitations().size()).isEqualTo(0);
+        assertThat(event.getUsers().size()).isEqualTo(1);
     }
 
     @Test

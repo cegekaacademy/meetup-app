@@ -21,4 +21,5 @@ public interface InvitationService {
 
     void sendGroupInvitationsToPrivateEvents(Long idGroup, Invitation invitation) throws NotFoundException;
 
+
 }

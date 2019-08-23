@@ -4,6 +4,7 @@ import com.cegeka.academy.domain.GroupUserRole;
 import com.cegeka.academy.domain.Invitation;
 import com.cegeka.academy.domain.User;
 import com.cegeka.academy.domain.enums.InvitationStatus;
+import com.cegeka.academy.repository.EventRepository;
 import com.cegeka.academy.repository.GroupUserRoleRepository;
 import com.cegeka.academy.repository.InvitationRepository;
 import com.cegeka.academy.repository.UserRepository;
@@ -27,15 +28,19 @@ public class InvitationServiceImpl implements InvitationService {
     private final InvitationRepository invitationRepository;
     private final GroupUserRoleRepository groupUserRoleRepository;
     private final UserRepository userRepository;
+    private final EventRepository eventRepository;
+
 
     private Logger logger =  LoggerFactory.getLogger(InvitationServiceImpl.class);
 
     @Autowired
     public InvitationServiceImpl(InvitationRepository invitationRepository, GroupUserRoleRepository groupUserRoleRepository,
-                                 UserRepository userRepository) {
+                                 UserRepository userRepository, EventRepository eventRepository) {
         this.invitationRepository = invitationRepository;
         this.groupUserRoleRepository = groupUserRoleRepository;
         this.userRepository = userRepository;
+        this.eventRepository = eventRepository;
+
     }
 
     @Override
@@ -56,12 +61,17 @@ public class InvitationServiceImpl implements InvitationService {
 
         invitation.setStatus(InvitationStatus.PENDING.name());
         logger.info("Invitation with id: "+ invitationRepository.save(invitation).getId() +"  was saved to database.");
+        eventRepository.findById(invitation.getEvent().getId()).ifPresent(event -> {
+            event.getPendingInvitations().add(invitation);
+            eventRepository.save(event);
+        });
     }
 
     @Override
     public void updateInvitation(Invitation invitation) {
 
         logger.info("Invitation with id: "+ invitationRepository.save(invitation).getId() +"  was updated into database.");
+
     }
 
     @Override
@@ -112,6 +122,12 @@ public class InvitationServiceImpl implements InvitationService {
 
         invitation.setStatus(InvitationStatus.ACCEPTED.name());
         logger.info("Invitation with id: " + invitationRepository.save(invitation).getId() + "  was accepted by the user.");
+        eventRepository.findById(invitation.getEvent().getId()).ifPresent(event -> {
+            event.getPendingInvitations().remove(invitation);
+            event.getUsers().add(invitation.getUser());
+            eventRepository.save(event);
+        });
+
 
     }
 
@@ -122,5 +138,6 @@ public class InvitationServiceImpl implements InvitationService {
         logger.info("Invitation with id: " + invitationRepository.save(invitation).getId() + "  was rejected by the user.");
 
     }
+
 
 }

@@ -32,6 +32,13 @@ public class TestsRepositoryUtil {
         return user;
     }
 
+    public static Category createCategory(String name, String description) {
+        Category category = new Category();
+        category.setName(name);
+        category.setDescription(description);
+        return category;
+    }
+
     public static Invitation createInvitation(String status, String description, Event event, User user) {
         Invitation invitation = new Invitation();
         invitation.setStatus(status);
