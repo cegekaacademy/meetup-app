@@ -35,7 +35,7 @@ public class EventRepositoryTest {
         Event event = TestsRepositoryUtil.createEvent("Ana are mere!", "KFC Krushers Party", true, address, user);
         eventRepository.save(event);
         Event eventTest = eventRepository.findAllByIsPublicIsTrue().get(0);
-        assertThat(eventTest.getPublic()).isEqualTo(true);
+        assertThat(eventTest.isPublic()).isEqualTo(true);
         assertThat(eventTest.getName()).isEqualTo(event.getName());
     }
 

@@ -1,9 +1,6 @@
 package com.cegeka.academy.repository.util;
 
-import com.cegeka.academy.domain.Address;
-import com.cegeka.academy.domain.Event;
-import com.cegeka.academy.domain.Invitation;
-import com.cegeka.academy.domain.User;
+import com.cegeka.academy.domain.*;
 
 public class TestsRepositoryUtil {
 
@@ -44,5 +41,25 @@ public class TestsRepositoryUtil {
         return invitation;
     }
 
+    public static Group createGroup(String name, String description) {
+        Group group = new Group();
+        group.setName(name);
+        group.setDescription(description);
+        return group;
+    }
+
+    public static GroupUserRole createGroupUserRole(User user, Group group, Role role) {
+        GroupUserRole groupUserRole = new GroupUserRole();
+        groupUserRole.setUser(user);
+        groupUserRole.setGroup(group);
+        groupUserRole.setRole(role);
+        return groupUserRole;
+    }
+
+    public static Role createRole(String name) {
+        Role role = new Role();
+        role.setName(name);
+        return role;
+    }
 
 }

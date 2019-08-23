@@ -1,10 +1,15 @@
 package com.cegeka.academy.service.invitation;
 
+import com.cegeka.academy.domain.GroupUserRole;
 import com.cegeka.academy.domain.Invitation;
+import com.cegeka.academy.domain.User;
 import com.cegeka.academy.domain.enums.InvitationStatus;
+import com.cegeka.academy.repository.GroupUserRoleRepository;
 import com.cegeka.academy.repository.InvitationRepository;
+import com.cegeka.academy.repository.UserRepository;
 import com.cegeka.academy.service.dto.InvitationDTO;
 import com.cegeka.academy.service.mapper.InvitationMapper;
+import com.cegeka.academy.web.rest.errors.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,18 +18,24 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional
 public class InvitationServiceImpl implements InvitationService {
 
     private final InvitationRepository invitationRepository;
+    private final GroupUserRoleRepository groupUserRoleRepository;
+    private final UserRepository userRepository;
 
     private Logger logger =  LoggerFactory.getLogger(InvitationServiceImpl.class);
 
     @Autowired
-    public InvitationServiceImpl(InvitationRepository invitationRepository) {
+    public InvitationServiceImpl(InvitationRepository invitationRepository, GroupUserRoleRepository groupUserRoleRepository,
+                                 UserRepository userRepository) {
         this.invitationRepository = invitationRepository;
+        this.groupUserRoleRepository = groupUserRoleRepository;
+        this.userRepository = userRepository;
     }
 
     @Override
@@ -57,6 +68,30 @@ public class InvitationServiceImpl implements InvitationService {
     public void deleteInvitationById(Long id) {
 
         invitationRepository.findById(id).ifPresent(invitation -> invitationRepository.delete(invitation));
+    }
+
+    @Override
+    public void sendGroupInvitationsToPrivateEvents(Long idGroup, Invitation invitation) throws NotFoundException {
+
+        if (invitation.getEvent() == null) {
+            throw new NotFoundException();
+
+        }
+        if (!invitation.getEvent().isPublic()) {
+
+            List<GroupUserRole> listIdUsers = groupUserRoleRepository.findAllByGroupId(idGroup);
+
+            for (GroupUserRole userGroup : listIdUsers) {
+
+                Optional<User> user = userRepository.findById(userGroup.getUser().getId());
+
+                user.orElseThrow(NotFoundException::new);
+
+                invitation.setUser(user.get());
+                invitationRepository.save(invitation);
+
+            }
+        }
     }
 
     @Override
