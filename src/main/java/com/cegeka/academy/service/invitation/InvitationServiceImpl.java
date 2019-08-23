@@ -94,6 +94,9 @@ public class InvitationServiceImpl implements InvitationService {
                     }
                 }
             }
+        } else {
+
+            throw new NotFoundException();
         }
     }
 
