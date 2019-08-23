@@ -45,6 +45,9 @@ public class InvitationServiceTest {
     @Autowired
     private GroupUserRoleRepository groupUserRoleRepository;
 
+    @Autowired
+    private RoleRepository roleRepository;
+
 
     private User user, user1;
     private Event event, publicEvent;
@@ -52,7 +55,7 @@ public class InvitationServiceTest {
     private Address address;
     private Group group;
     private GroupUserRole groupUserRole1, groupUserRole2;
-
+    private Role role;
     @BeforeEach
     public void init() {
         userRepository.deleteAll();
@@ -70,9 +73,11 @@ public class InvitationServiceTest {
         invitationService.saveInvitation(invitation);
         group = TestsRepositoryUtil.createGroup("gr1", "descriere grup");
         groupRepository.save(group);
-        groupUserRole1 = TestsRepositoryUtil.createGroupUserRole(userRepository.findAll().get(0), groupRepository.findAll().get(0), null);
+        role = TestsRepositoryUtil.createRole("admin");
+        roleRepository.save(role);
+        groupUserRole1 = TestsRepositoryUtil.createGroupUserRole(userRepository.findAll().get(0), groupRepository.findAll().get(0), roleRepository.findAll().get(0));
         groupUserRoleRepository.save(groupUserRole1);
-        groupUserRole2 = TestsRepositoryUtil.createGroupUserRole(userRepository.findAll().get(1), groupRepository.findAll().get(0), null);
+        groupUserRole2 = TestsRepositoryUtil.createGroupUserRole(userRepository.findAll().get(1), groupRepository.findAll().get(0), roleRepository.findAll().get(0));
         groupUserRoleRepository.save(groupUserRole2);
         invitationSendToGroup = TestsRepositoryUtil.createInvitation(InvitationStatus.PENDING.name(), "aaaa", eventRepository.findAll().get(0), null);
         invitationWithNullEvent = TestsRepositoryUtil.createInvitation(InvitationStatus.PENDING.name(), "aaaa", null, null);
