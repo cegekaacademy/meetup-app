@@ -2,6 +2,7 @@ package com.cegeka.academy.service.challenge;
 
 import com.cegeka.academy.domain.Challenge;
 import com.cegeka.academy.domain.UserChallenge;
+import com.cegeka.academy.domain.enums.ChallengeStatus;
 import com.cegeka.academy.repository.ChallengeRepository;
 import com.cegeka.academy.repository.UserChallengeRepository;
 import com.cegeka.academy.web.rest.errors.NotFoundException;
@@ -80,6 +81,21 @@ public class ChallengeServiceImp implements ChallengeService {
         }
 
        return challenges.stream().map(challenge -> ChallengeMapper.convertChallengeToChallengeDTO(challenge)).collect(Collectors.toList());
+
+    }
+
+    @Override
+    public List<ChallengeDTO> getPublicChallenges() throws NotFoundException {
+
+        List<Challenge> publicChallenges = challengeRepository.findAllByStatus(ChallengeStatus.PUBLIC.toString());
+
+        if(publicChallenges == null || publicChallenges.isEmpty()){
+
+            throw new NotFoundException().setMessage("List is empty");
+
+        }
+
+        return publicChallenges.stream().map(challenge -> ChallengeMapper.convertChallengeToChallengeDTO(challenge)).collect(Collectors.toList());
 
     }
 

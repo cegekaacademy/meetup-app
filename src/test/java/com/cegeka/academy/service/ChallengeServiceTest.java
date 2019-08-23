@@ -2,6 +2,7 @@ package com.cegeka.academy.service;
 
 import com.cegeka.academy.AcademyProjectApp;
 import com.cegeka.academy.domain.*;
+import com.cegeka.academy.domain.enums.ChallengeStatus;
 import com.cegeka.academy.repository.*;
 import com.cegeka.academy.service.challenge.ChallengeService;
 import com.cegeka.academy.service.dto.ChallengeCategoryDTO;
@@ -91,7 +92,7 @@ public class ChallengeServiceTest {
         challenge.setCreator(user);
         challenge.setStartDate(new Date(System.currentTimeMillis()));
         challenge.setEndDate(new Date(System.currentTimeMillis()));
-        challenge.setStatus("Activa");
+        challenge.setStatus(ChallengeStatus.PUBLIC.toString());
         challenge.setDescription("Nimic");
         challenge.setPoints(10);
         challenge.setChallengeCategory(challengeCategory);
@@ -180,8 +181,8 @@ public class ChallengeServiceTest {
     }
 
     @Test
-    void getChallengebyIdWhenNoSuchElementException()
-    {
+    void getChallengeByIdWhenNoSuchElementException() {
+
         Assertions.assertThrows(NotFoundException.class, ()->{ challengeService.getChallengeById(0); });
     }
 
@@ -223,6 +224,28 @@ public class ChallengeServiceTest {
 
         Assertions.assertThrows(NotFoundException.class, () -> {
             challengeService.getChallengesByCreatorId(100L);
+        });
+
+    }
+
+    @Test
+    public void testGetPublicChallenges() throws NotFoundException {
+
+        Challenge savedChallenge = challengeRepository.save(challenge);
+        ChallengeDTO savedChallengeDTO = ChallengeMapper.convertChallengeToChallengeDTO(savedChallenge);
+
+        List<ChallengeDTO> challengeDTOList = challengeService.getPublicChallenges();
+
+        assertThat(challengeDTOList.size()).isEqualTo(1);
+        assertThat(challengeDTOList.get(0)).isEqualTo(savedChallengeDTO);
+
+    }
+
+    @Test
+    public void testGetPublicChallengesEmptyList() {
+
+        Assertions.assertThrows(NotFoundException.class, () -> {
+            challengeService.getPublicChallenges();
         });
 
     }
