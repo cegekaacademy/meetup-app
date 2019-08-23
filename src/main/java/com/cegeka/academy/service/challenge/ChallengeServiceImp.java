@@ -6,6 +6,7 @@ import com.cegeka.academy.domain.enums.ChallengeStatus;
 import com.cegeka.academy.repository.ChallengeRepository;
 import com.cegeka.academy.repository.UserChallengeRepository;
 import com.cegeka.academy.web.rest.errors.NotFoundException;
+import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.cegeka.academy.service.dto.ChallengeDTO;
 import com.cegeka.academy.service.mapper.ChallengeMapper;
@@ -15,10 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -93,9 +91,21 @@ public class ChallengeServiceImp implements ChallengeService {
 
             throw new NotFoundException().setMessage("List is empty");
 
-        }
+        } else {
 
-        return publicChallenges.stream().map(challenge -> ChallengeMapper.convertChallengeToChallengeDTO(challenge)).collect(Collectors.toList());
+            List<ChallengeDTO> challengeDTOList =  publicChallenges.stream().map(challenge -> ChallengeMapper.convertChallengeToChallengeDTO(challenge)).collect(Collectors.toList());
+
+            List<ChallengeDTO> validChallengeDTOList = challengeDTOList.stream().filter(challenge -> isValidChallengeDTO(challenge)).collect(Collectors.toList());
+
+            if(validChallengeDTOList == null || validChallengeDTOList.isEmpty()){
+
+                throw new NotFoundException().setMessage("List is empty");
+
+            }
+
+            return validChallengeDTOList;
+
+        }
 
     }
 
@@ -117,6 +127,16 @@ public class ChallengeServiceImp implements ChallengeService {
     {
         Challenge challenge = userChallenge.getChallenge();
         return ChallengeMapper.convertChallengeToChallengeDTO(challenge);
+    }
+
+    private boolean isValidChallengeDTO(ChallengeDTO challengeDTO){
+
+        if(DateUtils.isSameDay(challengeDTO.getEndDate(), new Date()) || challengeDTO.getEndDate().after(new Date())){
+
+            return true;
+        }
+
+        return false;
     }
 
 }

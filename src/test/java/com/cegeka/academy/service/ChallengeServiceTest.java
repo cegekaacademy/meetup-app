@@ -19,6 +19,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -91,7 +93,14 @@ public class ChallengeServiceTest {
 
         challenge.setCreator(user);
         challenge.setStartDate(new Date(System.currentTimeMillis()));
-        challenge.setEndDate(new Date(System.currentTimeMillis()));
+
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+        try {
+            challenge.setEndDate(sdf.parse("22/09/2019"));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
         challenge.setStatus(ChallengeStatus.PUBLIC.toString());
         challenge.setDescription("Nimic");
         challenge.setPoints(10);
@@ -160,8 +169,8 @@ public class ChallengeServiceTest {
     }
 
     @Test
-    void emptyChallengeSetException()
-    {
+    void emptyChallengeSetException() {
+
         Assertions.assertThrows(NotFoundException.class,()->{ challengeService.getChallengesByUserId(0); });
     }
 
@@ -188,6 +197,7 @@ public class ChallengeServiceTest {
 
     @Test
     void getChallengeById() throws NotFoundException {
+
         Challenge expectedChallenge = challengeRepository.save(challenge);
 
         ChallengeDTO challengeDTO = challengeService.getChallengeById(expectedChallenge.getId());
@@ -199,6 +209,7 @@ public class ChallengeServiceTest {
 
     @AfterEach
     public void destroy(){
+
         userChallengeRepository.deleteAll();
         challengeRepository.deleteAll();
         challengeCategoryRepository.deleteAll();
