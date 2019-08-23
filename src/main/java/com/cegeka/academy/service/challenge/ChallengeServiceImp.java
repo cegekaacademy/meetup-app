@@ -81,10 +81,7 @@ public class ChallengeServiceImp implements ChallengeService {
             throw new NotFoundException().setMessage("List is empty.");
         }
 
-        List<ChallengeDTO> challengeDTOList = challenges.stream().map(challenge -> ChallengeMapper.convertChallengeToChallengeDTO(challenge)).collect(Collectors.toList());
-
-
-       return challengeDTOList;
+       return challenges.stream().map(challenge -> ChallengeMapper.convertChallengeToChallengeDTO(challenge)).collect(Collectors.toList());
 
     }
 
