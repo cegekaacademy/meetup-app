@@ -6,7 +6,6 @@ import com.cegeka.academy.web.rest.errors.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Set;
 
 @RestController
@@ -37,13 +36,6 @@ public class ChallengeController {
     public void saveChallenge(@RequestBody ChallengeDTO challenge) {
 
         challengeService.saveChallenge(challenge);
-
-    }
-
-    @GetMapping("/creator/{creatorId}")
-    public List<ChallengeDTO> getChallengesByCreatorId(@PathVariable(value = "creatorId") Long creatorId) throws NotFoundException {
-
-        return challengeService.getChallengesByCreatorId(creatorId);
 
     }
 }

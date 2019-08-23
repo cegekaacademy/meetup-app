@@ -20,6 +20,4 @@ public interface ChallengeRepository extends JpaRepository<Challenge, Long> {
     List<Challenge> findAllByEndDate(Date endTime);
 
     List<Challenge> findAllByPoints(Double points);
-
-    List<Challenge> findAllByCreatorId(Long creatorId);
 }
