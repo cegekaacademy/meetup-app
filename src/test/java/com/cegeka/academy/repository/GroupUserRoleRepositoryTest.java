@@ -3,6 +3,7 @@ package com.cegeka.academy.repository;
 import com.cegeka.academy.AcademyProjectApp;
 import com.cegeka.academy.domain.Group;
 import com.cegeka.academy.domain.GroupUserRole;
+import com.cegeka.academy.domain.Role;
 import com.cegeka.academy.domain.User;
 import com.cegeka.academy.repository.util.TestsRepositoryUtil;
 import org.junit.jupiter.api.BeforeEach;
@@ -29,9 +30,13 @@ public class GroupUserRoleRepositoryTest {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private RoleRepository roleRepository;
+
     private User user1, user2;
     private Group group;
     private GroupUserRole groupUserRole1, groupUserRole2;
+    private Role role;
 
     @BeforeEach
     public void init() {
@@ -42,9 +47,11 @@ public class GroupUserRoleRepositoryTest {
         userRepository.saveAndFlush(user2);
         group = TestsRepositoryUtil.createGroup("gr1", "ana are mere");
         groupRepository.save(group);
-        groupUserRole1 = TestsRepositoryUtil.createGroupUserRole(user1, groupRepository.findAll().get(0), null);
+        role = TestsRepositoryUtil.createRole("admin");
+        roleRepository.save(role);
+        groupUserRole1 = TestsRepositoryUtil.createGroupUserRole(user1, groupRepository.findAll().get(0), roleRepository.findAll().get(0));
         groupUserRoleRepository.save(groupUserRole1);
-        groupUserRole2 = TestsRepositoryUtil.createGroupUserRole(user2, groupRepository.findAll().get(0), null);
+        groupUserRole2 = TestsRepositoryUtil.createGroupUserRole(user2, groupRepository.findAll().get(0), roleRepository.findAll().get(0));
         groupUserRoleRepository.save(groupUserRole2);
     }
 
@@ -54,6 +61,11 @@ public class GroupUserRoleRepositoryTest {
         List<GroupUserRole> list = groupUserRoleRepository.findAll();
         assertThat(list.size()).isEqualTo(2);
         assertThat(list.get(0).getGroup()).isEqualTo(groupRepository.findAll().get(0));
+        assertThat(list.get(0).getRole()).isEqualTo(roleRepository.findAll().get(0));
+        assertThat(list.get(0).getUser()).isEqualTo(userRepository.findAll().get(userRepository.findAll().size() - 2));
+        assertThat(list.get(1).getGroup()).isEqualTo(groupRepository.findAll().get(0));
+        assertThat(list.get(1).getRole()).isEqualTo(roleRepository.findAll().get(0));
+        assertThat(list.get(1).getUser()).isEqualTo(userRepository.findAll().get(userRepository.findAll().size() - 1));
     }
 
     @Test
@@ -77,5 +89,14 @@ public class GroupUserRoleRepositoryTest {
         List<GroupUserRole> list = groupUserRoleRepository.findAllByGroupId(100L);
         assertThat(list.size()).isEqualTo(0);
     }
+
+    @Test
+    public void testFindAllByGroupIdWithNoGroupUserRole() {
+
+        groupUserRoleRepository.deleteAll();
+        List<GroupUserRole> list = groupUserRoleRepository.findAllByGroupId(1L);
+        assertThat(list.size()).isEqualTo(0);
+    }
+
 
 }

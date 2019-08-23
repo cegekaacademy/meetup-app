@@ -56,4 +56,10 @@ public class TestsRepositoryUtil {
         return groupUserRole;
     }
 
+    public static Role createRole(String name) {
+        Role role = new Role();
+        role.setName(name);
+        return role;
+    }
+
 }
