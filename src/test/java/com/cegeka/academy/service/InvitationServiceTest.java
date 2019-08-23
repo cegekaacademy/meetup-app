@@ -56,6 +56,8 @@ public class InvitationServiceTest {
     private Group group;
     private GroupUserRole groupUserRole1, groupUserRole2;
     private Role role;
+
+
     @BeforeEach
     public void init() {
         userRepository.deleteAll();
