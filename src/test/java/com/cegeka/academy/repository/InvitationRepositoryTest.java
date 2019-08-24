@@ -100,10 +100,9 @@ public class InvitationRepositoryTest {
         List<Invitation> list = invitationRepository.findByUser_IdAndStatusIgnoreCase(user2.getId(), InvitationStatus.PENDING.name());
         assertThat(list.size()).isEqualTo(0);
     }
-
     @Test
     public void testFindByEventId() {
-        User user = TestsRepositoryUtil.createUser("login1", "anaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaana");
+        User user = TestsRepositoryUtil.createUser("login", "anaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaana");
         userRepository.save(user);
         Address address = TestsRepositoryUtil.createAddress("Romania", "Bucuresti", "Splai", "333", "Casa", "Casa magica");
         addressRepository.saveAndFlush(address);
@@ -117,7 +116,7 @@ public class InvitationRepositoryTest {
         invitationRepository.save(invitation2);
         event.getPendingInvitations().add(invitation2);
         eventRepository.save(event);
-        Set<Invitation> invitationList = invitationRepository.findAllByEvent_id(event.getId());
+        Set<Invitation> invitationList=invitationRepository.findAllByEvent_id(event.getId());
         assertThat(invitationList.size()).isEqualTo(2);
 
     }
