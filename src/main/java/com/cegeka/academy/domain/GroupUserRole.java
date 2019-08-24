@@ -1,6 +1,7 @@
 package com.cegeka.academy.domain;
 
 import javax.persistence.*;
+import java.util.Set;
 
 @Entity
 @Table(name = "group_user_role")
@@ -55,13 +56,4 @@ public class GroupUserRole {
         this.id = id;
     }
 
-    @Override
-    public String toString() {
-        return "GroupUserRole{" +
-                "id=" + id +
-                ", user=" + user +
-                ", group=" + group +
-                ", role=" + role +
-                '}';
-    }
 }
