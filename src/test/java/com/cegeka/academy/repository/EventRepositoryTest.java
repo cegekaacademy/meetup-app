@@ -7,9 +7,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
-import java.util.HashSet;
+
 import java.util.List;
-import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -39,7 +38,7 @@ public class EventRepositoryTest {
         Event event = TestsRepositoryUtil.createEvent("Ana are mere!", "KFC Krushers Party", true, address, user);
         eventRepository.save(event);
         Event eventTest = eventRepository.findAllByIsPublicIsTrue().get(0);
-        assertThat(eventTest.getPublic()).isEqualTo(true);
+        assertThat(eventTest.isPublic()).isEqualTo(true);
         assertThat(eventTest.getName()).isEqualTo(event.getName());
         Invitation invitation1=TestsRepositoryUtil.createInvitation("pending","description",event,user);
         invitationRepository.save(invitation1);
