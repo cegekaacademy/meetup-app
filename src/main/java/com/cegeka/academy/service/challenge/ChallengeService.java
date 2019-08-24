@@ -10,7 +10,7 @@ public interface ChallengeService {
 
     void saveChallenge(ChallengeDTO challenge);
 
-    ChallengeDTO updateChallenge(ChallengeDTO challengeDTO) throws NotFoundException;
+    ChallengeDTO updateChallenge(Long challengeId, ChallengeDTO challengeDTO) throws NotFoundException;
 
     Set<ChallengeDTO> getChallengesByUserId(long id) throws NotFoundException;
 

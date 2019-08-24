@@ -57,7 +57,7 @@ public class ChallengeServiceImp implements ChallengeService {
     }
 
     @Override
-    public ChallengeDTO updateChallenge(ChallengeDTO challengeDTO) throws NotFoundException {
+    public ChallengeDTO updateChallenge(Long challengeId, ChallengeDTO challengeDTO) throws NotFoundException {
 
         Long userId;
 
@@ -66,20 +66,23 @@ public class ChallengeServiceImp implements ChallengeService {
             throw new InvalidFieldException().setMessage("Un challenge trebuie sa aiba un creator");
         }
 
-        Long challengeCategoryId = challengeDTO.getChallengeCategory().getId();
+        if(challengeDTO.getChallengeCategory() != null) {
 
-        Optional<Long> challengeCategoryOptional = Optional.ofNullable(challengeCategoryId);
+            Optional<Long> challengeCategoryOptional = Optional.ofNullable(challengeDTO.getChallengeCategory().getId());
 
-        challengeCategoryOptional.ifPresent( id -> challengeCategoryRepository.findById(id).
-                        orElseThrow(()-> new InvalidFieldException().setMessage("Categoria aleasa trebuie sa existe"))
-                    );
+            if (!challengeCategoryOptional.isPresent()) {
+                challengeDTO.setChallengeCategory(null);
+            }
 
-        if(!challengeCategoryOptional.isPresent())
-        {
-            challengeDTO.setChallengeCategory(null);
+            challengeCategoryOptional.ifPresent(id -> challengeCategoryRepository.findById(id).
+                    orElseThrow(() -> new InvalidFieldException().setMessage("Categoria aleasa trebuie sa existe"))
+            );
         }
 
-        Long challengeId = challengeDTO.getId();
+        if(!challengeId.equals(challengeDTO.getId()))
+        {
+            throw new InvalidFieldException().setMessage("Id-ul challenge-ului din path trebuie ca corespunda cu cel din DTO");
+        }
 
         Challenge oldChallenge = challengeRepository.findById(challengeId).orElseThrow(
                 ()->new NotFoundException().setMessage("Challenge-ul " + challengeId +" nu exista")
