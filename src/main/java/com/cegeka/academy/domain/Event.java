@@ -46,6 +46,18 @@ public class Event {
     @ManyToMany(mappedBy = "events")
     private Set<User> users = new HashSet<>();
 
+    @ManyToMany
+    @JoinTable(
+            name = "event_category",
+            joinColumns = @JoinColumn(name = "event_id"),
+            inverseJoinColumns = @JoinColumn(name = "category_id"))
+    private Set<Category>categories=new HashSet<>();
+
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_event",referencedColumnName = "id")
+    Set<Invitation>pendingInvitations=new HashSet<>();
+
+
     public Long getId() {
         return id;
     }
@@ -126,6 +138,14 @@ public class Event {
         this.users = users;
     }
 
+    public Set<Category> getCategories() {
+        return categories;
+    }
+
+    public void setCategories(Set<Category> categories) {
+        this.categories = categories;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -144,6 +164,10 @@ public class Event {
         return result;
     }
 
+    public Set<Invitation> getPendingInvitations() {
+        return pendingInvitations;
+    }
+
     @Override
     public String toString() {
         return "Event{" +
@@ -158,4 +182,5 @@ public class Event {
                 ", addressId=" + addressId +
                 '}';
     }
+
 }

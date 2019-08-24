@@ -119,6 +119,20 @@ public class ChallengeServiceImp implements ChallengeService {
     }
 
     @Override
+    public List<ChallengeDTO> getChallengesByCreatorId(Long creatorId) throws NotFoundException {
+
+        List<Challenge> challenges = challengeRepository.findAllByCreatorId(creatorId);
+
+        if(challenges == null || challenges.isEmpty()){
+
+            throw new NotFoundException().setMessage("List is empty.");
+        }
+
+       return challenges.stream().map(challenge -> ChallengeMapper.convertChallengeToChallengeDTO(challenge)).collect(Collectors.toList());
+
+    }
+
+    @Override
     public ChallengeDTO getChallengeById(long id) throws NotFoundException {
 
         Optional<Challenge> challengeOptional = challengeRepository.findById(id);

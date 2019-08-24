@@ -4,6 +4,7 @@ import com.cegeka.academy.domain.Invitation;
 import com.cegeka.academy.service.dto.InvitationDTO;
 
 import java.util.List;
+import java.util.Set;
 
 public interface InvitationService {
 
@@ -17,5 +18,6 @@ public interface InvitationService {
     void acceptInvitation(Invitation invitation);
 
     void rejectInvitation(Invitation invitation);
+
 
 }
