@@ -20,7 +20,7 @@ public class Challenge {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "creator")
-    @NotNull
+    @NotNull(message = "Pentru un challenge este necesar un creator")
     private User creator;
 
     @Column(name = "start_date")

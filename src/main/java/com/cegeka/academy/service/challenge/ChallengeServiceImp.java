@@ -61,11 +61,6 @@ public class ChallengeServiceImp implements ChallengeService {
 
         Long userId;
 
-        if(challengeDTO.getCreator().getId() == null)
-        {
-            throw new InvalidFieldException().setMessage("Un challenge trebuie sa aiba un creator");
-        }
-
         if(challengeDTO.getChallengeCategory() != null) {
 
             Optional<Long> challengeCategoryOptional = Optional.ofNullable(challengeDTO.getChallengeCategory().getId());

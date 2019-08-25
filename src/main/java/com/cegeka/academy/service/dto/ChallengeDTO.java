@@ -1,6 +1,7 @@
 package com.cegeka.academy.service.dto;
 
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
 import java.util.Objects;
@@ -10,6 +11,7 @@ public class ChallengeDTO {
     @NotNull
     private Long id;
 
+    @Valid
     @NotNull
     private UserDTO creator;
 

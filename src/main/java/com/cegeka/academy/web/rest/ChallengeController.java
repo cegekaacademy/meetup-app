@@ -32,8 +32,8 @@ public class ChallengeController {
         challengeService.deleteChallenge(id);
     }
 
-    @RequestMapping(value = "/update/{id}", method = RequestMethod.PUT)
-    public ChallengeDTO updateChallengeController(@Valid @RequestBody ChallengeDTO challengeDTO, @PathVariable Long challengeId) throws NotFoundException {
+    @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
+    public ChallengeDTO updateChallenge(@Valid @RequestBody ChallengeDTO challengeDTO, @PathVariable Long challengeId) throws NotFoundException {
         return challengeService.updateChallenge(challengeId, challengeDTO);
     }
 
