@@ -40,6 +40,10 @@ public class Event {
     @Column(name = "is_public")
     private Boolean isPublic;
 
+    @Size(max = 250, message = "Image path must have 250 letters")
+    @Column(name = "cover_photo")
+    private String coverPhoto;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "address_id", referencedColumnName = "id")
     private Address addressId;
@@ -163,6 +167,18 @@ public class Event {
         return Objects.hash(id);
     }
 
+    public Boolean getPublic() {
+        return isPublic;
+    }
+
+    public String getCoverPhoto() {
+        return coverPhoto;
+    }
+
+    public void setCoverPhoto(String coverPhoto) {
+        this.coverPhoto = coverPhoto;
+    }
+
     public Set<Invitation> getPendingInvitations() {
         return pendingInvitations;
     }
@@ -178,8 +194,11 @@ public class Event {
                 ", owner=" + owner +
                 ", notes='" + notes + '\'' +
                 ", isPublic=" + isPublic +
+                ", coverPhoto='" + coverPhoto + '\'' +
                 ", addressId=" + addressId +
+                ", users=" + users +
+                ", categories=" + categories +
+                ", pendingInvitations=" + pendingInvitations +
                 '}';
     }
-
 }

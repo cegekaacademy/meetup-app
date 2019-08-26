@@ -101,4 +101,8 @@ public class EventController {
 
     }
 
+    @GetMapping("getAllByCategory/{id}")
+    public List<Event> getAllCategoryEvents(@PathVariable(value = "id") Long id) {
+        return eventRepository.findAllByCategories_id(id);
+    }
 }
