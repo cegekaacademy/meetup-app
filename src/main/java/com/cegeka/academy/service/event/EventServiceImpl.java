@@ -5,6 +5,8 @@ import com.cegeka.academy.domain.User;
 import com.cegeka.academy.repository.EventRepository;
 import com.cegeka.academy.repository.UserRepository;
 import com.cegeka.academy.service.UserService;
+import com.cegeka.academy.service.dto.EventDTO;
+import com.cegeka.academy.service.mapper.EventMapper;
 import com.cegeka.academy.web.rest.errors.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -37,7 +40,7 @@ public class EventServiceImpl implements EventService {
         return eventRepository.findAllByIsPublicIsTrue();
     }
 
-    public List<Event> getAllByUser(User owner) {
+    public List<Event> getAllByOwner(User owner) {
         return eventRepository.findAllByOwner(owner);
     }
 
@@ -72,13 +75,28 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public void addUserToPublicEvent(Long userId, Event event) throws NotFoundException {
-        if (event.getPublic()) {
+        if (event.isPublic()) {
             Optional<User> user = userRepository.findById(userId);
             user.orElseThrow(() -> new NotFoundException().setMessage("User not found"));
             user.get().getEvents().add(event);
             logger.info("Event with id: " + event.getId() + " has a new user with id " + userRepository.save(user.get()).getId());
 
         }
+    }
+
+    @Override
+    public List<EventDTO> getEventsByUser(Long userId) throws NotFoundException {
+        List<EventDTO> userEvents = new ArrayList<>();
+        List<Event> events = eventRepository.findByUsers_id(userId);
+
+        if (events.isEmpty() || events == null) throw new NotFoundException().setMessage("No events found");
+        for (Event event : events) {
+            EventDTO aux = EventMapper.convertEventtoEventDTO(event);
+            userEvents.add(aux);
+        }
+
+        return userEvents;
+
     }
 
 }

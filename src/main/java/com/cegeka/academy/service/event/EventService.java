@@ -2,6 +2,7 @@ package com.cegeka.academy.service.event;
 
 import com.cegeka.academy.domain.Event;
 import com.cegeka.academy.domain.User;
+import com.cegeka.academy.service.dto.EventDTO;
 import com.cegeka.academy.web.rest.errors.NotFoundException;
 
 import java.util.List;
@@ -11,7 +12,7 @@ public interface EventService {
 
     public List<Event> getAllPubicEvents();
 
-    List<Event> getAllByUser(User owner);
+    List<Event> getAllByOwner(User owner);
 
     Optional<Event> getEvent(Long id);
 
@@ -22,4 +23,6 @@ public interface EventService {
     void deleteEventById(Long id);
 
     void addUserToPublicEvent(Long userId, Event event) throws NotFoundException;
+
+    List<EventDTO> getEventsByUser(Long userId) throws NotFoundException;
 }

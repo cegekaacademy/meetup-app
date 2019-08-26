@@ -2,6 +2,7 @@ package com.cegeka.academy.web.rest;
 
 import com.cegeka.academy.domain.Event;
 import com.cegeka.academy.repository.EventRepository;
+import com.cegeka.academy.service.dto.EventDTO;
 import com.cegeka.academy.service.event.EventService;
 import com.cegeka.academy.service.serviceValidation.ExpirationCheckService;
 import com.cegeka.academy.service.serviceValidation.ValidationAccessService;
@@ -99,6 +100,11 @@ public class EventController {
 
         eventService.addUserToPublicEvent(id, event);
 
+    }
+
+    @GetMapping("/userEvents/{id}")
+    public List<EventDTO> getEventsByUser(@PathVariable(value = "id") Long id) throws NotFoundException {
+        return eventService.getEventsByUser(id);
     }
 
 }

@@ -8,6 +8,7 @@ import com.cegeka.academy.repository.AddressRepository;
 import com.cegeka.academy.repository.EventRepository;
 import com.cegeka.academy.repository.UserRepository;
 import com.cegeka.academy.repository.util.TestsRepositoryUtil;
+import com.cegeka.academy.service.dto.EventDTO;
 import com.cegeka.academy.service.event.EventService;
 import com.cegeka.academy.web.rest.errors.NotFoundException;
 import org.junit.jupiter.api.Assertions;
@@ -113,5 +114,19 @@ public class EventServiceT {
 
     }
 
+
+    @Test
+    @Transactional
+    public void getEventsByUser_ThrowsException() {
+        Assertions.assertThrows(NotFoundException.class, () -> eventService.getEventsByUser(1002l));
+    }
+
+    @Test
+    @Transactional
+    public void getEventsByUserWorks() throws NotFoundException {
+        eventService.addUserToPublicEvent(user.getId(), event);
+        List<EventDTO> events = eventService.getEventsByUser(user.getId());
+        assertThat(events.size()).isEqualTo(1);
+    }
 
 }
