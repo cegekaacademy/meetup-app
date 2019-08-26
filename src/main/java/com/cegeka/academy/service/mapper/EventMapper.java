@@ -1,4 +1,4 @@
-package com.cegeka.academy.service.util;
+package com.cegeka.academy.service.mapper;
 
 import com.cegeka.academy.domain.Event;
 import com.cegeka.academy.service.dto.EventDTO;

@@ -1,21 +1,23 @@
 package com.cegeka.academy.web.rest;
 
 import com.cegeka.academy.AcademyProjectApp;
-import com.cegeka.academy.domain.Challenge;
-import com.cegeka.academy.domain.ChallengeCategory;
-import com.cegeka.academy.domain.User;
+import com.cegeka.academy.domain.*;
 import com.cegeka.academy.repository.ChallengeCategoryRepository;
 import com.cegeka.academy.repository.ChallengeRepository;
 import com.cegeka.academy.repository.UserRepository;
+import com.cegeka.academy.service.mapper.UserMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MockMvcBuilder;
+import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.junit.jupiter.api.*;
-import static org.assertj.core.api.Assertions.assertThat;
+
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.util.Date;
 
@@ -75,7 +77,7 @@ public class ChallengeControllerTest {
         challenge.setStatus("Activa");
         challenge.setDescription("Nimic");
         challenge.setPoints(10);
-        challenge.setChallengeCategory(challengeCategoryRepository.findAll().get(0));
+        challenge.setChallengeCategory(challengeCategory);
 
         challengeRepository.save(challenge);
     }
@@ -89,5 +91,15 @@ public class ChallengeControllerTest {
     void testDeleteChallenge() throws Exception {
         long id = challengeRepository.findAll().get(0).getId();
         restMockMvc.perform(delete("/challenge/"+id)).andExpect(status().isOk());
+    }
+
+    @Test
+    void testGetUserChallengesByUserIdException() throws Exception {
+        restMockMvc.perform(get("/challenge/user/0")).andExpect(status().isNotFound());
+    }
+
+    @Test
+    void getChallengeByIdException() throws Exception {
+        restMockMvc.perform(get("challenge/0")).andExpect(status().isNotFound());
     }
 }

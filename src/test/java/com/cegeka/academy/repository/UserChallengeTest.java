@@ -39,6 +39,8 @@ public class UserChallengeTest {
 
     @BeforeEach
     public void init() {
+
+        invitation.setStatus("pending");
         invitationRepository.save(invitation);
 
         user.setLogin("LoginSetForTest");

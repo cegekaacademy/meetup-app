@@ -7,7 +7,6 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,7 +14,7 @@ import java.util.List;
 public class GlobalExceptionHandler{
 
     @ExceptionHandler(value = NotFoundException.class)
-    public ResponseEntity<String> handle(NotFoundException exception)
+    public ResponseEntity<String> handleNotFoundException(NotFoundException exception)
     {
         return new ResponseEntity<String>(exception.getMessage(), HttpStatus.NOT_FOUND);
     }
@@ -28,8 +27,6 @@ public class GlobalExceptionHandler{
             errors.add(errorMessage);
         });
 
-        return new ResponseEntity(errors.toString(), HttpStatus.BAD_REQUEST);
-
+        return new ResponseEntity<>(errors.toString(), HttpStatus.BAD_REQUEST);
     }
-
 }
