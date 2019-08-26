@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/academy-project.iml" filepath="$PROJECT_DIR$/academy-project.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/meetup-app.iml" filepath="$PROJECT_DIR$/.idea/meetup-app.iml" />
     </modules>
   </component>
