@@ -94,25 +94,21 @@ public class ChallengeServiceImp implements ChallengeService {
 
         List<Challenge> publicChallenges = challengeRepository.findAllByStatus(ChallengeStatus.PUBLIC.toString());
 
-        if(publicChallenges == null || publicChallenges.isEmpty()){
+        if(publicChallenges == null || publicChallenges.isEmpty()) {
 
             throw new NotFoundException().setMessage("List is empty");
 
-        } else {
+        }
 
-            List<ChallengeDTO> challengeDTOList =  publicChallenges.stream().map(challenge -> ChallengeMapper.convertChallengeToChallengeDTO(challenge)).collect(Collectors.toList());
+        List<Challenge> validChallengeList = publicChallenges.stream().filter(challenge -> isValidChallengeDTO(challenge)).collect(Collectors.toList());
 
-            List<ChallengeDTO> validChallengeDTOList = challengeDTOList.stream().filter(challenge -> isValidChallengeDTO(challenge)).collect(Collectors.toList());
+        if(validChallengeList == null || validChallengeList.isEmpty()){
 
-            if(validChallengeDTOList == null || validChallengeDTOList.isEmpty()){
-
-                throw new NotFoundException().setMessage("List is empty");
-
-            }
-
-            return validChallengeDTOList;
+            throw new NotFoundException().setMessage("List is empty");
 
         }
+
+        return validChallengeList.stream().map(challenge -> ChallengeMapper.convertChallengeToChallengeDTO(challenge)).collect(Collectors.toList());
 
     }
 
@@ -136,9 +132,9 @@ public class ChallengeServiceImp implements ChallengeService {
         return ChallengeMapper.convertChallengeToChallengeDTO(challenge);
     }
 
-    private boolean isValidChallengeDTO(ChallengeDTO challengeDTO){
+    private boolean isValidChallengeDTO(Challenge challenge){
 
-        if(DateUtils.isSameDay(challengeDTO.getEndDate(), new Date()) || challengeDTO.getEndDate().after(new Date())){
+        if(DateUtils.isSameDay(challenge.getEndDate(), new Date()) || challenge.getEndDate().after(new Date())){
 
             return true;
         }
