@@ -260,6 +260,18 @@ body,
   -webkit-overflow-scrolling: touch;
 }
 
+#main {
+  transition: margin-left .5s;
+}
+
+.logo-img {
+  height: 75px;
+  width: 110px;
+  display: inline-block;
+  vertical-align: middle;
+  background: url('/content/images/cegeka-logo.png') no-repeat center center;
+  background-size: contain;
+}
 
 
 /* jhipster-needle-scss-add-main JHipster will add new css style */

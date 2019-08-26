@@ -1,15 +1,24 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, EventEmitter, OnInit, Output} from '@angular/core';
 
 @Component({
-  selector: 'jhi-sidebar',
-  templateUrl: './sidebar.component.html',
-  styleUrls: ['./sidebar.component.scss']
+    selector: 'jhi-sidebar',
+    templateUrl: './sidebar.component.html',
+    styleUrls: ['./sidebar.component.scss']
 })
 export class SidebarComponent implements OnInit {
 
-  constructor() { }
+    @Output() isMenuExpanded: EventEmitter<any> = new EventEmitter<any>();
 
-  ngOnInit() {
-  }
+    isExpanded = true;
 
+    constructor() {
+    }
+
+    ngOnInit() {
+    }
+
+    toggleMenu() {
+        this.isExpanded = !this.isExpanded;
+        this.isMenuExpanded.emit({isExpanded: this.isExpanded});
+    }
 }
