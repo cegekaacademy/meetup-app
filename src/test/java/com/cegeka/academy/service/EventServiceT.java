@@ -129,4 +129,19 @@ public class EventServiceT {
         assertThat(events.size()).isEqualTo(1);
     }
 
+    @Test
+    @Transactional
+    public void getAllByOwner_ThrowsException() {
+        User notOwner = TestsRepositoryUtil.createUser("loginx", "anaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaana");
+        userRepository.saveAndFlush(notOwner);
+        Assertions.assertThrows(NotFoundException.class, () -> eventService.getAllByOwner(notOwner));
+    }
+
+    @Test
+    @Transactional
+    public void getAllByOwnerWorks() throws NotFoundException {
+        List<EventDTO> events = eventService.getAllByOwner(user);
+        assertThat(events.size()).isEqualTo(1);
+    }
+
 }

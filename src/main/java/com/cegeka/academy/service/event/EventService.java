@@ -12,7 +12,7 @@ public interface EventService {
 
     public List<Event> getAllPubicEvents();
 
-    List<Event> getAllByOwner(User owner);
+    List<EventDTO> getAllByOwner(User owner) throws NotFoundException;
 
     Optional<Event> getEvent(Long id);
 

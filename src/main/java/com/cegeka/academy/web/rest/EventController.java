@@ -1,7 +1,9 @@
 package com.cegeka.academy.web.rest;
 
 import com.cegeka.academy.domain.Event;
+import com.cegeka.academy.domain.User;
 import com.cegeka.academy.repository.EventRepository;
+import com.cegeka.academy.repository.UserRepository;
 import com.cegeka.academy.service.dto.EventDTO;
 import com.cegeka.academy.service.event.EventService;
 import com.cegeka.academy.service.serviceValidation.ExpirationCheckService;
@@ -24,14 +26,17 @@ public class EventController {
     private final ValidationAccessService validationAccessService;
     private final ExpirationCheckService expirationCheckService;
     private final EventRepository eventRepository;
+    private final UserRepository userRepository;
 
     @Autowired
     public EventController(EventService eventService, ValidationAccessService validationAccessService,
-                           ExpirationCheckService expirationCheckService, EventRepository eventRepository) {
+                           ExpirationCheckService expirationCheckService, EventRepository eventRepository,
+                           UserRepository userRepository) {
         this.eventService = eventService;
         this.validationAccessService = validationAccessService;
         this.expirationCheckService = expirationCheckService;
         this.eventRepository = eventRepository;
+        this.userRepository = userRepository;
     }
 
     @GetMapping("/all_public")
@@ -105,6 +110,13 @@ public class EventController {
     @GetMapping("/userEvents/{id}")
     public List<EventDTO> getEventsByUser(@PathVariable(value = "id") Long id) throws NotFoundException {
         return eventService.getEventsByUser(id);
+    }
+
+    @GetMapping("/byOwner/{id}")
+    public List<EventDTO> getEventsByOwner(@PathVariable(value = "id") Long id) throws NotFoundException {
+        Optional<User> user = userRepository.findById(id);
+        user.orElseThrow(() -> new NotFoundException().setMessage("User not found"));
+        return eventService.getAllByOwner(user.get());
     }
 
 }

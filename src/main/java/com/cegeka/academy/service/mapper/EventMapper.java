@@ -24,6 +24,10 @@ public class EventMapper {
         eventDTO.setNotes(event.getNotes());
         eventDTO.setStartDate(event.getStartDate());
         eventDTO.setEndDate(event.getEndDate());
+
+        if (event.getOwner() != null) {
+            eventDTO.setCreatedBy(event.getOwner().getLogin());
+        }
         return eventDTO;
     }
 }

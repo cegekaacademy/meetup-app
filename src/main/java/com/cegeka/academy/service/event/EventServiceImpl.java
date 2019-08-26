@@ -40,8 +40,17 @@ public class EventServiceImpl implements EventService {
         return eventRepository.findAllByIsPublicIsTrue();
     }
 
-    public List<Event> getAllByOwner(User owner) {
-        return eventRepository.findAllByOwner(owner);
+    public List<EventDTO> getAllByOwner(User owner) throws NotFoundException {
+
+        List<EventDTO> ownerEvents = new ArrayList<>();
+        List<Event> events = eventRepository.findAllByOwner(owner);
+        if (events.isEmpty() || events == null) throw new NotFoundException().setMessage("No events found");
+        for (Event event : events) {
+            EventDTO aux = EventMapper.convertEventtoEventDTO(event);
+            ownerEvents.add(aux);
+        }
+
+        return ownerEvents;
     }
 
     @Override
