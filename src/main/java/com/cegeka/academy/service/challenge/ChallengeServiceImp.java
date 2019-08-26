@@ -100,7 +100,7 @@ public class ChallengeServiceImp implements ChallengeService {
 
         }
 
-        List<Challenge> validChallengeList = publicChallenges.stream().filter(challenge -> isValidChallengeDTO(challenge)).collect(Collectors.toList());
+        List<Challenge> validChallengeList = publicChallenges.stream().filter(challenge -> isValidChallenge(challenge)).collect(Collectors.toList());
 
         if(validChallengeList == null || validChallengeList.isEmpty()){
 
@@ -132,14 +132,10 @@ public class ChallengeServiceImp implements ChallengeService {
         return ChallengeMapper.convertChallengeToChallengeDTO(challenge);
     }
 
-    private boolean isValidChallengeDTO(Challenge challenge){
+    private boolean isValidChallenge(Challenge challenge){
 
-        if(DateUtils.isSameDay(challenge.getEndDate(), new Date()) || challenge.getEndDate().after(new Date())){
+        return DateUtils.isSameDay(challenge.getEndDate(), new Date()) || challenge.getEndDate().after(new Date());
 
-            return true;
-        }
-
-        return false;
     }
 
 }
