@@ -133,12 +133,12 @@ public class InvitationServiceImpl implements InvitationService {
 
                 invitation.setUser(user.get());
 
-                Invitation invitation1 = new Invitation();
-                invitation1.setDescription(invitation.getDescription());
-                invitation1.setStatus(invitation.getStatus());
-                invitation1.setEvent(invitation.getEvent());
-                invitation1.setUser(invitation.getUser());
-                invitationRepository.save(invitation1);
+                Invitation invitationSendToGroup = new Invitation();
+                invitationSendToGroup.setDescription(invitation.getDescription());
+                invitationSendToGroup.setStatus(invitation.getStatus());
+                invitationSendToGroup.setEvent(invitation.getEvent());
+                invitationSendToGroup.setUser(invitation.getUser());
+                invitationRepository.save(invitationSendToGroup);
 
             }
         }
