@@ -63,7 +63,7 @@ public class EventRepositoryTest {
         event = TestsRepositoryUtil.createEvent("Ana are mere!", "KFC Krushers Party", true, address, user, categories, "https://scontent.fotp3-2.fna.fbcdn.net/v/t1.0-9/67786277_2592710307438854_5055220041180512256");
         eventRepository.save(event);
         Event eventTest = eventRepository.findAllByIsPublicIsTrue().get(0);
-        assertThat(eventTest.getPublic()).isEqualTo(true);
+        assertThat(eventTest.isPublic()).isEqualTo(true);
         assertThat(eventTest.getName()).isEqualTo(event.getName());
     }
 
