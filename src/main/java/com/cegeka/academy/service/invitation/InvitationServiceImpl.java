@@ -131,13 +131,11 @@ public class InvitationServiceImpl implements InvitationService {
 
                 user.orElseThrow(NotFoundException::new);
 
-                invitation.setUser(user.get());
-
                 Invitation invitationSendToGroup = new Invitation();
                 invitationSendToGroup.setDescription(invitation.getDescription());
                 invitationSendToGroup.setStatus(invitation.getStatus());
                 invitationSendToGroup.setEvent(invitation.getEvent());
-                invitationSendToGroup.setUser(invitation.getUser());
+                invitationSendToGroup.setUser(user.get());
                 invitationRepository.save(invitationSendToGroup);
 
             }
