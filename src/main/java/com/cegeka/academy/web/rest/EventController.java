@@ -94,4 +94,11 @@ public class EventController {
 
     }
 
+    @PutMapping("addUser/{id}")
+    public void addUserToPublicEvent(@PathVariable(value = "id") Long id, @Valid @RequestBody Event event) throws NotFoundException {
+
+        eventService.addUserToPublicEvent(id, event);
+
+    }
+
 }

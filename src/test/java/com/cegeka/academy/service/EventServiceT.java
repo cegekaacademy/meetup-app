@@ -5,9 +5,12 @@ import com.cegeka.academy.domain.Address;
 import com.cegeka.academy.domain.Event;
 import com.cegeka.academy.domain.User;
 import com.cegeka.academy.repository.AddressRepository;
+import com.cegeka.academy.repository.EventRepository;
 import com.cegeka.academy.repository.UserRepository;
 import com.cegeka.academy.repository.util.TestsRepositoryUtil;
 import com.cegeka.academy.service.event.EventService;
+import com.cegeka.academy.web.rest.errors.NotFoundException;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,12 +31,15 @@ public class EventServiceT {
     AddressRepository addressRepository;
     private @Autowired
     EventService eventService;
+    private @Autowired
+    EventRepository eventRepository;
 
     private Event event;
+    private User user;
 
     @BeforeEach
     void init() {
-        User user = TestsRepositoryUtil.createUser("cosminalex", "anaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaana");
+        user = TestsRepositoryUtil.createUser("cosminalex", "anaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaana");
         userRepository.saveAndFlush(user);
         Address address = TestsRepositoryUtil.createAddress("Romania", "Bucuresti", "Splai", "333", "Casa", "Casa magica");
         addressRepository.save(address);
@@ -72,5 +78,40 @@ public class EventServiceT {
         List<Event> listAfterDelete = eventService.getAllPubicEvents();
         assertThat(listAfterDelete.size()).isEqualTo(0);
     }
+
+    @Test
+    @Transactional
+    public void assertThatAddUserToPublicEvent_ThrowsException() {
+        Assertions.assertThrows(NotFoundException.class, () -> eventService.addUserToPublicEvent(1001l, event));
+    }
+
+    @Test
+    @Transactional
+    public void assertThatAddUserToPublicEventWorksWithPrivateEvent() throws NotFoundException {
+        event.setPublic(false);
+        eventRepository.save(event);
+        eventService.addUserToPublicEvent(user.getId(), event);
+        List<Event> events = eventRepository.findByUsers_id(user.getId());
+        assertThat(events.size()).isEqualTo(0);
+    }
+
+    @Test
+    @Transactional
+    public void assertThatAddUserToPublicEventWorksWithUser() throws NotFoundException {
+        eventService.addUserToPublicEvent(user.getId(), event);
+        List<User> users = userRepository.findAllByEvents_id(event.getId());
+        assertThat(users.size()).isEqualTo(1);
+
+    }
+
+    @Test
+    @Transactional
+    public void assertThatAddUserToPublicEventWorksWithEvent() throws NotFoundException {
+        eventService.addUserToPublicEvent(user.getId(), event);
+        List<Event> events = eventRepository.findByUsers_id(user.getId());
+        assertThat(events.size()).isEqualTo(1);
+
+    }
+
 
 }
