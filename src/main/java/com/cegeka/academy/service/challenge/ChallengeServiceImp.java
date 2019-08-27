@@ -63,15 +63,13 @@ public class ChallengeServiceImp implements ChallengeService {
 
         if(challengeDTO.getChallengeCategory() != null) {
 
-            Optional<Long> challengeCategoryOptional = Optional.ofNullable(challengeDTO.getChallengeCategory().getId());
-
-            if (!challengeCategoryOptional.isPresent()) {
+            if (challengeDTO.getChallengeCategory().getId() == null) {
                 challengeDTO.setChallengeCategory(null);
+            } else
+            {
+            challengeCategoryRepository.findById(challengeDTO.getChallengeCategory().getId())
+                    .orElseThrow(() -> new InvalidFieldException().setMessage("Categoria aleasa trebuie sa existe"));
             }
-
-            challengeCategoryOptional.ifPresent(id -> challengeCategoryRepository.findById(id).
-                    orElseThrow(() -> new InvalidFieldException().setMessage("Categoria aleasa trebuie sa existe"))
-            );
         }
 
         if(!challengeId.equals(challengeDTO.getId()))
@@ -90,9 +88,9 @@ public class ChallengeServiceImp implements ChallengeService {
             throw new InvalidFieldException().setMessage("Creatorul unui challenge nu se poate schimba");
         }
 
-        Challenge updatedChallenge = challengeRepository.save(ChallengeMapper.convertChallengeDTOToChallenge(challengeDTO));
+       challengeRepository.save(ChallengeMapper.convertChallengeDTOToChallenge(challengeDTO));
 
-        return ChallengeMapper.convertChallengeToChallengeDTO(updatedChallenge);
+        return challengeDTO;
     }
 
     @Override

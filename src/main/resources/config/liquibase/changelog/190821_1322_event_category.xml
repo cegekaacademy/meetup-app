@@ -21,7 +21,7 @@
                                  baseTableName="Event_Category"
                                  constraintName="fk_eventIdConstraint"
                                  referencedColumnNames="id"
-                                 referencedTableName="event"/>
+                                 referencedTableName="Event"/>
         <addForeignKeyConstraint baseColumnNames="category_id"
                                  baseTableName="Event_Category"
                                  constraintName="fk_categoryIdConstraint"
