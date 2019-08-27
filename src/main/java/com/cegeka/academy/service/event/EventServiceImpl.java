@@ -44,7 +44,9 @@ public class EventServiceImpl implements EventService {
 
         List<EventDTO> ownerEvents = new ArrayList<>();
         List<Event> events = eventRepository.findAllByOwner(owner);
-        if (events.isEmpty() || events == null) throw new NotFoundException().setMessage("No events found");
+        if (events == null || events.isEmpty()) {
+            throw new NotFoundException().setMessage("No events found");
+        }
         for (Event event : events) {
             EventDTO aux = EventMapper.convertEventtoEventDTO(event);
             ownerEvents.add(aux);
@@ -98,7 +100,9 @@ public class EventServiceImpl implements EventService {
         List<EventDTO> userEvents = new ArrayList<>();
         List<Event> events = eventRepository.findByUsers_id(userId);
 
-        if (events.isEmpty() || events == null) throw new NotFoundException().setMessage("No events found");
+        if (events == null || events.isEmpty()) {
+            throw new NotFoundException().setMessage("No events found");
+        }
         for (Event event : events) {
             EventDTO aux = EventMapper.convertEventtoEventDTO(event);
             userEvents.add(aux);

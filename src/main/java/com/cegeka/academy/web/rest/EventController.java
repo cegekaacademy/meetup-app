@@ -107,12 +107,12 @@ public class EventController {
 
     }
 
-    @GetMapping("/userEvents/{id}")
+    @GetMapping("/user/{id}")
     public List<EventDTO> getEventsByUser(@PathVariable(value = "id") Long id) throws NotFoundException {
         return eventService.getEventsByUser(id);
     }
 
-    @GetMapping("/byOwner/{id}")
+    @GetMapping("/owner/{id}")
     public List<EventDTO> getEventsByOwner(@PathVariable(value = "id") Long id) throws NotFoundException {
         Optional<User> user = userRepository.findById(id);
         user.orElseThrow(() -> new NotFoundException().setMessage("User not found"));
