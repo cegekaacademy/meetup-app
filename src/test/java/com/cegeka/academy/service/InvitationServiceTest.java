@@ -1,26 +1,23 @@
 package com.cegeka.academy.service;
 
 import com.cegeka.academy.AcademyProjectApp;
-import com.cegeka.academy.domain.Address;
-import com.cegeka.academy.domain.Event;
-import com.cegeka.academy.domain.Invitation;
-import com.cegeka.academy.domain.User;
+import com.cegeka.academy.domain.*;
 import com.cegeka.academy.domain.enums.InvitationStatus;
-import com.cegeka.academy.repository.AddressRepository;
-import com.cegeka.academy.repository.EventRepository;
-import com.cegeka.academy.repository.InvitationRepository;
-import com.cegeka.academy.repository.UserRepository;
+import com.cegeka.academy.repository.*;
 import com.cegeka.academy.repository.util.TestsRepositoryUtil;
 import com.cegeka.academy.service.dto.InvitationDTO;
 import com.cegeka.academy.service.invitation.InvitationService;
+import com.cegeka.academy.web.rest.errors.NotFoundException;
+import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -44,22 +41,50 @@ public class InvitationServiceTest {
     @Autowired
     private AddressRepository addressRepository;
 
-    private User user;
-    private Event event,event2;
-    private Invitation invitation,invitation2,invitation3;
+    @Autowired
+    private GroupRepository groupRepository;
+
+    @Autowired
+    private GroupUserRoleRepository groupUserRoleRepository;
+
+    @Autowired
+    private RoleRepository roleRepository;
+
+    private User user, user1;
+    private Event event, event2, publicEvent;
+    private Invitation invitation, invitation2, invitation3, invitationSendToGroup, invitationWithNullEvent, invitationWithPublicEvent;
     private Address address;
+    private Group group;
+    private GroupUserRole groupUserRole1, groupUserRole2;
+    private Role role;
 
     @BeforeEach
     public void init() {
 
+        userRepository.deleteAll();
         user = TestsRepositoryUtil.createUser("login", "anaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaana");
         userRepository.saveAndFlush(user);
+        user1 = TestsRepositoryUtil.createUser("login2", "anaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaaka");
+        userRepository.save(user1);
         address = TestsRepositoryUtil.createAddress("Romania", "Bucuresti", "Splai", "333", "Casa", "Casa magica");
         addressRepository.saveAndFlush(address);
-        event = TestsRepositoryUtil.createEvent("Ana are mere!", "KFC Krushers Party", true, address, user);
+        event = TestsRepositoryUtil.createEvent("Ana are mere!", "KFC Krushers Party", false, address, user);
         eventRepository.saveAndFlush(event);
+        publicEvent = TestsRepositoryUtil.createEvent("Ana are mere!", "KFC Krushers Party", true, address, user);
+        eventRepository.saveAndFlush(publicEvent);
         invitation = TestsRepositoryUtil.createInvitation(InvitationStatus.PENDING.name(), "ana are mere", event, user);
         invitationService.saveInvitation(invitation);
+        group = TestsRepositoryUtil.createGroup("gr1", "descriere grup");
+        groupRepository.save(group);
+        role = TestsRepositoryUtil.createRole("admin");
+        roleRepository.save(role);
+        groupUserRole1 = TestsRepositoryUtil.createGroupUserRole(userRepository.findAll().get(0), groupRepository.findAll().get(0), roleRepository.findAll().get(0));
+        groupUserRoleRepository.save(groupUserRole1);
+        groupUserRole2 = TestsRepositoryUtil.createGroupUserRole(userRepository.findAll().get(1), groupRepository.findAll().get(0), roleRepository.findAll().get(0));
+        groupUserRoleRepository.save(groupUserRole2);
+        invitationSendToGroup = TestsRepositoryUtil.createInvitation(InvitationStatus.PENDING.name(), "aaaa", eventRepository.findAll().get(0), null);
+        invitationWithNullEvent = TestsRepositoryUtil.createInvitation(InvitationStatus.PENDING.name(), "aaaa", null, null);
+        invitationWithPublicEvent = TestsRepositoryUtil.createInvitation(InvitationStatus.PENDING.name(), "aaaa", eventRepository.findAll().get(1), null);
 
     }
     @Test
@@ -164,6 +189,49 @@ public class InvitationServiceTest {
         assertThat(list.get(0).getEvent()).isEqualTo(invitation.getEvent());
     }
 
+    @Test
+    public void assertThatSendGroupInvitationToPrivateEventIsWorking() throws NotFoundException {
 
+        Long idGroup = groupRepository.findAll().get(0).getId();
+        invitationService.sendGroupInvitationsToPrivateEvents(idGroup, invitationSendToGroup);
+        List<Invitation> list = invitationRepository.findAll();
+        Optional<User> findUser = userRepository.findById(list.get(list.lastIndexOf(invitationSendToGroup)).getUser().getId());
+        Optional<Event> findEvent = eventRepository.findById(list.get(list.lastIndexOf(invitationSendToGroup)).getEvent().getId());
+
+        assertThat(list.size()).isEqualTo(2);
+        Assert.assertTrue(findUser.isPresent());
+        Assert.assertTrue(findEvent.isPresent());
+    }
+
+    @Test
+    public void assertThatSendGroupInvitationToPrivateEventIsWorkingWithNullIdGroup() throws NotFoundException {
+
+        invitationService.sendGroupInvitationsToPrivateEvents(null, invitationSendToGroup);
+        List<Invitation> list = invitationRepository.findAll();
+        assertThat(list.size()).isEqualTo(1);
+    }
+
+    @Test
+    public void assertThatSendGroupInvitationToPrivateEventIsWorkingWithInvalidIdGroup() throws NotFoundException {
+
+        invitationService.sendGroupInvitationsToPrivateEvents(100L, invitationSendToGroup);
+        List<Invitation> list = invitationRepository.findAll();
+        assertThat(list.size()).isEqualTo(1);
+    }
+
+    @Test
+    void assertThatSendGroupInvitationToPrivateEventThrowsNotFoundExceptionTest() {
+
+        Assertions.assertThrows(NotFoundException.class, () -> invitationService.sendGroupInvitationsToPrivateEvents(1L, invitationWithNullEvent));
+    }
+
+    @Test
+    public void assertThatSendGroupInvitationToPrivateEventIsNotWorkingWithPublicEvent() throws NotFoundException {
+
+        Long idGroup = groupRepository.findAll().get(0).getId();
+        invitationService.sendGroupInvitationsToPrivateEvents(idGroup, invitationWithPublicEvent);
+        List<Invitation> list = invitationRepository.findAll();
+        assertThat(list.size()).isEqualTo(1);
+    }
 
 }

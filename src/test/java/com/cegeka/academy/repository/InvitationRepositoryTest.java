@@ -102,6 +102,8 @@ public class InvitationRepositoryTest {
     }
     @Test
     public void testFindByEventId() {
+        User user = TestsRepositoryUtil.createUser("login1", "anaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaana");
+        userRepository.save(user);
         Address address = TestsRepositoryUtil.createAddress("Romania", "Bucuresti", "Splai", "333", "Casa", "Casa magica");
         addressRepository.saveAndFlush(address);
         Event event = TestsRepositoryUtil.createEvent("Ana are mere!", "KFC Krushers Party", true, address, user);

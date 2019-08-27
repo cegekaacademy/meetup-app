@@ -110,5 +110,10 @@ public class InvitationController {
         }
     }
 
+    @PostMapping("/send/{idGroup}")
+    public void sendGroupInvitationsToPrivateEvents(@PathVariable Long idGroup,
+                                                    @Valid @RequestBody Invitation newInvitation) throws NotFoundException {
 
+        invitationService.sendGroupInvitationsToPrivateEvents(idGroup, newInvitation);
+    }
 }

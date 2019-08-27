@@ -5,6 +5,7 @@ import javax.persistence.*;
 import javax.validation.constraints.Size;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 @Entity
@@ -114,7 +115,7 @@ public class Event {
         this.notes = notes;
     }
 
-    public Boolean getPublic() {
+    public Boolean isPublic() {
         return isPublic;
     }
 
@@ -159,9 +160,7 @@ public class Event {
 
     @Override
     public int hashCode() {
-        int result = id.hashCode();
-        result = 31 * result + name.hashCode();
-        return result;
+        return Objects.hash(id);
     }
 
     public Set<Invitation> getPendingInvitations() {
