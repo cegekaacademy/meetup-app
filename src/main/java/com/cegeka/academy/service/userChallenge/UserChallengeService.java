@@ -10,5 +10,5 @@ public interface UserChallengeService {
 
     List<UserChallengeDTO> getUserChallengesByUserId(Long userId);
 
-    UserChallenge rateUser(UserChallengeDTO userChallengeDTO, Long ownerId, Long userChallengeId) throws WrongOwnerException;
+    UserChallenge rateUser(UserChallengeDTO userChallengeDTO, Long ownerId) throws WrongOwnerException;
 }

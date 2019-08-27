@@ -155,8 +155,9 @@ public class UserChallengeServiceTest  {
         userChallengeDTO.setPoints(49);
         challenge.getCreator().setId((long)4);
         userChallengeDTO.getUser().setId((long)3);
+        userChallenge.setId((long) 1);
         assertThat(userChallengeDTO.getPoints() ==
-                userChallengeService.rateUser(userChallengeDTO, (long)4, (long)1).getPoints());
+                userChallengeService.rateUser(userChallengeDTO, (long)4).getPoints());
     }
 
     @Test
@@ -164,8 +165,9 @@ public class UserChallengeServiceTest  {
         userChallengeDTO.setPoints(49);
         challenge.getCreator().setId((long)4);
         userChallengeDTO.getUser().setId((long)3);
+        userChallenge.setId((long) 1);
         try {
-            userChallengeService.rateUser(userChallengeDTO, (long)2, (long)1);
+            userChallengeService.rateUser(userChallengeDTO, (long)4);
             fail();
         } catch (WrongOwnerException e) {
             assertTrue(true);

@@ -36,12 +36,16 @@ public class UserChallengeServiceImpl implements UserChallengeService {
     }
 
     @Override
-    public UserChallenge rateUser(UserChallengeDTO userChallengeDTO, Long ownerId, Long userChallengeId) throws WrongOwnerException {
+    public UserChallenge rateUser(UserChallengeDTO userChallengeDTO, Long ownerId) throws WrongOwnerException {
+
+        System.out.println(userChallengeDTO);
 
         Optional<UserChallenge> userChallengeOptional = userChallengeRepository.findById(userChallengeDTO.getId());
 
         UserChallenge userChallenge = userChallengeOptional.orElseThrow(NoSuchElementException::new);
         userChallenge.setPoints(userChallengeDTO.getPoints());
+
+        System.out.println(userChallenge);
 
         Optional<Challenge> challengeOptional = challengeRepository.findById(userChallenge.getChallenge().getId());
 

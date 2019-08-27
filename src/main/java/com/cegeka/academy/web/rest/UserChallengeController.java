@@ -25,10 +25,10 @@ public class UserChallengeController {
     }
 
     @PutMapping(value = "/rate")
-    public UserChallenge rateUser(@RequestBody UserChallengeDTO userChallengeDTO, @Param("ownerId") Long ownerId,
-                                  @Param("userChallengeId") Long userChallengeId) throws WrongOwnerException {
+    public UserChallenge rateUser(@RequestBody UserChallengeDTO userChallengeDTO,
+                                  @Param("ownerId") Long ownerId) throws WrongOwnerException {
 
-        return userChallengeService.rateUser(userChallengeDTO, ownerId, userChallengeId);
+        return userChallengeService.rateUser(userChallengeDTO, ownerId);
     }
 
 }
