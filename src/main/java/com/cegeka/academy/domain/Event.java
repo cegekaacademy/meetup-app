@@ -167,9 +167,6 @@ public class Event {
         return Objects.hash(id);
     }
 
-    public Boolean getPublic() {
-        return isPublic;
-    }
 
     public String getCoverPhoto() {
         return coverPhoto;
