@@ -140,8 +140,6 @@ public class InvitationServiceImpl implements InvitationService {
                 invitation1.setUser(invitation.getUser());
                 invitationRepository.save(invitation1);
 
-                System.out.println(invitation1.toString());
-                System.out.println(user.get().toString());
             }
         }
     }
