@@ -16,5 +16,8 @@ public interface GroupUserRoleRepository extends JpaRepository<GroupUserRole, Lo
 
 
     List<GroupUserRole> findAllByGroupId(Long groupId);
+    GroupUserRole findOneByGroupIdAndUserId (Long groupId, Long userId);
+
+
 
 }

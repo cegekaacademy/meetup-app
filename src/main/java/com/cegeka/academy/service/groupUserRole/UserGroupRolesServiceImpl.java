@@ -1,4 +1,4 @@
-package com.cegeka.academy.service;
+package com.cegeka.academy.service.groupUserRole;
 
 import com.cegeka.academy.domain.GroupUserRole;
 import com.cegeka.academy.domain.Role;
@@ -12,7 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 
 @Service
-public class UserGroupRolesService {
+public class UserGroupRolesServiceImpl {
 
     @Autowired
     private GroupUserRoleRepository groupUserRoleRepository;
@@ -20,6 +20,15 @@ public class UserGroupRolesService {
     public List<GroupUserRole> getById(Long userId){
         return groupUserRoleRepository.findAllByUserId(userId);
     }
+
+    public void addMember(GroupUserRole user){
+        groupUserRoleRepository.save(user);
+    }
+    public void removeMember(Long groupId, Long userId){
+        GroupUserRole gur = groupUserRoleRepository.findOneByGroupIdAndUserId(groupId, userId);
+        groupUserRoleRepository.delete(gur);
+    }
+
 
 
 }

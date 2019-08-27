@@ -7,19 +7,19 @@ import com.cegeka.academy.domain.User;
 public class GroupUserRoleDTO {
 
     private long id;
-    private User user;
-    private Group group;
-    private Role role;
+    private long userId;
+    private long groupId;
+    private long roleId;
 
     public GroupUserRoleDTO(){
 
     }
 
-    public GroupUserRoleDTO(long id, User user, Group group, Role role) {
+    public GroupUserRoleDTO(long id, long userId, long groupId, long roleId) {
         this.id = id;
-        this.user = user;
-        this.group = group;
-        this.role = role;
+        this.userId = userId;
+        this.groupId = groupId;
+        this.roleId = roleId;
     }
 
     public long getId() {
@@ -30,27 +30,27 @@ public class GroupUserRoleDTO {
         this.id = id;
     }
 
-    public User getUser() {
-        return user;
+    public long getUserId() {
+        return userId;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setUserId(long userId) {
+        this.userId = userId;
     }
 
-    public Group getGroup() {
-        return group;
+    public long getGroupId() {
+        return groupId;
     }
 
-    public void setGroup(Group group) {
-        this.group = group;
+    public void setGroupId(long groupId) {
+        this.groupId = groupId;
     }
 
-    public Role getRole() {
-        return role;
+    public long getRoleId() {
+        return roleId;
     }
 
-    public void setRole(Role role) {
-        this.role = role;
+    public void setRoleId(long roleId) {
+        this.roleId = roleId;
     }
 }
