@@ -132,20 +132,26 @@ public class InvitationServiceImpl implements InvitationService {
 
                 user.orElseThrow(NotFoundException::new);
 
+                boolean isUnique = true;
+
                 for (Invitation findInvitation : allInvitations) {
 
                     if (findInvitation.getUser().equals(user.get()) && findInvitation.getEvent().equals(invitation.getEvent())) {
+
                         logger.info("This user has already been invited to this event");
+                        isUnique = false;
 
-                    } else {
-
-                        Invitation invitationSendToGroup = new Invitation();
-                        invitationSendToGroup.setDescription(invitation.getDescription());
-                        invitationSendToGroup.setStatus(invitation.getStatus());
-                        invitationSendToGroup.setEvent(invitation.getEvent());
-                        invitationSendToGroup.setUser(user.get());
-                        invitationRepository.save(invitationSendToGroup);
                     }
+                }
+
+                if (isUnique) {
+
+                    Invitation invitationSendToGroup = new Invitation();
+                    invitationSendToGroup.setDescription(invitation.getDescription());
+                    invitationSendToGroup.setStatus(invitation.getStatus());
+                    invitationSendToGroup.setEvent(invitation.getEvent());
+                    invitationSendToGroup.setUser(user.get());
+                    invitationRepository.save(invitationSendToGroup);
                 }
             }
         }
