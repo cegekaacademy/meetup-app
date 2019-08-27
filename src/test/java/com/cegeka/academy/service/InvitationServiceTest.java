@@ -50,12 +50,12 @@ public class InvitationServiceTest {
     @Autowired
     private RoleRepository roleRepository;
 
-    private User user, user1;
+    private User user, user1, user2;
     private Event event, event2, publicEvent;
     private Invitation invitation, invitation2, invitation3, invitationSendToGroup, invitationWithNullEvent, invitationWithPublicEvent;
     private Address address;
     private Group group;
-    private GroupUserRole groupUserRole1, groupUserRole2;
+    private GroupUserRole groupUserRole1, groupUserRole2, groupUserRole3;
     private Role role;
 
     @BeforeEach
@@ -66,6 +66,8 @@ public class InvitationServiceTest {
         userRepository.saveAndFlush(user);
         user1 = TestsRepositoryUtil.createUser("login2", "anaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaaka");
         userRepository.save(user1);
+        user2 = TestsRepositoryUtil.createUser("login3", "anaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaama");
+        userRepository.save(user2);
         address = TestsRepositoryUtil.createAddress("Romania", "Bucuresti", "Splai", "333", "Casa", "Casa magica");
         addressRepository.saveAndFlush(address);
         event = TestsRepositoryUtil.createEvent("Ana are mere!", "KFC Krushers Party", false, address, user);
@@ -82,11 +84,13 @@ public class InvitationServiceTest {
         groupUserRoleRepository.save(groupUserRole1);
         groupUserRole2 = TestsRepositoryUtil.createGroupUserRole(userRepository.findAll().get(1), groupRepository.findAll().get(0), roleRepository.findAll().get(0));
         groupUserRoleRepository.save(groupUserRole2);
+        groupUserRole3 = TestsRepositoryUtil.createGroupUserRole(userRepository.findAll().get(2), groupRepository.findAll().get(0), roleRepository.findAll().get(0));
+        groupUserRoleRepository.save(groupUserRole3);
         invitationSendToGroup = TestsRepositoryUtil.createInvitation(InvitationStatus.PENDING.name(), "aaaa", eventRepository.findAll().get(0), null);
         invitationWithNullEvent = TestsRepositoryUtil.createInvitation(InvitationStatus.PENDING.name(), "aaaa", null, null);
         invitationWithPublicEvent = TestsRepositoryUtil.createInvitation(InvitationStatus.PENDING.name(), "aaaa", eventRepository.findAll().get(1), null);
-
     }
+
     @Test
     @Transactional
     public void assertThatSaveInvitationIsWorking() {
@@ -194,11 +198,12 @@ public class InvitationServiceTest {
 
         Long idGroup = groupRepository.findAll().get(0).getId();
         invitationService.sendGroupInvitationsToPrivateEvents(idGroup, invitationSendToGroup);
+        invitationSendToGroup.setId(invitationRepository.findAll().get(3).getId());
         List<Invitation> list = invitationRepository.findAll();
         Optional<User> findUser = userRepository.findById(list.get(list.lastIndexOf(invitationSendToGroup)).getUser().getId());
         Optional<Event> findEvent = eventRepository.findById(list.get(list.lastIndexOf(invitationSendToGroup)).getEvent().getId());
 
-        assertThat(list.size()).isEqualTo(2);
+        assertThat(list.size()).isEqualTo(4);
         Assert.assertTrue(findUser.isPresent());
         Assert.assertTrue(findEvent.isPresent());
     }

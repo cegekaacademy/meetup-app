@@ -132,8 +132,16 @@ public class InvitationServiceImpl implements InvitationService {
                 user.orElseThrow(NotFoundException::new);
 
                 invitation.setUser(user.get());
-                invitationRepository.save(invitation);
 
+                Invitation invitation1 = new Invitation();
+                invitation1.setDescription(invitation.getDescription());
+                invitation1.setStatus(invitation.getStatus());
+                invitation1.setEvent(invitation.getEvent());
+                invitation1.setUser(invitation.getUser());
+                invitationRepository.save(invitation1);
+
+                System.out.println(invitation1.toString());
+                System.out.println(user.get().toString());
             }
         }
     }
