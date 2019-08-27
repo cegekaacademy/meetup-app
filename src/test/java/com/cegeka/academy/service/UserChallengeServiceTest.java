@@ -24,6 +24,8 @@ import java.util.Date;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 @SpringBootTest(classes = AcademyProjectApp.class)
 @Transactional
@@ -155,6 +157,19 @@ public class UserChallengeServiceTest  {
         userChallengeDTO.getUser().setId((long)3);
         assertThat(userChallengeDTO.getPoints() ==
                 userChallengeService.rateUser(userChallengeDTO, (long)4, (long)1).getPoints());
+    }
+
+    @Test
+    public void testRateUserByWrongOwner() {
+        userChallengeDTO.setPoints(49);
+        challenge.getCreator().setId((long)4);
+        userChallengeDTO.getUser().setId((long)3);
+        try {
+            userChallengeService.rateUser(userChallengeDTO, (long)2, (long)1);
+            fail();
+        } catch (WrongOwnerException e) {
+            assertTrue(true);
+        }
     }
 
 }
