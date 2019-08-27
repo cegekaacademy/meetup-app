@@ -72,7 +72,7 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public void addUserToPublicEvent(Long userId, Event event) throws NotFoundException {
-        if (event.getPublic()) {
+        if (event.isPublic()) {
             Optional<User> user = userRepository.findById(userId);
             user.orElseThrow(() -> new NotFoundException().setMessage("User not found"));
             user.get().getEvents().add(event);
