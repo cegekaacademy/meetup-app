@@ -17,4 +17,6 @@ public interface ChallengeService {
 
     List<ChallengeDTO> getChallengesByCreatorId(Long creatorId) throws NotFoundException;
 
+    List<ChallengeDTO> getPublicChallenges() throws NotFoundException;
+
 }

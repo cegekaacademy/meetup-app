@@ -2,6 +2,7 @@ package com.cegeka.academy.service;
 
 import com.cegeka.academy.AcademyProjectApp;
 import com.cegeka.academy.domain.*;
+import com.cegeka.academy.domain.enums.ChallengeStatus;
 import com.cegeka.academy.repository.*;
 import com.cegeka.academy.service.challenge.ChallengeService;
 import com.cegeka.academy.service.dto.ChallengeCategoryDTO;
@@ -18,6 +19,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -90,8 +93,15 @@ public class ChallengeServiceTest {
 
         challenge.setCreator(user);
         challenge.setStartDate(new Date(System.currentTimeMillis()));
-        challenge.setEndDate(new Date(System.currentTimeMillis()));
-        challenge.setStatus("Activa");
+
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+        try {
+            challenge.setEndDate(sdf.parse("22/09/2019"));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        challenge.setStatus(ChallengeStatus.PUBLIC.toString());
         challenge.setDescription("Nimic");
         challenge.setPoints(10);
         challenge.setChallengeCategory(challengeCategory);
@@ -159,8 +169,8 @@ public class ChallengeServiceTest {
     }
 
     @Test
-    void emptyChallengeSetException()
-    {
+    void emptyChallengeSetException() {
+
         Assertions.assertThrows(NotFoundException.class,()->{ challengeService.getChallengesByUserId(0); });
     }
 
@@ -180,13 +190,14 @@ public class ChallengeServiceTest {
     }
 
     @Test
-    void getChallengebyIdWhenNoSuchElementException()
-    {
+    void getChallengeByIdWhenNoSuchElementException() {
+
         Assertions.assertThrows(NotFoundException.class, ()->{ challengeService.getChallengeById(0); });
     }
 
     @Test
     void getChallengeById() throws NotFoundException {
+
         Challenge expectedChallenge = challengeRepository.save(challenge);
 
         ChallengeDTO challengeDTO = challengeService.getChallengeById(expectedChallenge.getId());
@@ -198,6 +209,7 @@ public class ChallengeServiceTest {
 
     @AfterEach
     public void destroy(){
+
         userChallengeRepository.deleteAll();
         challengeRepository.deleteAll();
         challengeCategoryRepository.deleteAll();
@@ -223,6 +235,28 @@ public class ChallengeServiceTest {
 
         Assertions.assertThrows(NotFoundException.class, () -> {
             challengeService.getChallengesByCreatorId(100L);
+        });
+
+    }
+
+    @Test
+    public void testGetPublicChallenges() throws NotFoundException {
+
+        Challenge savedChallenge = challengeRepository.save(challenge);
+        ChallengeDTO savedChallengeDTO = ChallengeMapper.convertChallengeToChallengeDTO(savedChallenge);
+
+        List<ChallengeDTO> challengeDTOList = challengeService.getPublicChallenges();
+
+        assertThat(challengeDTOList.size()).isEqualTo(1);
+        assertThat(challengeDTOList.get(0)).isEqualTo(savedChallengeDTO);
+
+    }
+
+    @Test
+    public void testGetPublicChallengesEmptyList() {
+
+        Assertions.assertThrows(NotFoundException.class, () -> {
+            challengeService.getPublicChallenges();
         });
 
     }
