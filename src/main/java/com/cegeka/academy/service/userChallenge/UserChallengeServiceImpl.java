@@ -36,25 +36,31 @@ public class UserChallengeServiceImpl implements UserChallengeService {
     }
 
     @Override
-    public UserChallenge rateUser(UserChallengeDTO userChallengeDTO, Long ownerId) throws WrongOwnerException {
+    public UserChallenge rateUser(UserChallengeDTO userChallengeDTO, Long ownerId)
+            throws WrongOwnerException, NoSuchElementException {
 
-        System.out.println(userChallengeDTO);
-
-        Optional<UserChallenge> userChallengeOptional = userChallengeRepository.findById(userChallengeDTO.getId());
-
-        UserChallenge userChallenge = userChallengeOptional.orElseThrow(NoSuchElementException::new);
-        userChallenge.setPoints(userChallengeDTO.getPoints());
+        long userId = userChallengeDTO.getUser().getId();
+        long challengeId = userChallengeDTO.getChallenge().getId();
+        long invitationId = userChallengeDTO.getInvitation().getId();
+        UserChallenge userChallenge = userChallengeRepository
+                .findByUserIdAndChallengeIdAndInvitationId(userId, challengeId, invitationId);
 
         System.out.println(userChallenge);
 
-        Optional<Challenge> challengeOptional = challengeRepository.findById(userChallenge.getChallenge().getId());
+        if (userChallenge != null) {
+            userChallenge.setPoints(userChallengeDTO.getPoints());
 
-        Challenge challenge = challengeOptional.get();
+            Optional<Challenge> challengeOptional = challengeRepository.findById(userChallenge.getChallenge().getId());
 
-        if (challenge.getCreator().getId().equals(ownerId)) {
-            return userChallengeRepository.save(userChallenge);
+            Challenge challenge = challengeOptional.get();
+
+            if (challenge.getCreator().getId().equals(ownerId)) {
+                return userChallengeRepository.save(userChallenge);
+            } else {
+                throw new WrongOwnerException();
+            }
         } else {
-            throw new WrongOwnerException();
+            throw new NoSuchElementException();
         }
 
     }

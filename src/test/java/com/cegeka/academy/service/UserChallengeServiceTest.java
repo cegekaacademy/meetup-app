@@ -22,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertTrue;
@@ -52,6 +53,7 @@ public class UserChallengeServiceTest  {
     private Invitation invitation;
     private User user;
     private Challenge challenge;
+    private ChallengeDTO challengeDTO;
     private ChallengeCategory challengeCategory;
     private UserChallengeDTO userChallengeDTO;
     private UserChallenge userChallenge;
@@ -87,7 +89,7 @@ public class UserChallengeServiceTest  {
         challengeCategoryRepository.save(challengeCategory);
 
         challenge = new Challenge();
-        challenge.setCreator(userRepository.findAll().get(0));
+        challenge.setCreator(userRepository.findAll().get(3));
         challenge.setPoints(5.22);
         challenge.setStartDate(startDate);
         challenge.setEndDate(endDate);
@@ -95,6 +97,8 @@ public class UserChallengeServiceTest  {
         challenge.setDescription("description");
         challenge.setChallengeCategory(challengeCategoryRepository.findAll().get(0));
         challengeRepository.save(challenge);
+
+        challengeDTO = ChallengeMapper.convertChallengeToChallengeDTO(challenge);
 
         userChallenge = new UserChallenge();
         userChallenge.setUser(usedUser);
@@ -153,23 +157,54 @@ public class UserChallengeServiceTest  {
     @Test
     public void testRateUserByOwner() throws WrongOwnerException {
         userChallengeDTO.setPoints(49);
-        challenge.getCreator().setId((long)4);
-        userChallengeDTO.getUser().setId((long)3);
-        userChallenge.setId((long) 1);
-        assertThat(userChallengeDTO.getPoints() ==
-                userChallengeService.rateUser(userChallengeDTO, (long)4).getPoints());
+        double actual = userChallengeDTO.getPoints();
+        double expected = userChallengeService.rateUser(userChallengeDTO, (long)4).getPoints();
+        assertThat(actual == expected);
     }
 
     @Test
     public void testRateUserByWrongOwner() {
         userChallengeDTO.setPoints(49);
-        challenge.getCreator().setId((long)4);
-        userChallengeDTO.getUser().setId((long)3);
-        userChallenge.setId((long) 1);
+        try {
+            userChallengeService.rateUser(userChallengeDTO, (long)3);
+            fail();
+        } catch (WrongOwnerException e) {
+            assertTrue(true);
+        }
+    }
+
+    @Test
+    public void testRateUserWhenInvitationIdIsWrong() throws WrongOwnerException {
+        userChallengeDTO.setPoints(49);
+        userChallengeDTO.getInvitation().setId((long) 5);
         try {
             userChallengeService.rateUser(userChallengeDTO, (long)4);
             fail();
-        } catch (WrongOwnerException e) {
+        } catch (NoSuchElementException e) {
+            assertTrue(true);
+        }
+    }
+
+    @Test
+    public void testRateUserWhenUserIdIsWrong() throws WrongOwnerException {
+        userChallengeDTO.setPoints(49);
+        userChallengeDTO.getUser().setId((long) 7);
+        try {
+            userChallengeService.rateUser(userChallengeDTO, (long)4);
+            fail();
+        } catch (NoSuchElementException e) {
+            assertTrue(true);
+        }
+    }
+
+    @Test
+    public void testRateUserWhenChallengeIdIsWrong() throws WrongOwnerException {
+        userChallengeDTO.setPoints(49);
+        userChallengeDTO.getChallenge().setId((long) 5);
+        try {
+            userChallengeService.rateUser(userChallengeDTO, (long)4);
+            fail();
+        } catch (NoSuchElementException e) {
             assertTrue(true);
         }
     }
