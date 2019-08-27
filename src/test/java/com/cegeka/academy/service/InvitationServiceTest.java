@@ -198,14 +198,19 @@ public class InvitationServiceTest {
 
         Long idGroup = groupRepository.findAll().get(0).getId();
         invitationService.sendGroupInvitationsToPrivateEvents(idGroup, invitationSendToGroup);
-        invitationSendToGroup.setId(invitationRepository.findAll().get(3).getId());
+        invitationSendToGroup.setId(invitationRepository.findAll().get(2).getId());
         List<Invitation> list = invitationRepository.findAll();
-        Optional<User> findUser = userRepository.findById(list.get(list.lastIndexOf(invitationSendToGroup)).getUser().getId());
-        Optional<Event> findEvent = eventRepository.findById(list.get(list.lastIndexOf(invitationSendToGroup)).getEvent().getId());
+        Optional<User> findUser1 = userRepository.findById(list.get(list.lastIndexOf(invitationSendToGroup)).getUser().getId());
+        Optional<Event> findEvent1 = eventRepository.findById(list.get(list.lastIndexOf(invitationSendToGroup)).getEvent().getId());
+        invitationSendToGroup.setId(invitationRepository.findAll().get(1).getId());
+        Optional<User> findUser2 = userRepository.findById(list.get(list.lastIndexOf(invitationSendToGroup) - 1).getUser().getId());
+        Optional<Event> findEvent2 = eventRepository.findById(list.get(list.lastIndexOf(invitationSendToGroup) - 1).getEvent().getId());
 
-        assertThat(list.size()).isEqualTo(4);
-        Assert.assertTrue(findUser.isPresent());
-        Assert.assertTrue(findEvent.isPresent());
+        assertThat(list.size()).isEqualTo(3);
+        Assert.assertTrue(findUser1.isPresent());
+        Assert.assertTrue(findEvent1.isPresent());
+        Assert.assertTrue(findUser2.isPresent());
+        Assert.assertTrue(findEvent2.isPresent());
     }
 
     @Test
