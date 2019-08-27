@@ -5,6 +5,7 @@ import javax.persistence.*;
 import javax.validation.constraints.Size;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 @Entity
@@ -15,11 +16,11 @@ public class Event {
     @Column(name = "id")
     private Long id;
 
-    @Size(max = 45)
+    @Size(max = 45, message = "Name size must have max 45 letters")
     @Column(name = "name", length = 45)
     private String name;
 
-    @Size(max = 250)
+    @Size(max = 250, message = "Description size must have max 250 letters")
     @Column(name = "description", length = 250)
     private String description;
 
@@ -45,6 +46,18 @@ public class Event {
 
     @ManyToMany(mappedBy = "events")
     private Set<User> users = new HashSet<>();
+
+    @ManyToMany
+    @JoinTable(
+            name = "event_category",
+            joinColumns = @JoinColumn(name = "event_id"),
+            inverseJoinColumns = @JoinColumn(name = "category_id"))
+    private Set<Category>categories=new HashSet<>();
+
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_event",referencedColumnName = "id")
+    Set<Invitation>pendingInvitations=new HashSet<>();
+
 
     public Long getId() {
         return id;
@@ -102,7 +115,7 @@ public class Event {
         this.notes = notes;
     }
 
-    public Boolean getPublic() {
+    public Boolean isPublic() {
         return isPublic;
     }
 
@@ -126,6 +139,14 @@ public class Event {
         this.users = users;
     }
 
+    public Set<Category> getCategories() {
+        return categories;
+    }
+
+    public void setCategories(Set<Category> categories) {
+        this.categories = categories;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -139,9 +160,11 @@ public class Event {
 
     @Override
     public int hashCode() {
-        int result = id.hashCode();
-        result = 31 * result + name.hashCode();
-        return result;
+        return Objects.hash(id);
+    }
+
+    public Set<Invitation> getPendingInvitations() {
+        return pendingInvitations;
     }
 
     @Override
@@ -158,4 +181,5 @@ public class Event {
                 ", addressId=" + addressId +
                 '}';
     }
+
 }

@@ -74,7 +74,7 @@ public class ChallengeAnswerServiceTest {
 
         invitation = new Invitation();
         invitation.setDescription("invitationDescription");
-        invitation.setStatus("invitationStatus");
+        invitation.setStatus("pending");
         invitation.setUser(usedUser);
         invitation.setEvent(null);
         invitationRepository.save(invitation);

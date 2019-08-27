@@ -1,9 +1,6 @@
 package com.cegeka.academy.repository.util;
 
-import com.cegeka.academy.domain.Address;
-import com.cegeka.academy.domain.Event;
-import com.cegeka.academy.domain.Invitation;
-import com.cegeka.academy.domain.User;
+import com.cegeka.academy.domain.*;
 
 public class TestsRepositoryUtil {
 
@@ -34,6 +31,12 @@ public class TestsRepositoryUtil {
         user.setPassword(password);
         return user;
     }
+    public static Category createCategory(String name,String description){
+        Category category=new Category();
+        category.setName(name);
+        category.setDescription(description);
+        return category;
+    }
 
     public static Invitation createInvitation(String status, String description, Event event, User user) {
         Invitation invitation = new Invitation();
@@ -44,5 +47,24 @@ public class TestsRepositoryUtil {
         return invitation;
     }
 
+    public static Group createGroup(String name, String description) {
+        Group group = new Group();
+        group.setName(name);
+        group.setDescription(description);
+        return group;
+    }
 
+    public static GroupUserRole createGroupUserRole(User user, Group group, Role role) {
+        GroupUserRole groupUserRole = new GroupUserRole();
+        groupUserRole.setUser(user);
+        groupUserRole.setGroup(group);
+        groupUserRole.setRole(role);
+        return groupUserRole;
+    }
+
+    public static Role createRole(String name) {
+        Role role = new Role();
+        role.setName(name);
+        return role;
+    }
 }

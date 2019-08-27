@@ -4,8 +4,8 @@ import com.cegeka.academy.AcademyProjectApp;
 import com.cegeka.academy.domain.*;
 import com.cegeka.academy.repository.*;
 import com.cegeka.academy.service.dto.UserChallengeDTO;
-import com.cegeka.academy.service.userChallenge.UserChallengeService;
 import com.cegeka.academy.service.mapper.UserChallengeMapper;
+import com.cegeka.academy.service.userChallenge.UserChallengeService;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -64,7 +64,7 @@ public class UserChallengeServiceTest  {
 
         invitation = new Invitation();
         invitation.setDescription("invitationDescription");
-        invitation.setStatus("invitationStatus");
+        invitation.setStatus("pending");
         invitation.setUser(usedUser);
         invitation.setEvent(null);
         invitationRepository.save(invitation);

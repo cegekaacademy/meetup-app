@@ -7,6 +7,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
+import java.util.Objects;
 
 /**
  * A role.
@@ -49,7 +50,7 @@ public class Role implements Serializable {
 
     @Override
     public int hashCode() {
-        return 92;
+        return Objects.hashCode(id);
     }
 
     @Override
