@@ -2,8 +2,12 @@ package com.cegeka.academy.service.challenge;
 
 import com.cegeka.academy.domain.Challenge;
 import com.cegeka.academy.domain.UserChallenge;
+import com.cegeka.academy.domain.enums.ChallengeStatus;
 import com.cegeka.academy.repository.ChallengeRepository;
 import com.cegeka.academy.repository.UserChallengeRepository;
+import com.cegeka.academy.web.rest.errors.NotFoundException;
+import org.apache.commons.lang3.time.DateUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import com.cegeka.academy.web.rest.errors.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.cegeka.academy.service.dto.ChallengeDTO;
@@ -13,6 +17,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+
+import java.util.*;
 
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -84,6 +90,29 @@ public class ChallengeServiceImp implements ChallengeService {
     }
 
     @Override
+    public List<ChallengeDTO> getPublicChallenges() throws NotFoundException {
+
+        List<Challenge> publicChallenges = challengeRepository.findAllByStatus(ChallengeStatus.PUBLIC.toString());
+
+        if(publicChallenges == null || publicChallenges.isEmpty()) {
+
+            throw new NotFoundException().setMessage("List is empty");
+
+        }
+
+        List<Challenge> validChallengeList = publicChallenges.stream().filter(challenge -> isValidChallenge(challenge)).collect(Collectors.toList());
+
+        if(validChallengeList == null || validChallengeList.isEmpty()){
+
+            throw new NotFoundException().setMessage("List is empty");
+
+        }
+
+        return validChallengeList.stream().map(challenge -> ChallengeMapper.convertChallengeToChallengeDTO(challenge)).collect(Collectors.toList());
+
+    }
+
+    @Override
     public ChallengeDTO getChallengeById(long id) throws NotFoundException {
 
         Optional<Challenge> challengeOptional = challengeRepository.findById(id);
@@ -101,6 +130,12 @@ public class ChallengeServiceImp implements ChallengeService {
     {
         Challenge challenge = userChallenge.getChallenge();
         return ChallengeMapper.convertChallengeToChallengeDTO(challenge);
+    }
+
+    private boolean isValidChallenge(Challenge challenge){
+
+        return DateUtils.isSameDay(challenge.getEndDate(), new Date()) || challenge.getEndDate().after(new Date());
+
     }
 
 }

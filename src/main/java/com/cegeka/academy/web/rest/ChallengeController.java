@@ -50,4 +50,11 @@ public class ChallengeController {
         return challengeService.getChallengesByCreatorId(creatorId);
 
     }
+
+    @GetMapping("/public")
+    public List<ChallengeDTO> getPublicChallenges() throws NotFoundException {
+
+        return challengeService.getPublicChallenges();
+
+    }
 }
