@@ -18,7 +18,7 @@ logging:
     ROOT: DEBUG
     io.github.jhipster: DEBUG
     com.cegeka.academy: DEBUG
-    org.springframework.web: DEBUG
+#    org.springframework.web: DEBUG
 
 spring:
   profiles:

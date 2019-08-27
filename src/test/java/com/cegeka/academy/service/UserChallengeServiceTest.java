@@ -6,9 +6,12 @@ import com.cegeka.academy.repository.*;
 import com.cegeka.academy.service.dto.*;
 import com.cegeka.academy.service.mapper.ChallengeMapper;
 import com.cegeka.academy.service.mapper.InvitationMapper;
+import com.cegeka.academy.service.dto.UserChallengeDTO;
 import com.cegeka.academy.service.mapper.UserChallengeMapper;
 import com.cegeka.academy.service.mapper.UserMapper;
 import com.cegeka.academy.service.userChallenge.UserChallengeService;
+import com.cegeka.academy.service.userChallenge.UserChallengeService;
+import com.cegeka.academy.web.rest.errors.WrongOwnerException;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -68,7 +71,7 @@ public class UserChallengeServiceTest  {
 
         invitation = new Invitation();
         invitation.setDescription("invitationDescription");
-        invitation.setStatus("invitationStatus");
+        invitation.setStatus("pending");
         invitation.setUser(usedUser);
         invitation.setEvent(null);
         invitationRepository.save(invitation);
@@ -146,7 +149,7 @@ public class UserChallengeServiceTest  {
     }
 
     @Test
-    public void testRateUserByOwner() {
+    public void testRateUserByOwner() throws WrongOwnerException {
         userChallengeDTO.setPoints(49);
         challenge.getCreator().setId((long)4);
         userChallengeDTO.getUser().setId((long)3);

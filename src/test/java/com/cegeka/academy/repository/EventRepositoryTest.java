@@ -1,9 +1,7 @@
 package com.cegeka.academy.repository;
 
 import com.cegeka.academy.AcademyProjectApp;
-import com.cegeka.academy.domain.Address;
-import com.cegeka.academy.domain.Event;
-import com.cegeka.academy.domain.User;
+import com.cegeka.academy.domain.*;
 import com.cegeka.academy.repository.util.TestsRepositoryUtil;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +22,11 @@ public class EventRepositoryTest {
     private UserRepository userRepository;
     @Autowired
     private AddressRepository addressRepository;
+    @Autowired
+    private CategoryRepository categoryRepository;
+    @Autowired
+    private InvitationRepository invitationRepository;
+
 
 
     @Test
@@ -35,15 +38,45 @@ public class EventRepositoryTest {
         Event event = TestsRepositoryUtil.createEvent("Ana are mere!", "KFC Krushers Party", true, address, user);
         eventRepository.save(event);
         Event eventTest = eventRepository.findAllByIsPublicIsTrue().get(0);
-        assertThat(eventTest.getPublic()).isEqualTo(true);
+        assertThat(eventTest.isPublic()).isEqualTo(true);
         assertThat(eventTest.getName()).isEqualTo(event.getName());
+        Invitation invitation1=TestsRepositoryUtil.createInvitation("pending","description",event,user);
+        invitationRepository.save(invitation1);
+        event.getPendingInvitations().add(invitation1);
+        eventRepository.save(event);
+        Invitation invitation2=TestsRepositoryUtil.createInvitation("pending","description2",event,user);
+        invitationRepository.save(invitation2);
+        event.getPendingInvitations().add(invitation2);
+        eventRepository.save(event);
+        assertThat(event.getPendingInvitations().size()).isEqualTo(2);
     }
+    @Test
+    public void testFindAllByCategoryId() {
+        User user = TestsRepositoryUtil.createUser("login", "anaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaana");
+        userRepository.save(user);
+        Address address = TestsRepositoryUtil.createAddress("Romania", "Bucuresti", "Splai", "333", "Casa", "Casa magica");
+        addressRepository.saveAndFlush(address);
+        Event event = TestsRepositoryUtil.createEvent("Ana are mere!", "KFC Krushers Party", true, address, user);
+        eventRepository.save(event);
+        Category category1=TestsRepositoryUtil.createCategory("Ana","description");
+        categoryRepository.save(category1);
+        event.getCategories().add(category1);
+        eventRepository.save(event);
+        Category category2=TestsRepositoryUtil.createCategory("Dana","description");
+        categoryRepository.save(category2);
+        event.getCategories().add(category2);
+        eventRepository.save(event);
+        List<Event>events=eventRepository.findAllByCategories_id(category1.getId());
+        assertThat(events.size()).isEqualTo(1);
+    }
+
 
     @Test
     public void testFindAllByIsPublicIsTrue() {
 
         for (int i = 0; i < 5; i++) {
-            User user = TestsRepositoryUtil.createUser("abcd" + i, "anaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaana");
+
+            User user = TestsRepositoryUtil.createUser("login" + i, "anaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaana");
             userRepository.save(user);
             Address address = TestsRepositoryUtil.createAddress("Romania", "Bucuresti", "Splai", "333", "Casa", "Casa magica");
             addressRepository.saveAndFlush(address);

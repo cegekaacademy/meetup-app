@@ -10,6 +10,7 @@ import javax.validation.constraints.NotBlank;
 
 import javax.validation.constraints.*;
 import java.time.Instant;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -195,5 +196,30 @@ public class UserDTO {
             ", lastModifiedDate=" + lastModifiedDate +
             ", authorities=" + authorities +
             "}";
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof UserDTO)) return false;
+        UserDTO userDTO = (UserDTO) o;
+        return isActivated() == userDTO.isActivated() &&
+                Objects.equals(getId(), userDTO.getId()) &&
+                Objects.equals(getLogin(), userDTO.getLogin()) &&
+                Objects.equals(getFirstName(), userDTO.getFirstName()) &&
+                Objects.equals(getLastName(), userDTO.getLastName()) &&
+                Objects.equals(getEmail(), userDTO.getEmail()) &&
+                Objects.equals(getImageUrl(), userDTO.getImageUrl()) &&
+                Objects.equals(getLangKey(), userDTO.getLangKey()) &&
+                Objects.equals(getCreatedBy(), userDTO.getCreatedBy()) &&
+                Objects.equals(getCreatedDate(), userDTO.getCreatedDate()) &&
+                Objects.equals(getLastModifiedBy(), userDTO.getLastModifiedBy()) &&
+                Objects.equals(getLastModifiedDate(), userDTO.getLastModifiedDate()) &&
+                Objects.equals(getAuthorities(), userDTO.getAuthorities());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId(), getLogin(), getFirstName(), getLastName(), getEmail(), getImageUrl(), isActivated(), getLangKey(), getCreatedBy(), getCreatedDate(), getLastModifiedBy(), getLastModifiedDate(), getAuthorities());
     }
 }

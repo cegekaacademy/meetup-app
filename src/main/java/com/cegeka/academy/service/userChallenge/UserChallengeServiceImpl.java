@@ -6,11 +6,14 @@ import com.cegeka.academy.repository.ChallengeRepository;
 import com.cegeka.academy.repository.UserChallengeRepository;
 import com.cegeka.academy.service.dto.*;
 import com.cegeka.academy.service.mapper.UserChallengeMapper;
+import com.cegeka.academy.web.rest.errors.WrongOwnerException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -33,18 +36,31 @@ public class UserChallengeServiceImpl implements UserChallengeService {
     }
 
     @Override
-    public UserChallenge rateUser(UserChallengeDTO userChallengeDTO, Long ownerId, Long userChallengeId) {
+    public UserChallenge rateUser(UserChallengeDTO userChallengeDTO, Long ownerId, Long userChallengeId) throws WrongOwnerException {
 
-        userChallengeDTO.setId(userChallengeId);
-        UserChallenge userChallenge = userChallengeRepository.findById(userChallengeDTO.getId()).get();
+        UserChallenge userChallenge = new UserChallenge();
+        Optional<UserChallenge> userChallengeOptional = userChallengeRepository.findById(userChallengeDTO.getId());
+
+        if(userChallengeOptional.isPresent()) {
+           userChallenge = userChallengeOptional.get();
+        } else {
+            userChallengeOptional.orElseThrow(NoSuchElementException::new);
+        }
         userChallenge.setPoints(userChallengeDTO.getPoints());
 
-        Challenge challenge = challengeRepository.findById(userChallenge.getChallenge().getId()).get();
+        Challenge challenge = new Challenge();
+        Optional<Challenge> challengeOptional = challengeRepository.findById(userChallenge.getChallenge().getId());
+
+        if(challengeOptional.isPresent()) {
+            challenge = challengeOptional.get();
+        } else {
+            challengeOptional.orElseThrow(NoSuchElementException::new);
+        }
 
         if(challenge.getCreator().getId().equals(ownerId)) {
             return userChallengeRepository.save(userChallenge);
         } else {
-            return null;
+            throw new WrongOwnerException();
         }
 
     }

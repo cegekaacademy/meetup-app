@@ -3,6 +3,7 @@ package com.cegeka.academy.web.rest;
 import com.cegeka.academy.domain.UserChallenge;
 import com.cegeka.academy.service.dto.UserChallengeDTO;
 import com.cegeka.academy.service.userChallenge.UserChallengeService;
+import com.cegeka.academy.web.rest.errors.WrongOwnerException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
 import org.springframework.web.bind.annotation.*;
@@ -25,7 +26,7 @@ public class UserChallengeController {
 
     @PutMapping(value = "/rate")
     public UserChallenge rateUser(@RequestBody UserChallengeDTO userChallengeDTO, @Param("ownerId") Long ownerId,
-                                  @Param("userChallengeId") Long userChallengeId) {
+                                  @Param("userChallengeId") Long userChallengeId) throws WrongOwnerException {
 
         return userChallengeService.rateUser(userChallengeDTO, ownerId, userChallengeId);
     }
