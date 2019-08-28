@@ -117,7 +117,7 @@ public class InvitationServiceTest {
         invitation3 = TestsRepositoryUtil.createInvitation(InvitationStatus.PENDING.name(), "ana are mere", event2, user);
         invitationService.saveInvitation(invitation3);
         invitationService.acceptInvitation(invitation3.getId());
-        assertThat(event2.getUsers().size()).isEqualTo(1);
+        assertThat(user.getEvents().size()).isEqualTo(1);
         assertThat(event.getUsers().size()).isEqualTo(0);
 
     }
@@ -179,7 +179,7 @@ public class InvitationServiceTest {
         assertThat(list.get(0).getUser()).isEqualTo(invitation.getUser());
         assertThat(list.get(0).getEvent()).isEqualTo(invitation.getEvent());
         assertThat(event.getPendingInvitations().size()).isEqualTo(0);
-        assertThat(event.getUsers().size()).isEqualTo(1);
+        assertThat(user.getEvents().size()).isEqualTo(1);
     }
 
     @Test

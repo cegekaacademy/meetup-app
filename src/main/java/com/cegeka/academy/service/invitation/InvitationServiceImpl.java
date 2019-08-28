@@ -100,11 +100,14 @@ public class InvitationServiceImpl implements InvitationService {
         logger.info("Invitation with id: " + invitationRepository.save(invitation.get()).getId() + "  was accepted by the user.");
         eventRepository.findById(invitation.get().getEvent().getId()).ifPresent(event -> {
             event.getPendingInvitations().remove(invitation.get());
-            event.getUsers().add(invitation.get().getUser());
             eventRepository.save(event);
+            userRepository.findById(invitation.get().getUser().getId()).ifPresent(user -> {
+                user.getEvents().add(event);
+                userRepository.save(user);
+
+            });
 
         });
-
 
     }
 
