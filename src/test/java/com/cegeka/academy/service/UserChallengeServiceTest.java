@@ -2,12 +2,17 @@ package com.cegeka.academy.service;
 
 import com.cegeka.academy.AcademyProjectApp;
 import com.cegeka.academy.domain.*;
+import com.cegeka.academy.domain.enums.InvitationStatus;
+import com.cegeka.academy.domain.enums.UserChallengeStatus;
 import com.cegeka.academy.repository.*;
 import com.cegeka.academy.service.dto.UserChallengeDTO;
 import com.cegeka.academy.service.mapper.UserChallengeMapper;
 import com.cegeka.academy.service.userChallenge.UserChallengeService;
+import com.cegeka.academy.web.rest.errors.InvalidUserChallengeStatusException;
+import com.cegeka.academy.web.rest.errors.NotFoundException;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -140,5 +145,71 @@ public class UserChallengeServiceTest  {
 
     }
 
+    @Test
+    public void testUpdateUserChallengeStatusIsWorking() throws NotFoundException, InvalidUserChallengeStatusException {
+
+        UserChallenge existingUserChallenge = userChallengeRepository.findAll().get(0);
+
+        userChallengeService.updateUserChallengeStatus(existingUserChallenge.getId(), UserChallengeStatus.ACCEPTED.toString());
+
+        assertThat(userChallengeRepository.findAll().get(0).getId()).isEqualTo(existingUserChallenge.getId());
+        assertThat(userChallengeRepository.findAll().get(0).getStatus()).isEqualTo(UserChallengeStatus.ACCEPTED.toString());
+
+    }
+
+    @Test
+    public void testUpdateUserChallengeStatusWithInvalidId() {
+
+        Assertions.assertThrows(NotFoundException.class, () -> {
+
+            userChallengeService.updateUserChallengeStatus(100L, UserChallengeStatus.ACCEPTED.toString());
+
+        });
+
+    }
+
+    @Test
+    public void testUpdateUserChallengeStatusWithInvalidStatus() {
+
+        Assertions.assertThrows(InvalidUserChallengeStatusException.class, () -> {
+
+            userChallengeService.updateUserChallengeStatus(userChallengeRepository.findAll().get(0).getId(), "status");
+
+        });
+
+    }
+
+    @Test
+    public void testUpdateUserChallengeInvitationStatusIsWorking() throws NotFoundException, InvalidUserChallengeStatusException {
+
+        UserChallenge existingUserChallenge = userChallengeRepository.findAll().get(0);
+
+        userChallengeService.updateUserChallengeInvitationStatus(existingUserChallenge.getId(), InvitationStatus.CANCELED.toString());
+
+        assertThat(userChallengeRepository.findAll().get(0).getId()).isEqualTo(existingUserChallenge.getId());
+        assertThat(userChallengeRepository.findAll().get(0).getInvitation().getStatus()).isEqualTo(InvitationStatus.CANCELED.toString());
+
+    }
+
+    @Test
+    public void testUpdateUserChallengeInvitationStatusWithInvalidId() {
+
+        Assertions.assertThrows(NotFoundException.class, () -> {
+
+            userChallengeService.updateUserChallengeInvitationStatus(100L, InvitationStatus.CANCELED.toString());
+
+        });
+
+    }
+
+    @Test
+    public void testUpdateUserChallengeInvitationStatusWithInvalidStatus() {
+
+        Assertions.assertThrows(InvalidUserChallengeStatusException.class, () -> {
+
+            userChallengeService.updateUserChallengeInvitationStatus(userChallengeRepository.findAll().get(0).getId(), "status");
+        });
+
+    }
 
 }
