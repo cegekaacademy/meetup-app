@@ -41,11 +41,10 @@ public class SearchService {
 
         for (Event event : events) {
             Set<User> findUsers = event.getUsers();
-            if (findUsers != null) {
-                searchedUsers = findUsers.stream()
-                        .filter(Objects::nonNull)
-                        .collect(Collectors.toList());
-            }
+
+            searchedUsers = findUsers.stream()
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toList());
         }
 
         return searchedUsers;
