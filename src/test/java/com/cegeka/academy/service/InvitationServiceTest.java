@@ -243,5 +243,4 @@ public class InvitationServiceTest {
         List<Invitation> list = invitationRepository.findAll();
         assertThat(list.size()).isEqualTo(1);
     }
-
 }
