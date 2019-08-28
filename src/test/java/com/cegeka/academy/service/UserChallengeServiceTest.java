@@ -53,7 +53,6 @@ public class UserChallengeServiceTest  {
     private Invitation invitation;
     private User user;
     private Challenge challenge;
-    private ChallengeDTO challengeDTO;
     private ChallengeCategory challengeCategory;
     private UserChallengeDTO userChallengeDTO;
     private UserChallenge userChallenge;
@@ -97,8 +96,6 @@ public class UserChallengeServiceTest  {
         challenge.setDescription("description");
         challenge.setChallengeCategory(challengeCategoryRepository.findAll().get(0));
         challengeRepository.save(challenge);
-
-        challengeDTO = ChallengeMapper.convertChallengeToChallengeDTO(challenge);
 
         userChallenge = new UserChallenge();
         userChallenge.setUser(usedUser);

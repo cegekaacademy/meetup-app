@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface UserChallengeRepository extends JpaRepository<UserChallenge, Long> {
@@ -15,6 +16,6 @@ public interface UserChallengeRepository extends JpaRepository<UserChallenge, Lo
 
     UserChallenge findAllByUserIdAndChallengeId(Long userId, Long challengeId);
 
-    UserChallenge findByUserIdAndChallengeIdAndInvitationId(Long userId, Long challengeId, Long invitationId);
+    Optional<UserChallenge> findByUserIdAndChallengeIdAndInvitationId(Long userId, Long challengeId, Long invitationId);
 
 }

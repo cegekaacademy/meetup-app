@@ -24,9 +24,9 @@ public class UserChallengeController {
         return userChallengeService.getUserChallengesByUserId(userId);
     }
 
-    @PutMapping(value = "/rate")
+    @PutMapping(value = "/rate/{ownerId}")
     public UserChallenge rateUser(@RequestBody UserChallengeDTO userChallengeDTO,
-                                  @Param("ownerId") Long ownerId) throws WrongOwnerException {
+                                  @PathVariable("ownerId") Long ownerId) throws WrongOwnerException {
 
         return userChallengeService.rateUser(userChallengeDTO, ownerId);
     }

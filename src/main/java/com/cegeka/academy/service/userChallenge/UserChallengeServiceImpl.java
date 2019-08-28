@@ -1,10 +1,8 @@
 package com.cegeka.academy.service.userChallenge;
 
-import com.cegeka.academy.domain.Challenge;
 import com.cegeka.academy.domain.UserChallenge;
-import com.cegeka.academy.repository.ChallengeRepository;
 import com.cegeka.academy.repository.UserChallengeRepository;
-import com.cegeka.academy.service.dto.*;
+import com.cegeka.academy.service.dto.UserChallengeDTO;
 import com.cegeka.academy.service.mapper.UserChallengeMapper;
 import com.cegeka.academy.web.rest.errors.WrongOwnerException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +11,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -22,9 +19,6 @@ public class UserChallengeServiceImpl implements UserChallengeService {
 
     @Autowired
     private UserChallengeRepository userChallengeRepository;
-
-    @Autowired
-    private ChallengeRepository challengeRepository;
 
     @Override
     public List<UserChallengeDTO> getUserChallengesByUserId(Long userId) {
@@ -37,31 +31,20 @@ public class UserChallengeServiceImpl implements UserChallengeService {
 
     @Override
     public UserChallenge rateUser(UserChallengeDTO userChallengeDTO, Long ownerId)
-            throws WrongOwnerException, NoSuchElementException {
+            throws WrongOwnerException {
 
         long userId = userChallengeDTO.getUser().getId();
         long challengeId = userChallengeDTO.getChallenge().getId();
         long invitationId = userChallengeDTO.getInvitation().getId();
         UserChallenge userChallenge = userChallengeRepository
-                .findByUserIdAndChallengeIdAndInvitationId(userId, challengeId, invitationId);
+                .findByUserIdAndChallengeIdAndInvitationId(userId, challengeId, invitationId).orElseThrow(NoSuchElementException::new);
 
-        System.out.println(userChallenge);
+        userChallenge.setPoints(userChallengeDTO.getPoints());
 
-        if (userChallenge != null) {
-            userChallenge.setPoints(userChallengeDTO.getPoints());
-
-            Optional<Challenge> challengeOptional = challengeRepository.findById(userChallenge.getChallenge().getId());
-
-            Challenge challenge = challengeOptional.get();
-
-            if (challenge.getCreator().getId().equals(ownerId)) {
-                return userChallengeRepository.save(userChallenge);
-            } else {
-                throw new WrongOwnerException();
-            }
+        if (userChallenge.getChallenge().getCreator().getId().equals(ownerId)) {
+            return userChallengeRepository.save(userChallenge);
         } else {
-            throw new NoSuchElementException();
+            throw new WrongOwnerException();
         }
-
     }
 }
