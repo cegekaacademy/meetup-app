@@ -28,10 +28,10 @@ public class InvitationMapper {
         return invitationDTO;
     }
 
-    public static Invitation createInvitation(String status, String descriere, User user, Event event) {
+    public static Invitation createInvitation(String description, String status, User user, Event event) {
         Invitation invitation = new Invitation();
         invitation.setStatus(status);
-        invitation.setDescription(descriere);
+        invitation.setDescription(description);
         invitation.setUser(user);
         invitation.setEvent(event);
         return invitation;
