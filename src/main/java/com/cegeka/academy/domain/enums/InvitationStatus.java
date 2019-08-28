@@ -2,31 +2,21 @@ package com.cegeka.academy.domain.enums;
 
 import com.cegeka.academy.web.rest.errors.InvalidInvitationStatusException;
 
+import java.util.Arrays;
+import java.util.List;
+
 public enum InvitationStatus {
 
     PENDING, ACCEPTED, REJECTED, CANCELED;
 
     public static InvitationStatus getInvitationStatus(String status) throws InvalidInvitationStatusException {
 
-        if(status.equalsIgnoreCase(PENDING.toString())){
+        List<InvitationStatus> list  = Arrays.asList(InvitationStatus.values());
 
-            return PENDING;
+        return list.stream()
+                .filter(invitationStatus -> status.equalsIgnoreCase(invitationStatus.toString()))
+                .findFirst()
+                .orElseThrow(() -> new InvalidInvitationStatusException().setMessage("Status is invalid"));
 
-        } else if (status.equalsIgnoreCase(ACCEPTED.toString())){
-
-            return ACCEPTED;
-
-        } else if(status.equalsIgnoreCase(REJECTED.toString())){
-
-            return REJECTED;
-
-        } else if(status.equalsIgnoreCase(CANCELED.toString())){
-
-            return CANCELED;
-
-        } else {
-
-            throw new InvalidInvitationStatusException().setMessage("Status is invalid");
-        }
     }
 }

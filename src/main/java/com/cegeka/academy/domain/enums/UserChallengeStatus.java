@@ -2,23 +2,20 @@ package com.cegeka.academy.domain.enums;
 
 import com.cegeka.academy.web.rest.errors.InvalidUserChallengeStatusException;
 
+import java.util.Arrays;
+import java.util.List;
+
 public enum UserChallengeStatus {
 
     ACCEPTED, CANCELED;
 
     public static UserChallengeStatus getUserChallengeStatus(String status) throws InvalidUserChallengeStatusException {
 
-        if(status.equalsIgnoreCase(ACCEPTED.toString())){
+        List<UserChallengeStatus> list  = Arrays.asList(UserChallengeStatus.values());
 
-            return ACCEPTED;
-
-        } else if(status.equalsIgnoreCase(CANCELED.toString())){
-
-            return CANCELED;
-
-        } else {
-
-            throw new InvalidUserChallengeStatusException().setMessage("Status is invalid");
-        }
+        return list.stream()
+                .filter(userChallengeStatus -> status.equalsIgnoreCase(userChallengeStatus.toString()))
+                .findFirst()
+                .orElseThrow(() -> new InvalidUserChallengeStatusException().setMessage("Status is invalid"));
     }
 }
