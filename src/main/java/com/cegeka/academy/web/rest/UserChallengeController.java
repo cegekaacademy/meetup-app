@@ -1,6 +1,5 @@
 package com.cegeka.academy.web.rest;
 
-import com.cegeka.academy.service.dto.ChallengeAnswerDTO;
 import com.cegeka.academy.service.dto.UserChallengeDTO;
 import com.cegeka.academy.service.userChallenge.UserChallengeService;
 import com.cegeka.academy.web.rest.errors.InvalidInvitationStatusException;
