@@ -47,6 +47,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     List<User> findAllByEvents_id(Long eventId);
 
-    User findByFirstNameAndLastName(String firstName, String lastName);
+    List<User> findAllByFirstNameAndLastName(String firstName, String lastName);
 
 }
