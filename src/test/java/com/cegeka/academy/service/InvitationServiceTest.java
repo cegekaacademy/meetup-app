@@ -111,12 +111,12 @@ public class InvitationServiceTest {
     }
     @Test
     @Transactional
-    public void assertThatSaveUserToParticipationListAfterAcceptInvitationIsWorking() {
+    public void assertThatSaveUserToParticipationListAfterAcceptInvitationIsWorking() throws NotFoundException {
         event2 = TestsRepositoryUtil.createEvent("Dana Dana!", "KFC Krushers Party", true, address, user);
         eventRepository.save(event2);
         invitation3 = TestsRepositoryUtil.createInvitation(InvitationStatus.PENDING.name(), "ana are mere", event2, user);
         invitationService.saveInvitation(invitation3);
-        invitationService.acceptInvitation(invitation3);
+        invitationService.acceptInvitation(invitation3.getId());
         assertThat(event2.getUsers().size()).isEqualTo(1);
         assertThat(event.getUsers().size()).isEqualTo(0);
 
@@ -161,11 +161,17 @@ public class InvitationServiceTest {
         assertThat(pendingListUser.size()).isEqualTo(1);
 
     }
+    @Test
+    @Transactional
+    public void assertThatAcceptInvitation_ThrowsExceptionWithWrongUserId() {
+        Assertions.assertThrows(NotFoundException.class, () -> invitationService.acceptInvitation(40l));
+    }
+
 
     @Test
-    public void assertThatAcceptInvitationIsWorking() {
+    public void assertThatAcceptInvitationIsWorking() throws NotFoundException {
         List<Invitation> list = invitationRepository.findAll();
-        invitationService.acceptInvitation(invitation);
+        invitationService.acceptInvitation(invitation.getId());
         assertThat(list.size()).isEqualTo(1);
         assertThat(list.get(0).getStatus()).isEqualTo(invitation.getStatus());
         assertThat(list.get(0).getStatus()).isEqualTo(InvitationStatus.ACCEPTED.name());
@@ -177,10 +183,16 @@ public class InvitationServiceTest {
     }
 
     @Test
-    public void assertThatRejectInvitationIsWorking() {
+    @Transactional
+    public void assertThatRejectInvitation_ThrowsExceptionWithWrongUserId() {
+        Assertions.assertThrows(NotFoundException.class, () -> invitationService.rejectInvitation(40l));
+    }
+
+    @Test
+    public void assertThatRejectInvitationIsWorking() throws NotFoundException {
         List<Invitation> list = invitationRepository.findAll();
         invitation.setStatus(InvitationStatus.PENDING.name());
-        invitationService.rejectInvitation(invitation);
+        invitationService.rejectInvitation(invitation.getId());
         assertThat(list.size()).isEqualTo(1);
         assertThat(list.get(0).getStatus()).isEqualTo(invitation.getStatus());
         assertThat(list.get(0).getStatus()).isEqualTo(InvitationStatus.REJECTED.name());

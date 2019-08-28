@@ -93,24 +93,27 @@ public class InvitationServiceImpl implements InvitationService {
     }
 
     @Override
-    public void acceptInvitation(Invitation invitation) {
-
-        invitation.setStatus(InvitationStatus.ACCEPTED.name());
-        logger.info("Invitation with id: " + invitationRepository.save(invitation).getId() + "  was accepted by the user.");
-        eventRepository.findById(invitation.getEvent().getId()).ifPresent(event -> {
-            event.getPendingInvitations().remove(invitation);
-            event.getUsers().add(invitation.getUser());
+    public void acceptInvitation(Long invitationId) throws NotFoundException {
+        Optional<Invitation> invitation = invitationRepository.findById(invitationId);
+        invitation.orElseThrow(() -> new NotFoundException().setMessage("Invitation not found"));
+        invitation.get().setStatus(InvitationStatus.ACCEPTED.name());
+        logger.info("Invitation with id: " + invitationRepository.save(invitation.get()).getId() + "  was accepted by the user.");
+        eventRepository.findById(invitation.get().getEvent().getId()).ifPresent(event -> {
+            event.getPendingInvitations().remove(invitation.get());
+            event.getUsers().add(invitation.get().getUser());
             eventRepository.save(event);
+
         });
 
 
     }
 
     @Override
-    public void rejectInvitation(Invitation invitation) {
-
-        invitation.setStatus(InvitationStatus.REJECTED.name());
-        logger.info("Invitation with id: " + invitationRepository.save(invitation).getId() + "  was rejected by the user.");
+    public void rejectInvitation(Long invitationId) throws NotFoundException {
+        Optional<Invitation> invitation = invitationRepository.findById(invitationId);
+        invitation.orElseThrow(() -> new NotFoundException().setMessage("Invitation not found"));
+        invitation.get().setStatus(InvitationStatus.REJECTED.name());
+        logger.info("Invitation with id: " + invitationRepository.save(invitation.get()).getId() + "  was rejected by the user.");
 
     }
 
