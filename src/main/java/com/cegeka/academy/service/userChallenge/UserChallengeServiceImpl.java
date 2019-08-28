@@ -6,6 +6,7 @@ import com.cegeka.academy.domain.enums.UserChallengeStatus;
 import com.cegeka.academy.repository.UserChallengeRepository;
 import com.cegeka.academy.service.dto.*;
 import com.cegeka.academy.service.mapper.UserChallengeMapper;
+import com.cegeka.academy.web.rest.errors.InvalidInvitationStatusException;
 import com.cegeka.academy.web.rest.errors.InvalidUserChallengeStatusException;
 import com.cegeka.academy.web.rest.errors.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,35 +38,21 @@ public class UserChallengeServiceImpl implements UserChallengeService {
         UserChallenge userChallenge = userChallengeRepository.findById(userChallengeId)
                 .orElseThrow(() -> new NotFoundException().setMessage("User challenge does not exists."));
 
-        if(status.equalsIgnoreCase(UserChallengeStatus.ACCEPTED.toString()) || status.equalsIgnoreCase(UserChallengeStatus.CANCELED.toString())){
+        userChallenge.setStatus(UserChallengeStatus.getUserChallengeStatus(status).toString());
 
-            userChallenge.setStatus(status);
-
-            userChallengeRepository.save(userChallenge);
-
-        } else {
-
-            throw new InvalidUserChallengeStatusException().setMessage("Status is invalid");
-        }
+        userChallengeRepository.save(userChallenge);
 
     }
 
     @Override
-    public void updateUserChallengeInvitationStatus(Long userChallengeId, String status) throws NotFoundException, InvalidUserChallengeStatusException {
+    public void updateUserChallengeInvitationStatus(Long userChallengeId, String status) throws NotFoundException, InvalidInvitationStatusException {
 
         UserChallenge userChallenge = userChallengeRepository.findById(userChallengeId)
                 .orElseThrow(() -> new NotFoundException().setMessage("User challenge does not exists."));
 
-        if(status.equalsIgnoreCase(InvitationStatus.ACCEPTED.toString()) || status.equalsIgnoreCase(InvitationStatus.CANCELED.toString()) || status.equalsIgnoreCase(InvitationStatus.REJECTED.toString())){
+        userChallenge.getInvitation().setStatus(InvitationStatus.getInvitationStatus(status).toString());
 
-            userChallenge.getInvitation().setStatus(status);
-
-            userChallengeRepository.save(userChallenge);
-
-        } else {
-
-            throw new InvalidUserChallengeStatusException().setMessage("Status is invalid");
-        }
+        userChallengeRepository.save(userChallenge);
 
     }
 }

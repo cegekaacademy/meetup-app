@@ -3,6 +3,7 @@ package com.cegeka.academy.web.rest;
 import com.cegeka.academy.service.dto.ChallengeAnswerDTO;
 import com.cegeka.academy.service.dto.UserChallengeDTO;
 import com.cegeka.academy.service.userChallenge.UserChallengeService;
+import com.cegeka.academy.web.rest.errors.InvalidInvitationStatusException;
 import com.cegeka.academy.web.rest.errors.InvalidUserChallengeStatusException;
 import com.cegeka.academy.web.rest.errors.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +36,7 @@ public class UserChallengeController {
     }
 
     @PutMapping("/updateInvitationStatus/{userChallengeId}/{invitationStatus}")
-    public ResponseEntity<String> updateUserChallengeInvitationStatus(@PathVariable(value = "userChallengeId") Long userChallengeId, @PathVariable(value = "invitationStatus") String invitationStatus) throws NotFoundException, InvalidUserChallengeStatusException {
+    public ResponseEntity<String> updateUserChallengeInvitationStatus(@PathVariable(value = "userChallengeId") Long userChallengeId, @PathVariable(value = "invitationStatus") String invitationStatus) throws NotFoundException, InvalidInvitationStatusException {
 
         userChallengeService.updateUserChallengeInvitationStatus(userChallengeId, invitationStatus);
 

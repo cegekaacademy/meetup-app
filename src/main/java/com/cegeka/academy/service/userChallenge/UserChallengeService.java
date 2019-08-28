@@ -1,6 +1,7 @@
 package com.cegeka.academy.service.userChallenge;
 
 import com.cegeka.academy.service.dto.UserChallengeDTO;
+import com.cegeka.academy.web.rest.errors.InvalidInvitationStatusException;
 import com.cegeka.academy.web.rest.errors.InvalidUserChallengeStatusException;
 import com.cegeka.academy.web.rest.errors.NotFoundException;
 
@@ -12,6 +13,6 @@ public interface UserChallengeService {
 
     void updateUserChallengeStatus(Long userChallengeId, String status) throws NotFoundException, InvalidUserChallengeStatusException;
 
-    void updateUserChallengeInvitationStatus(Long userChallengeId, String status) throws NotFoundException, InvalidUserChallengeStatusException;
+    void updateUserChallengeInvitationStatus(Long userChallengeId, String status) throws NotFoundException, InvalidInvitationStatusException;
 
 }

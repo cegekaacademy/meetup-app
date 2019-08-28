@@ -8,6 +8,7 @@ import com.cegeka.academy.repository.*;
 import com.cegeka.academy.service.dto.UserChallengeDTO;
 import com.cegeka.academy.service.mapper.UserChallengeMapper;
 import com.cegeka.academy.service.userChallenge.UserChallengeService;
+import com.cegeka.academy.web.rest.errors.InvalidInvitationStatusException;
 import com.cegeka.academy.web.rest.errors.InvalidUserChallengeStatusException;
 import com.cegeka.academy.web.rest.errors.NotFoundException;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -180,7 +181,7 @@ public class UserChallengeServiceTest  {
     }
 
     @Test
-    public void testUpdateUserChallengeInvitationStatusIsWorking() throws NotFoundException, InvalidUserChallengeStatusException {
+    public void testUpdateUserChallengeInvitationStatusIsWorking() throws NotFoundException, InvalidInvitationStatusException {
 
         UserChallenge existingUserChallenge = userChallengeRepository.findAll().get(0);
 
@@ -205,7 +206,7 @@ public class UserChallengeServiceTest  {
     @Test
     public void testUpdateUserChallengeInvitationStatusWithInvalidStatus() {
 
-        Assertions.assertThrows(InvalidUserChallengeStatusException.class, () -> {
+        Assertions.assertThrows(InvalidInvitationStatusException.class, () -> {
 
             userChallengeService.updateUserChallengeInvitationStatus(userChallengeRepository.findAll().get(0).getId(), "status");
         });
