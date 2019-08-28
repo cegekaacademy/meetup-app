@@ -54,8 +54,7 @@ public class CategoryRepositoryTest {
     }
 
     @Test
-    public void testFindAllByEventId()
-    {
+    public void testFindAllByEventId() {
         List<Category> categories = categoryRepository.findAllByEvents_id(event.getId());
         assertThat(categories.size()).isEqualTo(3);
 
