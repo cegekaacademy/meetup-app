@@ -7,6 +7,7 @@ import com.cegeka.academy.repository.InvitationRepository;
 import com.cegeka.academy.service.invitation.InvitationServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,6 +21,7 @@ public class CheckUniqueService {
 
     private final InvitationRepository invitationRepository;
 
+    @Autowired
     public CheckUniqueService(InvitationRepository invitationRepository) {
         this.invitationRepository = invitationRepository;
     }
