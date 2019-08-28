@@ -3,7 +3,6 @@ package com.cegeka.academy.domain.enums;
 import com.cegeka.academy.web.rest.errors.InvalidInvitationStatusException;
 
 import java.util.Arrays;
-import java.util.List;
 
 public enum InvitationStatus {
 
@@ -11,9 +10,7 @@ public enum InvitationStatus {
 
     public static InvitationStatus getInvitationStatus(String status) throws InvalidInvitationStatusException {
 
-        List<InvitationStatus> list  = Arrays.asList(InvitationStatus.values());
-
-        return list.stream()
+        return Arrays.stream(values())
                 .filter(invitationStatus -> status.equalsIgnoreCase(invitationStatus.toString()))
                 .findFirst()
                 .orElseThrow(() -> new InvalidInvitationStatusException().setMessage("Status is invalid"));
