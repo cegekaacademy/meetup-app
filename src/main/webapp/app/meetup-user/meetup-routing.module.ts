@@ -1,7 +1,7 @@
 import {NgModule} from '@angular/core';
 import {RouterModule, Routes} from '@angular/router';
-import {UserProfileComponent} from 'app/meetup/user-profile/edit/user-profile.component';
-import {MyProfileComponent} from "app/meetup/user-profile/my-profile/my-profile.component";
+import {UserProfileComponent} from 'app/meetup-user/user-profile/edit/user-profile.component';
+import {MyProfileComponent} from "app/meetup-user/user-profile/my-profile/my-profile.component";
 
 const routes: Routes = [
     {
