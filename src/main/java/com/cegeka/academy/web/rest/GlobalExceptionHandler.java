@@ -1,5 +1,7 @@
 package com.cegeka.academy.web.rest;
 
+import com.cegeka.academy.web.rest.errors.InvalidInvitationStatusException;
+import com.cegeka.academy.web.rest.errors.InvalidUserChallengeStatusException;
 import com.cegeka.academy.web.rest.errors.NotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,4 +31,20 @@ public class GlobalExceptionHandler{
 
         return new ResponseEntity<>(errors.toString(), HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(value = InvalidInvitationStatusException.class)
+    public ResponseEntity<String> handleInvalidInvitationStatusException(InvalidInvitationStatusException exception) {
+
+        return new ResponseEntity(exception.getMessage(), HttpStatus.BAD_REQUEST);
+
+    }
+
+    @ExceptionHandler(value = InvalidUserChallengeStatusException.class)
+    public ResponseEntity<String> handleInvalidUserChallengeStatusException(InvalidUserChallengeStatusException exception) {
+
+        return new ResponseEntity(exception.getMessage(), HttpStatus.BAD_REQUEST);
+
+    }
+
+
 }
