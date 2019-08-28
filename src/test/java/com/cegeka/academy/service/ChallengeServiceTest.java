@@ -250,17 +250,6 @@ public class ChallengeServiceTest {
 
 
     @Test
-    void invalidFieldExceptionTest_WITH_nullCreatorId() {
-        challengeRepository.save(challenge);
-
-        ChallengeDTO challengeDTO = ChallengeMapper.convertChallengeToChallengeDTO(challenge);
-
-        challengeDTO.getCreator().setId(null);
-
-        Assertions.assertThrows(InvalidFieldException.class, () -> challengeService.updateChallenge(challenge.getId(), challengeDTO));
-    }
-
-    @Test
     void invalidFieldExceptionTest_WITH_invalidChallengeCategoryId() {
         challengeRepository.save(challenge);
 

@@ -93,5 +93,17 @@ public class ChallengeMapper {
 
     }
 
+    public static Challenge enrichChallenge(ChallengeDTO challengeDTO, Challenge challenge)
+    {
+        challenge.setStartDate(challengeDTO.getStartDate());
+        challenge.setEndDate(challengeDTO.getEndDate());
+        challenge.setPoints(challengeDTO.getPoints());
+        challenge.setDescription(challengeDTO.getDescription());
+        challenge.setStatus(challengeDTO.getStatus());
+        challenge.setChallengeCategory(convertChallengeCategoryDTOToChallengeCategory(challengeDTO.getChallengeCategory()));
+
+        return challenge;
+    }
+
 
 }

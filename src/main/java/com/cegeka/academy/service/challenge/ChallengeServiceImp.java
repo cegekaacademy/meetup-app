@@ -6,12 +6,11 @@ import com.cegeka.academy.repository.ChallengeCategoryRepository;
 import com.cegeka.academy.domain.enums.ChallengeStatus;
 import com.cegeka.academy.repository.ChallengeRepository;
 import com.cegeka.academy.repository.UserChallengeRepository;
+import com.cegeka.academy.service.dto.ChallengeCategoryDTO;
 import com.cegeka.academy.web.rest.errors.NotFoundException;
 import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.cegeka.academy.web.rest.errors.InvalidFieldException;
-import com.cegeka.academy.web.rest.errors.NotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
 import com.cegeka.academy.service.dto.ChallengeDTO;
 import com.cegeka.academy.service.mapper.ChallengeMapper;
 import org.slf4j.Logger;
@@ -65,38 +64,19 @@ public class ChallengeServiceImp implements ChallengeService {
     @Override
     public ChallengeDTO updateChallenge(Long challengeId, ChallengeDTO challengeDTO) throws NotFoundException {
 
-        Long userId;
 
-        if(challengeDTO.getChallengeCategory() != null) {
+        validateChallengeDTOForUpdate(challengeId, challengeDTO);
 
-            if (challengeDTO.getChallengeCategory().getId() == null) {
-                challengeDTO.setChallengeCategory(null);
-            } else
-            {
-            challengeCategoryRepository.findById(challengeDTO.getChallengeCategory().getId())
-                    .orElseThrow(() -> new InvalidFieldException().setMessage("Categoria aleasa trebuie sa existe"));
-            }
-        }
-
-        if(!challengeId.equals(challengeDTO.getId()))
-        {
-            throw new InvalidFieldException().setMessage("Id-ul challenge-ului din path trebuie ca corespunda cu cel din DTO");
-        }
-
-        Challenge oldChallenge = challengeRepository.findById(challengeId).orElseThrow(
-                ()->new NotFoundException().setMessage("Challenge-ul " + challengeId +" nu exista")
+        Challenge challenge = challengeRepository.findById(challengeId).orElseThrow(
+                () -> new NotFoundException().setMessage("Challenge-ul " + challengeId + " nu exista")
         );
 
-        userId = challengeDTO.getCreator().getId();
+        challenge = ChallengeMapper.enrichChallenge(challengeDTO, challenge);
 
-        if(!oldChallenge.getCreator().getId().equals(userId))
-        {
-            throw new InvalidFieldException().setMessage("Creatorul unui challenge nu se poate schimba");
-        }
-
-       challengeRepository.save(ChallengeMapper.convertChallengeDTOToChallenge(challengeDTO));
+        challengeRepository.save(challenge);
 
         return challengeDTO;
+
     }
 
     @Override
@@ -178,6 +158,39 @@ public class ChallengeServiceImp implements ChallengeService {
 
         return DateUtils.isSameDay(challenge.getEndDate(), new Date()) || challenge.getEndDate().after(new Date());
 
+    }
+
+    private boolean  doesChallengeCategoryExist(long challengeCategoryId)
+    {
+        return challengeCategoryRepository.findById(challengeCategoryId).isPresent();
+    }
+
+
+    private void validateChallengeDTOForUpdate(long pathChallengeId, ChallengeDTO challengeDTO)
+    {
+
+        if(pathChallengeId != challengeDTO.getId()) {
+
+            throw new InvalidFieldException().setMessage("Id-ul challenge-ului din path trebuie ca corespunda cu cel din DTO");
+
+        }
+
+        ChallengeCategoryDTO challengeCategoryDTO = challengeDTO.getChallengeCategory();
+
+        if(challengeCategoryDTO != null)
+        {
+            if(challengeCategoryDTO.getId() == null) {
+
+                challengeDTO.setChallengeCategory(null);
+
+            }
+            else
+                if(!doesChallengeCategoryExist(challengeCategoryDTO.getId())){
+
+                    throw new InvalidFieldException().setMessage("Categoria aleasa nu exista in baza de date");
+
+                }
+        }
     }
 
 }
