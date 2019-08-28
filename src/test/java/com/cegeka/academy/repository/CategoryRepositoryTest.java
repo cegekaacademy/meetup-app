@@ -66,7 +66,6 @@ public class CategoryRepositoryTest {
 
         Category findCategory = categoryRepository.findByName("Ana");
         assertThat(findCategory).isEqualTo(categoryRepository.findAll().get(0));
-        System.out.println(findCategory.getName() + findCategory.getDescription());
 
     }
 
