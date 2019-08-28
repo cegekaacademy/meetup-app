@@ -100,10 +100,22 @@ public class ChallengeMapper {
         challenge.setPoints(challengeDTO.getPoints());
         challenge.setDescription(challengeDTO.getDescription());
         challenge.setStatus(challengeDTO.getStatus());
-        challenge.setChallengeCategory(convertChallengeCategoryDTOToChallengeCategory(challengeDTO.getChallengeCategory()));
+        challenge.setChallengeCategory(enrichChallengeCategory(challenge.getChallengeCategory() , challengeDTO.getChallengeCategory()));
 
         return challenge;
     }
 
+    public static ChallengeCategory enrichChallengeCategory(ChallengeCategory challengeCategory, ChallengeCategoryDTO challengeCategoryDTO)
+    {
+        if(!challengeCategory.getId().equals(challengeCategoryDTO.getId())) {
+
+            challengeCategory = new ChallengeCategory();
+            challengeCategory.setId(challengeCategoryDTO.getId());
+        }
+        challengeCategory.setDescription(challengeCategoryDTO.getDescription());
+        challengeCategory.setName(challengeCategoryDTO.getName());
+
+        return challengeCategory;
+    }
 
 }
