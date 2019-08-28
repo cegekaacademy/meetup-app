@@ -10,6 +10,7 @@ import com.cegeka.academy.repository.InvitationRepository;
 import com.cegeka.academy.repository.UserRepository;
 import com.cegeka.academy.service.dto.InvitationDTO;
 import com.cegeka.academy.service.mapper.InvitationMapper;
+import com.cegeka.academy.service.serviceValidation.CheckUniqueService;
 import com.cegeka.academy.web.rest.errors.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,17 +30,20 @@ public class InvitationServiceImpl implements InvitationService {
     private final EventRepository eventRepository;
     private final GroupUserRoleRepository groupUserRoleRepository;
     private final UserRepository userRepository;
+    private final CheckUniqueService checkUniqueService;
 
 
     private Logger logger =  LoggerFactory.getLogger(InvitationServiceImpl.class);
 
     @Autowired
     public InvitationServiceImpl(InvitationRepository invitationRepository, EventRepository eventRepository,
-                                 GroupUserRoleRepository groupUserRoleRepository, UserRepository userRepository) {
+                                 GroupUserRoleRepository groupUserRoleRepository, UserRepository userRepository,
+                                 CheckUniqueService checkUniqueService) {
         this.invitationRepository = invitationRepository;
         this.eventRepository = eventRepository;
         this.groupUserRoleRepository = groupUserRoleRepository;
         this.userRepository = userRepository;
+        this.checkUniqueService = checkUniqueService;
     }
 
     @Override
@@ -131,9 +135,11 @@ public class InvitationServiceImpl implements InvitationService {
 
                 user.orElseThrow(NotFoundException::new);
 
-                invitation.setUser(user.get());
-                invitationRepository.save(invitation);
+                if (checkUniqueService.checkUniqueInvitation(user.get(), invitation.getEvent())) {
 
+                    Invitation invitationSendToGroup = InvitationMapper.createInvitation(invitation.getDescription(), invitation.getStatus(), user.get(), invitation.getEvent());
+                    invitationRepository.save(invitationSendToGroup);
+                }
             }
         }
     }
