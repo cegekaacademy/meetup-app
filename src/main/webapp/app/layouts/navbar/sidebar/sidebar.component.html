@@ -3,47 +3,55 @@
     <div *ngIf="isExpanded" routerLink="/" style="margin-left: 25px">
         <span class="logo-img"></span>
     </div>
-    <div class="menu_items">
+    <div class="menu_items" [ngSwitch]="isAuthenticated()">
         <ul class="list_menu">
-            <li class="menu_item_li" routerLink="/">
+            <li *ngSwitchCase="true" class="menu_item_li" routerLink="/user-profile">
                 <fa-icon icon="user"></fa-icon>
                 <span *ngIf="isExpanded">Profile</span>
             </li>
             </span>
-            <li class="menu_item_li" routerLink="/">
+            <li *ngSwitchCase="true" class="menu_item_li" routerLink="/">
                 <fa-icon icon="search"></fa-icon>
                 <span *ngIf="isExpanded">Discovery</span>
             </li>
-            <li class="menu_item_li" routerLink="/">
+            <li *ngSwitchCase="true" class="menu_item_li" routerLink="/">
                 <fa-icon icon="calendar-check"></fa-icon>
                 <span *ngIf="isExpanded">Events</span>
             </li>
-            <li class="menu_item_li" routerLink="/">
+            <li *ngSwitchCase="true" class="menu_item_li" routerLink="/">
                 <fa-icon icon="star"></fa-icon>
                 <span *ngIf="isExpanded">Challenges</span>
             </li>
-            <li *ngIf="!isExpanded" (click)="toggleMenu()" class="menu_item_li" routerLink="/">
-                <fa-icon icon="arrow-circle-right"></fa-icon>
-            </li>
-            <li class="menu_item_li" routerLink="admin/user-management">
+            <li *ngSwitchCase="true" class="menu_item_li" routerLink="admin/user-management">
                 <fa-icon icon="user"></fa-icon>
                 <span *ngIf="isExpanded">User management</span>
             </li>
-            <li class="menu_item_li" routerLink="admin/jhi-metrics">
+            <li *ngSwitchCase="true" class="menu_item_li" routerLink="admin/jhi-metrics">
                 <fa-icon icon="tachometer-alt"></fa-icon>
                 <span *ngIf="isExpanded">Metrics</span>
             </li>
-            <li class="menu_item_li" routerLink="admin/admin/jhi-health">
+            <li *ngSwitchCase="true" class="menu_item_li" routerLink="admin/admin/jhi-health">
                 <fa-icon icon="heart"></fa-icon>
                 <span *ngIf="isExpanded">Health</span>
             </li>
-            <li class="menu_item_li" routerLink="admin/jhi-configuration">
+            <li *ngSwitchCase="true" class="menu_item_li" routerLink="admin/jhi-configuration">
                 <fa-icon icon="list"></fa-icon>
                 <span *ngIf="isExpanded">Configuration</span>
             </li>
-            <li class="menu_item_li" routerLink="admin/audits">
+            <li *ngSwitchCase="true" class="menu_item_li" routerLink="admin/audits">
                 <fa-icon icon="bell"></fa-icon>
                 <span *ngIf="isExpanded">Audits</span>
+            </li>
+            <li *ngSwitchCase="true" (click)="logout()" class="menu_item_li">
+                <fa-icon icon="sign-out-alt"></fa-icon>
+                <span *ngIf="isExpanded">Log out</span>
+            </li>
+            <li *ngSwitchCase="false" (click)="login()" class="menu_item_li">
+                <fa-icon icon="sign-in-alt"></fa-icon>
+                <span *ngIf="isExpanded">Sign in</span>
+            </li>
+            <li *ngIf="!isExpanded" (click)="toggleMenu()" class="menu_item_li" routerLink="/">
+                <fa-icon icon="arrow-circle-right"></fa-icon>
             </li>
         </ul>
     </div>
