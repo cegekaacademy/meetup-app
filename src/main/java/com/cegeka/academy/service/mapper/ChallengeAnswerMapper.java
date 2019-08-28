@@ -14,7 +14,6 @@ public class ChallengeAnswerMapper {
         } else {
 
             ChallengeAnswer challengeAnswer = new ChallengeAnswer();
-            challengeAnswer.setId(challengeAnswerDTO.getId());
             challengeAnswer.setVideoAt(challengeAnswerDTO.getVideoAt());
             challengeAnswer.setImagePath(challengeAnswerDTO.getImagePath());
             challengeAnswer.setAnswer(challengeAnswerDTO.getAnswer());

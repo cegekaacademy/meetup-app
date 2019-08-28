@@ -134,7 +134,14 @@ public class UserChallengeServiceTest  {
     public void testGetChallengesByUserId(){
 
        List<UserChallengeDTO> results = userChallengeService.getUserChallengesByUserId(usedUser.getId());
-        assertThat(UserChallengeMapper.convertUserChallengeDTOToUserChallenge(results.get(0))).isEqualTo(userChallenge);
+        assertThat(results.get(0).getChallenge().getId()).isEqualTo(userChallenge.getChallenge().getId());
+        assertThat(results.get(0).getStartTime()).isEqualTo(userChallenge.getStartTime());
+        assertThat(results.get(0).getEndTime()).isEqualTo(userChallenge.getEndTime());
+        assertThat(results.get(0).getPoints()).isEqualTo(userChallenge.getPoints());
+        assertThat(results.get(0).getStatus()).isEqualTo(userChallenge.getStatus());
+        assertThat(results.get(0).getChallengeAnswer()).isEqualTo(userChallenge.getChallengeAnswer());
+        assertThat(results.get(0).getInvitation().getId()).isEqualTo(userChallenge.getInvitation().getId());
+        assertThat(results.get(0).getUser().getId()).isEqualTo(userChallenge.getUser().getId());
 
     }
 

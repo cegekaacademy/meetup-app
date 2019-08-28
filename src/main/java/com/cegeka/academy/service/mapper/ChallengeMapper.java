@@ -12,7 +12,6 @@ public class ChallengeMapper {
     public static Challenge convertChallengeDTOToChallenge(ChallengeDTO challengeDTO){
 
         Challenge challenge = new Challenge();
-        challenge.setId(challengeDTO.getId());
         challenge.setEndDate(challengeDTO.getEndDate());
         challenge.setStartDate(challengeDTO.getStartDate());
         challenge.setDescription(challengeDTO.getDescription());
@@ -23,11 +22,14 @@ public class ChallengeMapper {
         if (challengeDTO.getCreator() != null) {
 
             challenge.setCreator(new UserMapper().userDTOToUser(challengeDTO.getCreator()));
+            challenge.getCreator().setId(challengeDTO.getCreator().getId());
         }
 
         if(challengeDTO.getChallengeCategory() != null) {
 
             challenge.setChallengeCategory(convertChallengeCategoryDTOToChallengeCategory(challengeDTO.getChallengeCategory()));
+            challenge.getChallengeCategory().setId(challengeDTO.getChallengeCategory().getId());
+
         }
 
         return challenge;
@@ -66,7 +68,6 @@ public class ChallengeMapper {
         } else {
 
             ChallengeCategory challengeCategory = new ChallengeCategory();
-            challengeCategory.setId(challengeCategoryDTO.getId());
             challengeCategory.setName(challengeCategoryDTO.getName());
             challengeCategory.setDescription(challengeCategoryDTO.getDescription());
 
