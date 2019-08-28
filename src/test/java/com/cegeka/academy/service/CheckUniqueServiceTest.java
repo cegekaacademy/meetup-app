@@ -42,7 +42,7 @@ public class CheckUniqueServiceTest {
     @Autowired
     private InvitationRepository invitationRepository;
 
-    private User user, uninvtiedUser;
+    private User user, uninvitedUser;
     private Invitation invitation;
     private Address address;
     private Event event, newEvent;
@@ -51,9 +51,9 @@ public class CheckUniqueServiceTest {
     public void init() {
 
         user = TestsRepositoryUtil.createUser("login", "anaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaana");
-        uninvtiedUser = TestsRepositoryUtil.createUser("login1", "anaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaana");
+        uninvitedUser = TestsRepositoryUtil.createUser("login1", "anaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaana");
         userRepository.save(user);
-        userRepository.save(uninvtiedUser);
+        userRepository.save(uninvitedUser);
         address = TestsRepositoryUtil.createAddress("Romania", "Bucuresti", "Splai", "333", "Casa", "Casa magica");
         addressRepository.saveAndFlush(address);
         event = TestsRepositoryUtil.createEvent("Ana are mere!", "KFC Krushers Party", false, address, user);
@@ -66,7 +66,7 @@ public class CheckUniqueServiceTest {
 
     @Test
     public void assertThatCheckUniqueServiceIsWorkingWithDifferentUserAndSameEvent() {
-        Assert.assertTrue(checkUniqueService.checkUniqueInvitation(uninvtiedUser, event));
+        Assert.assertTrue(checkUniqueService.checkUniqueInvitation(uninvitedUser, event));
     }
 
     @Test
@@ -76,7 +76,7 @@ public class CheckUniqueServiceTest {
 
     @Test
     public void assertThatCheckUniqueServiceIsWorkingWithDifferentEventAndDifferentUser() {
-        Assert.assertTrue(checkUniqueService.checkUniqueInvitation(uninvtiedUser, newEvent));
+        Assert.assertTrue(checkUniqueService.checkUniqueInvitation(uninvitedUser, newEvent));
     }
 
     @Test
