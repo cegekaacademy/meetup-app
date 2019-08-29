@@ -15,9 +15,9 @@ public interface InvitationService {
 
     List<InvitationDTO> getPendingInvitationsByUserId(Long userId);
 
-    void acceptInvitation(Invitation invitation);
+    void acceptInvitation(Long invitationId) throws NotFoundException;
 
-    void rejectInvitation(Invitation invitation);
+    void rejectInvitation(Long invitationId) throws NotFoundException;
 
     void sendGroupInvitationsToPrivateEvents(Long idGroup, Invitation invitation) throws NotFoundException;
 

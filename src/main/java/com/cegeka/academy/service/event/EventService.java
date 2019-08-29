@@ -22,7 +22,7 @@ public interface EventService {
 
     void deleteEventById(Long id);
 
-    void addUserToPublicEvent(Long userId, Event event) throws NotFoundException;
+    void addUserToPublicEvent(Long eventId, Long userId) throws NotFoundException;
 
     List<EventDTO> getEventsByUser(Long userId) throws NotFoundException;
 }
