@@ -18,7 +18,8 @@ public class Category {
     @Column(name = "description")
     private String description;
 
-    @ManyToMany(mappedBy = "categories")
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.ALL},
+            mappedBy = "categories")
     private Set<Event> events = new HashSet<>();
 
 

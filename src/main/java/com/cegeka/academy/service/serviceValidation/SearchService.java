@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -28,16 +27,20 @@ public class SearchService {
     public Set<Event> searchEventsByCategoryName(String categoryName) throws NotFoundException {
         Category category = categoryRepository.findByName(categoryName);
 
-        if (category == null || category.getEvents() == null) {
+        if (category == null || category.getEvents().size() == 0) {
             throw new NotFoundException().setMessage("Category or eventCategory not found");
         }
         return category.getEvents();
     }
 
-    public List<User> searchUserByInterestedEvents(Set<Event> events) {
+    public List<User> searchUserByInterestedEvents(Set<Event> events) throws NotFoundException {
 
-        return events.stream().map(event -> event.getUsers().stream().filter(Objects::nonNull)
-                .collect(Collectors.toList())).flatMap(List::stream).collect(Collectors.toList());
+        if (events == null) {
+            throw new NotFoundException().setMessage("Events not found");
+        }
+
+        return events.stream().filter(event -> event.getUsers().size() > 0).
+                flatMap(event -> event.getUsers().stream()).collect(Collectors.toList());
 
     }
 }
