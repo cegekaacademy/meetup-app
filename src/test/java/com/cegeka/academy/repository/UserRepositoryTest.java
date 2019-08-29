@@ -48,7 +48,7 @@ public class UserRepositoryTest {
     public void assertThatFindAllByFirstNameAndLastNameIsWorkingWithValidArguments() {
 
         List<UserDTO> findUser = userRepository.findAllByFirstNameAndLastName("ana", "maria");
-        assertThat(findUser.get(0)).isEqualTo(userRepository.findAll().get(0));
+        assertThat(findUser.get(0).getId()).isEqualTo(userRepository.findAll().get(0).getId());
     }
 
     @Test
