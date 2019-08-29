@@ -2,12 +2,20 @@ package com.cegeka.academy.service;
 
 import com.cegeka.academy.AcademyProjectApp;
 import com.cegeka.academy.config.Constants;
+import com.cegeka.academy.domain.Address;
+import com.cegeka.academy.domain.Category;
+import com.cegeka.academy.domain.Event;
 import com.cegeka.academy.domain.User;
+import com.cegeka.academy.repository.AddressRepository;
+import com.cegeka.academy.repository.CategoryRepository;
+import com.cegeka.academy.repository.EventRepository;
 import com.cegeka.academy.repository.UserRepository;
+import com.cegeka.academy.repository.util.TestsRepositoryUtil;
 import com.cegeka.academy.service.dto.UserDTO;
 import com.cegeka.academy.service.util.RandomUtil;
-
+import com.cegeka.academy.web.rest.errors.NotFoundException;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -20,10 +28,10 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
-import java.time.temporal.ChronoUnit;
 import java.time.LocalDateTime;
-import java.util.Optional;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
@@ -59,7 +67,17 @@ public class UserServiceIT {
     @Mock
     private DateTimeProvider dateTimeProvider;
 
+    @Autowired
+    private EventRepository eventRepository;
+
+    @Autowired
+    private AddressRepository addressRepository;
+
+    @Autowired
+    private CategoryRepository categoryRepository;
+
     private User user;
+    private Event event;
 
     @BeforeEach
     public void init() {
@@ -75,6 +93,25 @@ public class UserServiceIT {
 
         when(dateTimeProvider.getNow()).thenReturn(Optional.of(LocalDateTime.now()));
         auditingHandler.setDateTimeProvider(dateTimeProvider);
+
+        categoryRepository.deleteAll();
+        eventRepository.deleteAll();
+        userRepository.deleteAll();
+        User userOwner = TestsRepositoryUtil.createUser("login", "anaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaana");
+        userRepository.save(userOwner);
+        Address address = TestsRepositoryUtil.createAddress("Romania", "Bucuresti", "Splai", "333", "Casa", "Casa magica");
+        addressRepository.saveAndFlush(address);
+        event = TestsRepositoryUtil.createEvent("Ana are mere!", "KFC Krushers Party", true, address, userRepository.findAll().get(0));
+        Category category = TestsRepositoryUtil.createCategory("Ana", "description1");
+        Category category1 = TestsRepositoryUtil.createCategory("MARIA", "description1");
+        event.getCategories().add(category);
+        category.getEvents().add(event);
+        User user1 = TestsRepositoryUtil.createUser("login1", "anaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaana");
+        user1.getEvents().add(event);
+        event.getUsers().add(user1);
+        userRepository.save(user1);
+        eventRepository.save(event);
+        categoryRepository.save(category1);
     }
 
     @Test
@@ -196,6 +233,31 @@ public class UserServiceIT {
         assertThat(allManagedUsers.getContent().stream()
             .noneMatch(user -> Constants.ANONYMOUS_USER.equals(user.getLogin())))
             .isTrue();
+    }
+
+    @Test
+    public void assertThatFindByInterestedCategoryNameIsWorkingWithValidNameAndSomeUsers() throws NotFoundException {
+
+        List<User> list = userService.findByInterestedCategoryName("Ana");
+        assertThat(list.size()).isEqualTo(1);
+    }
+
+    @Test
+    public void assertThatFindByInterestedCategoryNameIsWorkingWithValidNameAndNoUsers() {
+
+        Assertions.assertThrows(NotFoundException.class, () -> userService.findByInterestedCategoryName("MARIA"));
+    }
+
+    @Test
+    public void assertThatFindByInterestedCategoryNameIsWorkingWithInvalidCategoryName() {
+
+        Assertions.assertThrows(NotFoundException.class, () -> userService.findByInterestedCategoryName("MARIA11"));
+    }
+
+    @Test
+    public void assertThatFindByInterestedCategoryNameIsWorkingWithNullCategoryName() {
+
+        Assertions.assertThrows(NotFoundException.class, () -> userService.findByInterestedCategoryName(null));
     }
 
 }
