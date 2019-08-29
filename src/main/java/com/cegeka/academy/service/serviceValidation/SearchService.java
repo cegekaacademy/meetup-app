@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -37,16 +36,8 @@ public class SearchService {
 
     public List<User> searchUserByInterestedEvents(Set<Event> events) {
 
-        List<User> searchedUsers = new ArrayList<>();
+        return events.stream().map(event -> event.getUsers().stream().filter(Objects::nonNull)
+                .collect(Collectors.toList())).flatMap(List::stream).collect(Collectors.toList());
 
-        for (Event event : events) {
-            Set<User> findUsers = event.getUsers();
-
-            searchedUsers = findUsers.stream()
-                    .filter(Objects::nonNull)
-                    .collect(Collectors.toList());
-        }
-
-        return searchedUsers;
     }
 }
