@@ -3,6 +3,7 @@ package com.cegeka.academy.repository;
 import com.cegeka.academy.AcademyProjectApp;
 import com.cegeka.academy.domain.User;
 import com.cegeka.academy.repository.util.TestsRepositoryUtil;
+import com.cegeka.academy.service.dto.UserDTO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,35 +47,35 @@ public class UserRepositoryTest {
     @Test
     public void assertThatFindAllByFirstNameAndLastNameIsWorkingWithValidArguments() {
 
-        List<User> findUser = userRepository.findAllByFirstNameAndLastName("ana", "maria");
+        List<UserDTO> findUser = userRepository.findAllByFirstNameAndLastName("ana", "maria");
         assertThat(findUser.get(0)).isEqualTo(userRepository.findAll().get(0));
     }
 
     @Test
     public void assertThatFindAllByFirstNameAndLastNameIsWorkingWithInvalidFirstName() {
 
-        List<User> findUser = userRepository.findAllByFirstNameAndLastName("ana1", "maria");
+        List<UserDTO> findUser = userRepository.findAllByFirstNameAndLastName("ana1", "maria");
         assertThat(findUser.size()).isEqualTo(0);
     }
 
     @Test
     public void assertThatFindAllByFirstNameAndLastNameIsWorkingWithInvalidLastName() {
 
-        List<User> findUser = userRepository.findAllByFirstNameAndLastName("ana", "maria1");
+        List<UserDTO> findUser = userRepository.findAllByFirstNameAndLastName("ana", "maria1");
         assertThat(findUser.size()).isEqualTo(0);
     }
 
     @Test
     public void assertThatFindAllByFirstNameAndLastNameIsWorkingWithNullFirstName() {
 
-        List<User> findUser = userRepository.findAllByFirstNameAndLastName(null, "maria");
+        List<UserDTO> findUser = userRepository.findAllByFirstNameAndLastName(null, "maria");
         assertThat(findUser.size()).isEqualTo(0);
     }
 
     @Test
     public void assertThatFindAllByFirstNameAndLastNameIsWorkingWithNullLastName() {
 
-        List<User> findUser = userRepository.findAllByFirstNameAndLastName("ana", null);
+        List<UserDTO> findUser = userRepository.findAllByFirstNameAndLastName("ana", null);
         assertThat(findUser.size()).isEqualTo(0);
     }
 
@@ -85,7 +86,7 @@ public class UserRepositoryTest {
         user2.setFirstName("ana");
         user2.setLastName("maria");
         userRepository.save(user2);
-        List<User> findUser = userRepository.findAllByFirstNameAndLastName("ana", "maria");
+        List<UserDTO> findUser = userRepository.findAllByFirstNameAndLastName("ana", "maria");
         assertThat(findUser.size()).isEqualTo(2);
     }
 }

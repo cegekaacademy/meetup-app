@@ -2,6 +2,7 @@ package com.cegeka.academy.web.rest.errors.controllerException;
 
 import com.cegeka.academy.service.invitation.InvitationServiceImpl;
 import com.cegeka.academy.web.rest.errors.ExpiredObjectException;
+import com.cegeka.academy.web.rest.errors.InvalidArgumentsException;
 import com.cegeka.academy.web.rest.errors.NotFoundException;
 import com.cegeka.academy.web.rest.errors.UnauthorizedUserException;
 import org.slf4j.Logger;
@@ -86,4 +87,19 @@ public class GeneralExceptionHandler extends HttpResponseExceptionHandler {
                 detailsList,
                 HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(value = InvalidArgumentsException.class)
+    public ResponseEntity<ErrorResponse> handleInvalidArgumentsExceptions(NotFoundException e) {
+        List<String> detailsList = new ArrayList<>();
+        detailsList.add("ErrorMessage: " + e.getMessage());
+
+        logger.info(e + "");
+
+        return getErrorResponseEntity(
+                ErrorCode.INVALID_ARGUMENT.getMessage(),
+                ErrorCode.INVALID_ARGUMENT.getCode(),
+                detailsList,
+                HttpStatus.BAD_REQUEST);
+    }
+
 }

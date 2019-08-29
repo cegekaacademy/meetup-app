@@ -13,6 +13,7 @@ import com.cegeka.academy.repository.UserRepository;
 import com.cegeka.academy.repository.util.TestsRepositoryUtil;
 import com.cegeka.academy.service.dto.UserDTO;
 import com.cegeka.academy.service.util.RandomUtil;
+import com.cegeka.academy.web.rest.errors.InvalidArgumentsException;
 import com.cegeka.academy.web.rest.errors.NotFoundException;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.Assertions;
@@ -98,6 +99,8 @@ public class UserServiceIT {
         eventRepository.deleteAll();
         userRepository.deleteAll();
         User userOwner = TestsRepositoryUtil.createUser("login", "anaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaana");
+        userOwner.setFirstName("ana");
+        userOwner.setLastName("maria");
         userRepository.save(userOwner);
         Address address = TestsRepositoryUtil.createAddress("Romania", "Bucuresti", "Splai", "333", "Casa", "Casa magica");
         addressRepository.saveAndFlush(address);
@@ -260,4 +263,33 @@ public class UserServiceIT {
         Assertions.assertThrows(NotFoundException.class, () -> userService.findByInterestedCategoryName(null));
     }
 
+    @Test
+    public void assertThatFindUsersByFirstAndLastNameIsWorkingWithValidArguments() throws NotFoundException, InvalidArgumentsException {
+        List<UserDTO> users = userService.findUsersByFirstAndLastName("ana", "maria");
+        assertThat(users.size()).isEqualTo(1);
+    }
+
+    @Test
+    public void assertThatFindUsersByFirstAndLastNameIsWorkingWithInvalidFirstName() {
+
+        Assertions.assertThrows(NotFoundException.class, () -> userService.findUsersByFirstAndLastName("ana1", "maria"));
+    }
+
+    @Test
+    public void assertThatFindUsersByFirstAndLastNameIsWorkingWithInvalidLastName() {
+
+        Assertions.assertThrows(NotFoundException.class, () -> userService.findUsersByFirstAndLastName("ana", "maria1"));
+    }
+
+    @Test
+    public void assertThatFindUsersByFirstAndLastNameIsWorkingWithNullFirstName() {
+
+        Assertions.assertThrows(InvalidArgumentsException.class, () -> userService.findUsersByFirstAndLastName(null, "maria"));
+    }
+
+    @Test
+    public void assertThatFindUsersByFirstAndLastNameIsWorkingWithNullLastName() {
+
+        Assertions.assertThrows(InvalidArgumentsException.class, () -> userService.findUsersByFirstAndLastName("ana", null));
+    }
 }

@@ -1,6 +1,7 @@
 package com.cegeka.academy.repository;
 
 import com.cegeka.academy.domain.User;
+import com.cegeka.academy.service.dto.UserDTO;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -47,6 +48,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     List<User> findAllByEvents_id(Long eventId);
 
-    List<User> findAllByFirstNameAndLastName(String firstName, String lastName);
+    List<UserDTO> findAllByFirstNameAndLastName(String firstName, String lastName);
 
 }

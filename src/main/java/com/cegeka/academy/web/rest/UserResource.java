@@ -7,14 +7,10 @@ import com.cegeka.academy.security.AuthoritiesConstants;
 import com.cegeka.academy.service.MailService;
 import com.cegeka.academy.service.UserService;
 import com.cegeka.academy.service.dto.UserDTO;
-import com.cegeka.academy.web.rest.errors.BadRequestAlertException;
-import com.cegeka.academy.web.rest.errors.EmailAlreadyUsedException;
-import com.cegeka.academy.web.rest.errors.LoginAlreadyUsedException;
-
+import com.cegeka.academy.web.rest.errors.*;
 import io.github.jhipster.web.util.HeaderUtil;
 import io.github.jhipster.web.util.PaginationUtil;
 import io.github.jhipster.web.util.ResponseUtil;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -31,7 +27,8 @@ import org.springframework.web.util.UriComponentsBuilder;
 import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * REST controller for managing users.
@@ -189,5 +186,11 @@ public class UserResource {
         log.debug("REST request to delete User: {}", login);
         userService.deleteUser(login);
         return ResponseEntity.noContent().headers(HeaderUtil.createAlert(applicationName,  "A user is deleted with identifier " + login, login)).build();
+    }
+
+    @GetMapping("/{firstName}/{lastName}")
+    public List<UserDTO> getAllUsersByFirstAndLastName(@PathVariable String firstName, @PathVariable String lastName) throws NotFoundException, InvalidArgumentsException {
+
+        return userService.findUsersByFirstAndLastName(firstName, lastName);
     }
 }

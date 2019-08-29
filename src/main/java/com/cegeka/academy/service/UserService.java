@@ -10,10 +10,7 @@ import com.cegeka.academy.security.SecurityUtils;
 import com.cegeka.academy.service.dto.UserDTO;
 import com.cegeka.academy.service.serviceValidation.SearchService;
 import com.cegeka.academy.service.util.RandomUtil;
-import com.cegeka.academy.web.rest.errors.EmailAlreadyUsedException;
-import com.cegeka.academy.web.rest.errors.InvalidPasswordException;
-import com.cegeka.academy.web.rest.errors.LoginAlreadyUsedException;
-import com.cegeka.academy.web.rest.errors.NotFoundException;
+import com.cegeka.academy.web.rest.errors.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.CacheManager;
@@ -305,6 +302,36 @@ public class UserService {
     public List<User> findByInterestedCategoryName(String categoryName) throws NotFoundException {
 
         return searchService.searchUserByInterestedEvents(searchService.searchEventsByCategoryName(categoryName));
+    }
+
+    @Transactional
+    public List<UserDTO> findUsersByFirstAndLastName(String firstName, String lastName) throws InvalidArgumentsException, NotFoundException {
+
+        if (firstName == null || lastName == null) {
+
+            throw new InvalidArgumentsException().setMessage("Invalid first or last name");
+        }
+
+        List<UserDTO> users = userRepository.findAllByFirstNameAndLastName(firstName, lastName);
+
+        if (users.isEmpty()) {
+            throw new NotFoundException().setMessage("Users not found");
+        }
+
+        return users.stream().sorted((o1, o2) -> {
+            if (o1.getCreatedDate() == null || o2.getCreatedDate() == null)
+                return 0;
+            int result;
+            if (o1.getCreatedDate() == o2.getCreatedDate()) {
+                result = 0;
+            } else if (o1.getCreatedDate().isBefore(o2.getCreatedDate())) {
+                result = 1;
+            } else {
+                result = -1;
+            }
+            return -1 * result;
+
+        }).collect(Collectors.toList());
     }
 
 }
