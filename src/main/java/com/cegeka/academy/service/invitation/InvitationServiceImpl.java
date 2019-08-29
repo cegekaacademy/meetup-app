@@ -1,5 +1,6 @@
 package com.cegeka.academy.service.invitation;
 
+import com.cegeka.academy.domain.Event;
 import com.cegeka.academy.domain.GroupUserRole;
 import com.cegeka.academy.domain.Invitation;
 import com.cegeka.academy.domain.User;
@@ -98,29 +99,29 @@ public class InvitationServiceImpl implements InvitationService {
 
     @Override
     public void acceptInvitation(Long invitationId) throws NotFoundException {
-        Optional<Invitation> invitation = invitationRepository.findById(invitationId);
-        invitation.orElseThrow(() -> new NotFoundException().setMessage("Invitation not found"));
-        invitation.get().setStatus(InvitationStatus.ACCEPTED.name());
-        logger.info("Invitation with id: " + invitationRepository.save(invitation.get()).getId() + "  was accepted by the user.");
-        eventRepository.findById(invitation.get().getEvent().getId()).ifPresent(event -> {
-            event.getPendingInvitations().remove(invitation.get());
+        Invitation invitation = invitationRepository.findById(invitationId)
+                .orElseThrow(() -> new NotFoundException().setMessage("Invitation not found"));
+        invitation.setStatus(InvitationStatus.ACCEPTED.name());
+        logger.info("Invitation with id: " + invitationRepository.save(invitation).getId() + "  was accepted by the user.");
+
+        Event event = eventRepository.findById(invitation.getEvent().getId()).
+                orElseThrow(() -> new NotFoundException().setMessage("Event not found"));
+        event.getPendingInvitations().remove(invitation);
             eventRepository.save(event);
-            userRepository.findById(invitation.get().getUser().getId()).ifPresent(user -> {
+
+        User user = userRepository.findById(invitation.getUser().getId())
+                .orElseThrow(() -> new NotFoundException().setMessage("User not found"));
                 user.getEvents().add(event);
                 userRepository.save(user);
-
-            });
-
-        });
 
     }
 
     @Override
     public void rejectInvitation(Long invitationId) throws NotFoundException {
-        Optional<Invitation> invitation = invitationRepository.findById(invitationId);
-        invitation.orElseThrow(() -> new NotFoundException().setMessage("Invitation not found"));
-        invitation.get().setStatus(InvitationStatus.REJECTED.name());
-        logger.info("Invitation with id: " + invitationRepository.save(invitation.get()).getId() + "  was rejected by the user.");
+        Invitation invitation = invitationRepository.findById(invitationId)
+                .orElseThrow(() -> new NotFoundException().setMessage("Invitation not found"));
+        invitation.setStatus(InvitationStatus.REJECTED.name());
+        logger.info("Invitation with id: " + invitationRepository.save(invitation).getId() + "  was rejected by the user.");
 
     }
 

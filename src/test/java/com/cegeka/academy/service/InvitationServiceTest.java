@@ -167,10 +167,27 @@ public class InvitationServiceTest {
     }
     @Test
     @Transactional
-    public void assertThatAcceptInvitation_ThrowsExceptionWithWrongUserId() {
+    public void assertThatAcceptInvitation_ThrowsExceptionWithWrongInvitationId() {
         Assertions.assertThrows(NotFoundException.class, () -> invitationService.acceptInvitation(40l));
     }
 
+    @Test
+    @Transactional
+    public void assertThatAcceptInvitation_ThrowsExceptionWithWrongEventId() {
+
+        invitation.getEvent().setId(111L);
+        invitationRepository.save(invitation);
+        Assertions.assertThrows(NotFoundException.class, () -> invitationService.acceptInvitation(invitation.getId()));
+    }
+
+    @Test
+    @Transactional
+    public void assertThatAcceptInvitation_ThrowsExceptionWithWrongUserId() {
+
+        invitation.getUser().setId(111l);
+        invitationRepository.save(invitation);
+        Assertions.assertThrows(NotFoundException.class, () -> invitationService.acceptInvitation(invitation.getId()));
+    }
 
     @Test
     public void assertThatAcceptInvitationIsWorking() throws NotFoundException {
@@ -188,7 +205,7 @@ public class InvitationServiceTest {
 
     @Test
     @Transactional
-    public void assertThatRejectInvitation_ThrowsExceptionWithWrongUserId() {
+    public void assertThatRejectInvitation_ThrowsExceptionWithWrongInvitationId() {
         Assertions.assertThrows(NotFoundException.class, () -> invitationService.rejectInvitation(40l));
     }
 
