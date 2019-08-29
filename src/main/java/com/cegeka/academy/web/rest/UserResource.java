@@ -7,6 +7,7 @@ import com.cegeka.academy.security.AuthoritiesConstants;
 import com.cegeka.academy.service.MailService;
 import com.cegeka.academy.service.UserService;
 import com.cegeka.academy.service.dto.UserDTO;
+import com.cegeka.academy.service.mapper.UserMapper;
 import com.cegeka.academy.web.rest.errors.*;
 import io.github.jhipster.web.util.HeaderUtil;
 import io.github.jhipster.web.util.PaginationUtil;
@@ -192,5 +193,11 @@ public class UserResource {
     public List<UserDTO> getAllUsersByFirstAndLastName(@PathVariable String firstName, @PathVariable String lastName) throws NotFoundException, InvalidArgumentsException {
 
         return userService.findUsersByFirstAndLastName(firstName, lastName);
+    }
+
+    @GetMapping("/{categoryName}")
+    public List<UserDTO> getAllUsersByCategoryName(@PathVariable String categoryName) throws NotFoundException, InvalidArgumentsException {
+
+        return new UserMapper().usersToUserDTOs(userService.findByInterestedCategoryName(categoryName));
     }
 }
