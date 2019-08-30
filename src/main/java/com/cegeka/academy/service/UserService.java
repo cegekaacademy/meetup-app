@@ -323,4 +323,8 @@ public class UserService {
         return SortUtil.sortUsersByDate(users);
     }
 
+    public List<String> searchByKeyword(String keyword) {
+        return userRepository.searchByKeyword(keyword);
+    }
+
 }

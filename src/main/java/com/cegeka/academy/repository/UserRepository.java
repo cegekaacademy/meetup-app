@@ -7,6 +7,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.Instant;
@@ -49,5 +51,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
     List<User> findAllByEvents_id(Long eventId);
 
     List<UserDTO> findAllByFirstNameAndLastName(String firstName, String lastName);
+
+    @Query("SELECT concat(firstName, ' ', lastName) FROM User where firstName like %:keyword%")
+    List<String> searchByKeyword(@Param("keyword") String keyword);
 
 }
