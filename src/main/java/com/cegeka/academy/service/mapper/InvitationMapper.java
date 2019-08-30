@@ -28,6 +28,24 @@ public class InvitationMapper {
         return invitationDTO;
     }
 
+    public static Invitation convertInvitationDTOToInvitation(InvitationDTO invitationDTO) {
+
+        Invitation invitation = new Invitation();
+        invitation.setStatus(invitationDTO.getStatus());
+        invitation.setDescription(invitationDTO.getDescription());
+        invitation.setEvent(null);
+
+        if(invitationDTO.getUserId() != null){
+
+            User newUser = new User();
+            newUser.setId(invitationDTO.getUserId());
+            invitation.setUser(newUser);
+
+        }
+
+        return invitation;
+    }
+
     public static Invitation createInvitation(String description, String status, User user, Event event) {
         Invitation invitation = new Invitation();
         invitation.setStatus(status);

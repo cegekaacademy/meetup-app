@@ -47,4 +47,10 @@ public class UserChallengeServiceImpl implements UserChallengeService {
             throw new WrongOwnerException();
         }
     }
+
+    @Override
+    public UserChallenge createUserChallenge(UserChallenge userChallenge) {
+
+        return userChallengeRepository.save(userChallenge);
+    }
 }

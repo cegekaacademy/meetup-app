@@ -5,6 +5,7 @@ import com.cegeka.academy.repository.InvitationRepository;
 import com.cegeka.academy.service.dto.InvitationDTO;
 import com.cegeka.academy.service.invitation.InvitationService;
 import com.cegeka.academy.service.serviceValidation.ValidationAccessService;
+import com.cegeka.academy.web.rest.errors.ExistingItemException;
 import com.cegeka.academy.web.rest.errors.NotFoundException;
 import com.cegeka.academy.web.rest.errors.UnauthorizedUserException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -115,5 +116,18 @@ public class InvitationController {
                                                     @Valid @RequestBody Invitation newInvitation) throws NotFoundException {
 
         invitationService.sendGroupInvitationsToPrivateEvents(idGroup, newInvitation);
+    }
+
+    @PostMapping("/createChallengeInvitation/{challengeId}")
+    public Invitation createChallengeInvitationForOneUser(@RequestBody InvitationDTO invitationDTO,
+                                                    @PathVariable Long challengeId) throws NotFoundException, ExistingItemException {
+
+        return invitationService.createChallengeInvitationForOneUser(invitationDTO, challengeId);
+    }
+
+    @GetMapping("/getInvitation/{invitationId}")
+    public Invitation getInvitation(@PathVariable Long invitationId) {
+
+        return invitationService.getInvitation(invitationId);
     }
 }

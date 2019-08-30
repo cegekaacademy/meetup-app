@@ -7,6 +7,8 @@ import com.cegeka.academy.repository.*;
 import com.cegeka.academy.repository.util.TestsRepositoryUtil;
 import com.cegeka.academy.service.dto.InvitationDTO;
 import com.cegeka.academy.service.invitation.InvitationService;
+import com.cegeka.academy.service.mapper.InvitationMapper;
+import com.cegeka.academy.web.rest.errors.ExistingItemException;
 import com.cegeka.academy.web.rest.errors.NotFoundException;
 import org.junit.Assert;
 import org.junit.jupiter.api.Assertions;
@@ -20,6 +22,8 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 @SpringBootTest(classes = AcademyProjectApp.class)
 @Transactional
@@ -236,10 +240,10 @@ public class InvitationServiceTest {
         Optional<Event> findEvent2 = eventRepository.findById(list.get(list.lastIndexOf(invitationSendToGroup) - 1).getEvent().getId());
 
         assertThat(list.size()).isEqualTo(3);
-        Assert.assertTrue(findUser1.isPresent());
-        Assert.assertTrue(findEvent1.isPresent());
-        Assert.assertTrue(findUser2.isPresent());
-        Assert.assertTrue(findEvent2.isPresent());
+        assertTrue(findUser1.isPresent());
+        assertTrue(findEvent1.isPresent());
+        assertTrue(findUser2.isPresent());
+        assertTrue(findEvent2.isPresent());
     }
 
     @Test
@@ -271,5 +275,56 @@ public class InvitationServiceTest {
         invitationService.sendGroupInvitationsToPrivateEvents(idGroup, invitationWithPublicEvent);
         List<Invitation> list = invitationRepository.findAll();
         assertThat(list.size()).isEqualTo(1);
+    }
+
+    @Test
+    public void assertThatCreateChallengeInvitationIsWorking() throws NotFoundException, ExistingItemException {
+        InvitationDTO invitationDTO = new InvitationDTO();
+        invitationDTO.setStatus(InvitationStatus.PENDING.toString());
+        invitationDTO.setUserId((long)4);
+        invitationDTO.setDescription("Description");
+        invitationDTO.setEventName(null);
+        Invitation actual = InvitationMapper.convertInvitationDTOToInvitation(invitationDTO);
+
+        Invitation expected = invitationService.createChallengeInvitationForOneUser(invitationDTO, (long)1);
+
+        assertThat(actual.hashCode() == expected.hashCode());
+    }
+
+    @Test
+    public void assertThatCreateChallengeInvitationThrowsExistingItemException() {
+        InvitationDTO invitationDTO = new InvitationDTO();
+        invitationDTO.setStatus(InvitationStatus.PENDING.toString());
+        invitationDTO.setUserId((long)4);
+        invitationDTO.setDescription("Description");
+        invitationDTO.setEventName(null);
+
+        try {
+            invitationService.createChallengeInvitationForOneUser(invitationDTO, (long)1);
+            fail();
+        } catch (ExistingItemException e) {
+            assertTrue(true);
+        } catch (NotFoundException e) {
+            fail();
+        }
+    }
+
+    @Test
+    public void assertThatCreateChallengeInvitationThrowsNotFoundException() {
+        InvitationDTO invitationDTO = new InvitationDTO();
+        invitationDTO.setStatus(InvitationStatus.PENDING.toString());
+        invitationDTO.setUserId((long)4);
+        invitationDTO.setDescription("Description");
+        invitationDTO.setEventName(null);
+
+        try {
+            invitationService.createChallengeInvitationForOneUser(invitationDTO, (long)2);
+            fail();
+        } catch (ExistingItemException e) {
+            fail();
+        } catch (NotFoundException e) {
+            assertTrue(true);
+        }
+
     }
 }
