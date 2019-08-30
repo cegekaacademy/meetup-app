@@ -33,7 +33,7 @@ public class SortUtil {
                 return -1;
             }
 
-            return -1 * o1.getCreatedDate().compareTo(o2.getCreatedDate());
+            return o2.getCreatedDate().compareTo(o1.getCreatedDate());
 
         }).collect(Collectors.toList());
     }
