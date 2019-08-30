@@ -5,13 +5,8 @@ import com.cegeka.academy.domain.*;
 import com.cegeka.academy.domain.enums.InvitationStatus;
 import com.cegeka.academy.domain.enums.UserChallengeStatus;
 import com.cegeka.academy.repository.*;
-import com.cegeka.academy.service.dto.*;
-import com.cegeka.academy.service.mapper.ChallengeMapper;
-import com.cegeka.academy.service.mapper.InvitationMapper;
 import com.cegeka.academy.service.dto.UserChallengeDTO;
 import com.cegeka.academy.service.mapper.UserChallengeMapper;
-import com.cegeka.academy.service.mapper.UserMapper;
-import com.cegeka.academy.service.userChallenge.UserChallengeService;
 import com.cegeka.academy.service.userChallenge.UserChallengeService;
 import com.cegeka.academy.web.rest.errors.InvalidInvitationStatusException;
 import com.cegeka.academy.web.rest.errors.InvalidUserChallengeStatusException;
@@ -120,25 +115,11 @@ public class UserChallengeServiceTest  {
     @AfterEach
     public void destroy(){
 
-        if(invitation != null){
-            invitationRepository.delete(invitation);
-        }
+        invitationRepository.deleteAll();
+        userChallengeRepository.deleteAll();
+        challengeRepository.deleteAll();
+        userRepository.deleteAll();
 
-        if(user != null){
-            userRepository.delete(user);
-        }
-
-        if(challengeCategory != null){
-            challengeCategoryRepository.delete(challengeCategory);
-        }
-
-        if(challenge != null){
-            challengeRepository.delete(challenge);
-        }
-
-        if(userChallenge != null){
-            userChallengeRepository.delete(userChallenge);
-        }
     }
 
     @Test
