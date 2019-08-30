@@ -63,7 +63,7 @@ public class SortUtil {
                     return -1;
                 }
 
-                return -1 * o1.getLastName().compareTo(o2.getLastName());
+                return o2.getLastName().compareTo(o1.getLastName());
 
 
             } else if (o1.getFirstName() == null) {
@@ -77,7 +77,7 @@ public class SortUtil {
                 return -1;
             }
 
-            return -1 * o1.getFirstName().compareTo(o2.getFirstName());
+            return o2.getFirstName().compareTo(o1.getFirstName());
 
         }).collect(Collectors.toList());
     }
