@@ -292,4 +292,22 @@ public class UserServiceIT {
 
         Assertions.assertThrows(InvalidArgumentsException.class, () -> userService.findUsersByFirstAndLastName("ana", null));
     }
+
+    @Test
+    public void assertThatSearchByKeywordIsWorkingWithValidArgument() throws NotFoundException {
+        List<String> list = userService.searchByKeyword("an");
+        assertThat(list.size()).isEqualTo(1);
+    }
+
+    @Test
+    public void assertThatSearchByKeywordIsWorkingWithInvalidArgument() {
+
+        Assertions.assertThrows(NotFoundException.class, () -> userService.searchByKeyword("lllll"));
+    }
+
+    @Test
+    public void assertThatSearchByKeywordIsWorkingWithNullArgument() {
+
+        Assertions.assertThrows(NotFoundException.class, () -> userService.searchByKeyword(null));
+    }
 }

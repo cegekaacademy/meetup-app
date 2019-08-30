@@ -89,4 +89,22 @@ public class UserRepositoryTest {
         List<UserDTO> findUser = userRepository.findAllByFirstNameAndLastName("ana", "maria");
         assertThat(findUser.size()).isEqualTo(2);
     }
+
+    @Test
+    public void assertThatSearchByKeywordIsWorkingWithValidArgument() {
+        List<String> list = userRepository.searchByKeyword("an");
+        assertThat(list.size()).isEqualTo(1);
+    }
+
+    @Test
+    public void assertThatSearchByKeywordIsWorkingWithInvalidArgument() {
+        List<String> list = userRepository.searchByKeyword("lllll");
+        assertThat(list.size()).isEqualTo(0);
+    }
+
+    @Test
+    public void assertThatSearchByKeywordIsWorkingWithNullArgument() {
+        List<String> list = userRepository.searchByKeyword(null);
+        assertThat(list.size()).isEqualTo(0);
+    }
 }

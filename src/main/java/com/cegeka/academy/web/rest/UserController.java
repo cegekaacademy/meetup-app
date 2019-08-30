@@ -25,7 +25,7 @@ public class UserController {
     }
 
     @GetMapping("/search/{keyword}")
-    public List<String> searchByKeyword(@PathVariable String keyword) {
+    public List<String> searchByKeyword(@PathVariable String keyword) throws NotFoundException {
         return userService.searchByKeyword(keyword).stream().sorted().collect(Collectors.toList());
     }
 

@@ -323,8 +323,16 @@ public class UserService {
         return SortUtil.sortUsersByDate(users);
     }
 
-    public List<String> searchByKeyword(String keyword) {
-        return userRepository.searchByKeyword(keyword);
+    @Transactional
+    public List<String> searchByKeyword(String keyword) throws NotFoundException {
+
+        List<String> result = userRepository.searchByKeyword(keyword);
+
+        if (result.isEmpty()) {
+
+            throw new NotFoundException().setMessage("Users not found");
+        }
+        return result;
     }
 
 }
