@@ -37,4 +37,48 @@ public class SortUtil {
 
         }).collect(Collectors.toList());
     }
+
+    public static List<UserDTO> sortUsersByName(List<UserDTO> users) {
+
+        return users.stream().sorted((o1, o2) -> {
+
+            if (o1.getFirstName() == null && o2.getFirstName() == null) {
+
+                logger.info("Both first name are null");
+
+                if (o1.getLastName() == null && o2.getLastName() == null) {
+
+                    logger.info("Both last name are null");
+
+                    return 0;
+
+                } else if (o1.getLastName() == null) {
+
+                    logger.info("First lastName is null");
+                    return 1;
+
+                } else if (o2.getLastName() == null) {
+
+                    logger.info("Second lastName is null");
+                    return -1;
+                }
+
+                return -1 * o1.getLastName().compareTo(o2.getLastName());
+
+
+            } else if (o1.getFirstName() == null) {
+
+                logger.info("First firstName is null");
+                return 1;
+
+            } else if (o2.getFirstName() == null) {
+
+                logger.info("Second firstName is null");
+                return -1;
+            }
+
+            return -1 * o1.getFirstName().compareTo(o2.getFirstName());
+
+        }).collect(Collectors.toList());
+    }
 }

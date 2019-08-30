@@ -241,7 +241,7 @@ public class UserServiceIT {
     @Test
     public void assertThatFindByInterestedCategoryNameIsWorkingWithValidNameAndSomeUsers() throws NotFoundException {
 
-        List<User> list = userService.findByInterestedCategoryName("Ana");
+        List<UserDTO> list = userService.findByInterestedCategoryName("Ana");
         assertThat(list.size()).isEqualTo(1);
     }
 

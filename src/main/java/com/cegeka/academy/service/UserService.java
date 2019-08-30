@@ -8,6 +8,7 @@ import com.cegeka.academy.repository.UserRepository;
 import com.cegeka.academy.security.AuthoritiesConstants;
 import com.cegeka.academy.security.SecurityUtils;
 import com.cegeka.academy.service.dto.UserDTO;
+import com.cegeka.academy.service.mapper.UserMapper;
 import com.cegeka.academy.service.serviceValidation.SearchService;
 import com.cegeka.academy.service.util.RandomUtil;
 import com.cegeka.academy.service.util.SortUtil;
@@ -300,9 +301,9 @@ public class UserService {
     }
 
     @Transactional
-    public List<User> findByInterestedCategoryName(String categoryName) throws NotFoundException {
+    public List<UserDTO> findByInterestedCategoryName(String categoryName) throws NotFoundException {
 
-        return searchService.searchUserByInterestedEvents(searchService.searchEventsByCategoryName(categoryName));
+        return SortUtil.sortUsersByName(new UserMapper().usersToUserDTOs(searchService.searchUserByInterestedEvents(searchService.searchEventsByCategoryName(categoryName))));
     }
 
     @Transactional
