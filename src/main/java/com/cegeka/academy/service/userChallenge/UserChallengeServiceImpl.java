@@ -4,16 +4,18 @@ import com.cegeka.academy.domain.UserChallenge;
 import com.cegeka.academy.domain.enums.InvitationStatus;
 import com.cegeka.academy.domain.enums.UserChallengeStatus;
 import com.cegeka.academy.repository.UserChallengeRepository;
-import com.cegeka.academy.service.dto.*;
+import com.cegeka.academy.service.dto.UserChallengeDTO;
 import com.cegeka.academy.service.mapper.UserChallengeMapper;
 import com.cegeka.academy.web.rest.errors.InvalidInvitationStatusException;
 import com.cegeka.academy.web.rest.errors.InvalidUserChallengeStatusException;
 import com.cegeka.academy.web.rest.errors.NotFoundException;
+import com.cegeka.academy.web.rest.errors.WrongOwnerException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 @Service
@@ -54,5 +56,24 @@ public class UserChallengeServiceImpl implements UserChallengeService {
 
         userChallengeRepository.save(userChallenge);
 
+    }
+
+    @Override
+    public UserChallenge rateUser(UserChallengeDTO userChallengeDTO, Long ownerId)
+            throws WrongOwnerException {
+
+        long userId = userChallengeDTO.getUser().getId();
+        long challengeId = userChallengeDTO.getChallenge().getId();
+        long invitationId = userChallengeDTO.getInvitation().getId();
+        UserChallenge userChallenge = userChallengeRepository
+                .findByUserIdAndChallengeIdAndInvitationId(userId, challengeId, invitationId).orElseThrow(NoSuchElementException::new);
+
+        userChallenge.setPoints(userChallengeDTO.getPoints());
+
+        if (userChallenge.getChallenge().getCreator().getId().equals(ownerId)) {
+            return userChallengeRepository.save(userChallenge);
+        } else {
+            throw new WrongOwnerException();
+        }
     }
 }
