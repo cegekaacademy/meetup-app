@@ -39,4 +39,11 @@
                                  referencedColumnNames="id"
                                  referencedTableName="address"/>
     </changeSet>
+
+    <changeSet id="190826021103" author="cosmin">
+
+        <addColumn tableName="event">
+            <column name="cover_photo" type="varchar(250)"/>
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>
