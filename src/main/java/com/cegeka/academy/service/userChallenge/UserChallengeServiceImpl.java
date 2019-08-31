@@ -1,9 +1,14 @@
 package com.cegeka.academy.service.userChallenge;
 
 import com.cegeka.academy.domain.UserChallenge;
+import com.cegeka.academy.domain.enums.InvitationStatus;
+import com.cegeka.academy.domain.enums.UserChallengeStatus;
 import com.cegeka.academy.repository.UserChallengeRepository;
 import com.cegeka.academy.service.dto.UserChallengeDTO;
 import com.cegeka.academy.service.mapper.UserChallengeMapper;
+import com.cegeka.academy.web.rest.errors.InvalidInvitationStatusException;
+import com.cegeka.academy.web.rest.errors.InvalidUserChallengeStatusException;
+import com.cegeka.academy.web.rest.errors.NotFoundException;
 import com.cegeka.academy.web.rest.errors.WrongOwnerException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,6 +31,30 @@ public class UserChallengeServiceImpl implements UserChallengeService {
         List<UserChallenge> userChallengeList = userChallengeRepository.findAllByUserId(userId);
 
         return userChallengeList.stream().map(userChallenge -> UserChallengeMapper.convertUserChallengeToUserChallengeDTO(userChallenge)).collect(Collectors.toList());
+
+    }
+
+    @Override
+    public void updateUserChallengeStatus(Long userChallengeId, String status) throws NotFoundException, InvalidUserChallengeStatusException {
+
+        UserChallenge userChallenge = userChallengeRepository.findById(userChallengeId)
+                .orElseThrow(() -> new NotFoundException().setMessage("User challenge does not exists."));
+
+        userChallenge.setStatus(UserChallengeStatus.getUserChallengeStatus(status).toString());
+
+        userChallengeRepository.save(userChallenge);
+
+    }
+
+    @Override
+    public void updateUserChallengeInvitationStatus(Long userChallengeId, String status) throws NotFoundException, InvalidInvitationStatusException {
+
+        UserChallenge userChallenge = userChallengeRepository.findById(userChallengeId)
+                .orElseThrow(() -> new NotFoundException().setMessage("User challenge does not exists."));
+
+        userChallenge.getInvitation().setStatus(InvitationStatus.getInvitationStatus(status).toString());
+
+        userChallengeRepository.save(userChallenge);
 
     }
 
