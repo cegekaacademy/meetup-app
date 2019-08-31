@@ -129,8 +129,6 @@ public class InvitationServiceTest {
 
     @Test
     @Transactional
-    public void assertThatSaveUserToParticipationListAfterAcceptInvitationIsWorking() throws NotFoundException {
-        event2 = TestsRepositoryUtil.createEvent("Dana Dana!", "KFC Krushers Party", true, address, user);
     public void assertThatSaveUserToParticipationListAfterAcceptInvitationIsWorking() {
         Category category1 = TestsRepositoryUtil.createCategory("Sport", "Liber pentru toate varstele!");
         Category category3 = TestsRepositoryUtil.createCategory("Arta", "Expozitii de arta");
@@ -141,7 +139,11 @@ public class InvitationServiceTest {
         eventRepository.save(event2);
         invitation3 = TestsRepositoryUtil.createInvitation(InvitationStatus.PENDING.name(), "ana are mere", event2, user);
         invitationService.saveInvitation(invitation3);
-        invitationService.acceptInvitation(invitation3.getId());
+        try {
+            invitationService.acceptInvitation(invitation3.getId());
+        } catch (NotFoundException e) {
+            e.printStackTrace();
+        }
         assertThat(user.getEvents().size()).isEqualTo(1);
         assertThat(event.getUsers().size()).isEqualTo(0);
 
