@@ -132,7 +132,7 @@ public class InvitationServiceImpl implements InvitationService {
             throw new NotFoundException().setMessage("Event not found");
 
         }
-        // if (!invitation.getEvent().isPublic()) {
+        if (!invitation.getEvent().isPublic()) {
 
             List<GroupUserRole> listIdUsers = groupUserRoleRepository.findAllByGroupId(idGroup);
 
@@ -147,7 +147,7 @@ public class InvitationServiceImpl implements InvitationService {
                     Invitation invitationSendToGroup = InvitationMapper.createInvitation(invitation.getDescription(), invitation.getStatus(), user.get(), invitation.getEvent());
                     invitationRepository.save(invitationSendToGroup);
                 }
-                // }
+            }
         }
     }
 
