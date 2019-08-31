@@ -2,18 +2,19 @@ package com.cegeka.academy.service;
 
 import com.cegeka.academy.AcademyProjectApp;
 import com.cegeka.academy.domain.*;
+import com.cegeka.academy.domain.enums.InvitationStatus;
+import com.cegeka.academy.domain.enums.UserChallengeStatus;
 import com.cegeka.academy.repository.*;
-import com.cegeka.academy.service.dto.*;
-import com.cegeka.academy.service.mapper.ChallengeMapper;
-import com.cegeka.academy.service.mapper.InvitationMapper;
 import com.cegeka.academy.service.dto.UserChallengeDTO;
 import com.cegeka.academy.service.mapper.UserChallengeMapper;
-import com.cegeka.academy.service.mapper.UserMapper;
 import com.cegeka.academy.service.userChallenge.UserChallengeService;
-import com.cegeka.academy.service.userChallenge.UserChallengeService;
+import com.cegeka.academy.web.rest.errors.InvalidInvitationStatusException;
+import com.cegeka.academy.web.rest.errors.InvalidUserChallengeStatusException;
+import com.cegeka.academy.web.rest.errors.NotFoundException;
 import com.cegeka.academy.web.rest.errors.WrongOwnerException;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -88,7 +89,7 @@ public class UserChallengeServiceTest  {
         challengeCategoryRepository.save(challengeCategory);
 
         challenge = new Challenge();
-        challenge.setCreator(userRepository.findAll().get(3));
+        challenge.setCreator(userRepository.findAll().get(1));
         challenge.setPoints(5.22);
         challenge.setStartDate(startDate);
         challenge.setEndDate(endDate);
@@ -114,32 +115,25 @@ public class UserChallengeServiceTest  {
     @AfterEach
     public void destroy(){
 
-        if(invitation != null){
-            invitationRepository.delete(invitation);
-        }
+        invitationRepository.deleteAll();
+        userChallengeRepository.deleteAll();
+        challengeRepository.deleteAll();
+        userRepository.deleteAll();
 
-        if(user != null){
-            userRepository.delete(user);
-        }
-
-        if(challengeCategory != null){
-            challengeCategoryRepository.delete(challengeCategory);
-        }
-
-        if(challenge != null){
-            challengeRepository.delete(challenge);
-        }
-
-        if(userChallenge != null){
-            userChallengeRepository.delete(userChallenge);
-        }
     }
 
     @Test
     public void testGetChallengesByUserId(){
 
        List<UserChallengeDTO> results = userChallengeService.getUserChallengesByUserId(usedUser.getId());
-        assertThat(UserChallengeMapper.convertUserChallengeDTOToUserChallenge(results.get(0))).isEqualTo(userChallenge);
+        assertThat(results.get(0).getChallenge().getId()).isEqualTo(userChallenge.getChallenge().getId());
+        assertThat(results.get(0).getStartTime()).isEqualTo(userChallenge.getStartTime());
+        assertThat(results.get(0).getEndTime()).isEqualTo(userChallenge.getEndTime());
+        assertThat(results.get(0).getPoints()).isEqualTo(userChallenge.getPoints());
+        assertThat(results.get(0).getStatus()).isEqualTo(userChallenge.getStatus());
+        assertThat(results.get(0).getChallengeAnswer()).isEqualTo(userChallenge.getChallengeAnswer());
+        assertThat(results.get(0).getInvitation().getId()).isEqualTo(userChallenge.getInvitation().getId());
+        assertThat(results.get(0).getUser().getId()).isEqualTo(userChallenge.getUser().getId());
 
     }
 
@@ -152,10 +146,76 @@ public class UserChallengeServiceTest  {
     }
 
     @Test
+    public void testUpdateUserChallengeStatusIsWorking() throws NotFoundException, InvalidUserChallengeStatusException {
+
+        UserChallenge existingUserChallenge = userChallengeRepository.findAll().get(0);
+
+        userChallengeService.updateUserChallengeStatus(existingUserChallenge.getId(), UserChallengeStatus.ACCEPTED.toString());
+
+        assertThat(userChallengeRepository.findAll().get(0).getId()).isEqualTo(existingUserChallenge.getId());
+        assertThat(userChallengeRepository.findAll().get(0).getStatus()).isEqualTo(UserChallengeStatus.ACCEPTED.toString());
+
+    }
+
+    @Test
+    public void testUpdateUserChallengeStatusWithInvalidId() {
+
+        Assertions.assertThrows(NotFoundException.class, () -> {
+
+            userChallengeService.updateUserChallengeStatus(100L, UserChallengeStatus.ACCEPTED.toString());
+
+        });
+
+    }
+
+    @Test
+    public void testUpdateUserChallengeStatusWithInvalidStatus() {
+
+        Assertions.assertThrows(InvalidUserChallengeStatusException.class, () -> {
+
+            userChallengeService.updateUserChallengeStatus(userChallengeRepository.findAll().get(0).getId(), "status");
+
+        });
+
+    }
+
+    @Test
+    public void testUpdateUserChallengeInvitationStatusIsWorking() throws NotFoundException, InvalidInvitationStatusException {
+
+        UserChallenge existingUserChallenge = userChallengeRepository.findAll().get(0);
+
+        userChallengeService.updateUserChallengeInvitationStatus(existingUserChallenge.getId(), InvitationStatus.CANCELED.toString());
+
+        assertThat(userChallengeRepository.findAll().get(0).getId()).isEqualTo(existingUserChallenge.getId());
+        assertThat(userChallengeRepository.findAll().get(0).getInvitation().getStatus()).isEqualTo(InvitationStatus.CANCELED.toString());
+
+    }
+
+    @Test
+    public void testUpdateUserChallengeInvitationStatusWithInvalidId() {
+
+        Assertions.assertThrows(NotFoundException.class, () -> {
+
+            userChallengeService.updateUserChallengeInvitationStatus(100L, InvitationStatus.CANCELED.toString());
+
+        });
+
+    }
+
+    @Test
+    public void testUpdateUserChallengeInvitationStatusWithInvalidStatus() {
+
+        Assertions.assertThrows(InvalidInvitationStatusException.class, () -> {
+
+            userChallengeService.updateUserChallengeInvitationStatus(userChallengeRepository.findAll().get(0).getId(), "status");
+        });
+
+    }
+    @Test
     public void testRateUserByOwner() throws WrongOwnerException {
         userChallengeDTO.setPoints(49);
         double actual = userChallengeDTO.getPoints();
-        double expected = userChallengeService.rateUser(userChallengeDTO, (long)4).getPoints();
+        double expected = userChallengeService.rateUser(userChallengeDTO, usedUser.getId()).getPoints();
         assertThat(actual == expected);
     }
 
