@@ -12,7 +12,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -33,21 +35,32 @@ public class CategoryRepositoryTest {
     @BeforeEach
     public void init() {
 
+        categoryRepository.deleteAll();
         User user = TestsRepositoryUtil.createUser("login", "anaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaana");
         userRepository.save(user);
         Address address = TestsRepositoryUtil.createAddress("Romania", "Bucuresti", "Splai", "333", "Casa", "Casa magica");
         addressRepository.saveAndFlush(address);
-        event = TestsRepositoryUtil.createEvent("Ana are mere!", "KFC Krushers Party", true, address, user);
+        Category category_1 = TestsRepositoryUtil.createCategory("Sport", "Liber pentru toate varstele!");
+        Category category_3 = TestsRepositoryUtil.createCategory("Arta", "Expozitii de arta");
+        Set<Category> list1 = new HashSet<>();
+        list1.add(category_1);
+        list1.add(category_3);
+        categoryRepository.save(category_1);
+        categoryRepository.save(category_3);
+        event = TestsRepositoryUtil.createEvent("Ana are mere!", "KFC Krushers Party", true, address, user, list1, "https://scontent.fotp3-2.fna.fbcdn.net/v/t1.0-9/67786277_2592710307438854_5055220041180512256");
         eventRepository.save(event);
         Category category1 = TestsRepositoryUtil.createCategory("Ana", "description1");
         categoryRepository.save(category1);
+        categoryRepository.saveAndFlush(category1);
         event.getCategories().add(category1);
         eventRepository.save(event);
         Category category2 = TestsRepositoryUtil.createCategory("Dana", "description2");
         categoryRepository.save(category2);
+        eventRepository.saveAndFlush(event);
+        categoryRepository.saveAndFlush(category2);
         event.getCategories().add(category2);
         eventRepository.save(event);
-        Category category3 = TestsRepositoryUtil.createCategory("Doriana", "description3");
+        Category category3 = TestsRepositoryUtil.createCategory("Doriana", "description");
         categoryRepository.save(category3);
         event.getCategories().add(category3);
         eventRepository.save(event);
@@ -55,8 +68,9 @@ public class CategoryRepositoryTest {
 
     @Test
     public void testFindAllByEventId() {
+
         List<Category> categories = categoryRepository.findAllByEvents_id(event.getId());
-        assertThat(categories.size()).isEqualTo(3);
+        assertThat(categories.size()).isEqualTo(5);
 
     }
 
@@ -64,7 +78,7 @@ public class CategoryRepositoryTest {
     public void assertThatFindByNameIsWorkingWithValidArgument() {
 
         Category findCategory = categoryRepository.findByName("Ana");
-        assertThat(findCategory).isEqualTo(categoryRepository.findAll().get(0));
+        assertThat(findCategory).isEqualTo(categoryRepository.findAll().get(2));
 
     }
 

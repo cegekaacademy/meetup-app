@@ -16,8 +16,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -50,6 +52,9 @@ public class InvitationServiceTest {
     @Autowired
     private RoleRepository roleRepository;
 
+    @Autowired
+    private CategoryRepository categoryRepository;
+
     private User user, user1, user2;
     private Event event, event2, publicEvent;
     private Invitation invitation, invitation2, invitation3, invitationSendToGroup, invitationWithNullEvent, invitationWithPublicEvent;
@@ -62,6 +67,7 @@ public class InvitationServiceTest {
     public void init() {
 
         userRepository.deleteAll();
+        categoryRepository.deleteAll();
         user = TestsRepositoryUtil.createUser("login", "anaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaana");
         userRepository.saveAndFlush(user);
         user1 = TestsRepositoryUtil.createUser("login2", "anaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaaka");
@@ -70,9 +76,16 @@ public class InvitationServiceTest {
         userRepository.save(user2);
         address = TestsRepositoryUtil.createAddress("Romania", "Bucuresti", "Splai", "333", "Casa", "Casa magica");
         addressRepository.saveAndFlush(address);
-        event = TestsRepositoryUtil.createEvent("Ana are mere!", "KFC Krushers Party", false, address, user);
+        Category category1 = TestsRepositoryUtil.createCategory("Sport", "Liber pentru toate varstele!");
+        Category category3 = TestsRepositoryUtil.createCategory("Arta", "Expozitii de arta");
+        categoryRepository.save(category1);
+        categoryRepository.save(category3);
+        Set<Category> list1 = new HashSet<>();
+        list1.add(category1);
+        list1.add(category3);
+        event = TestsRepositoryUtil.createEvent("Ana are mere!", "KFC Krushers Party", false, address, user, list1, "https://scontent.fotp3-2.fna.fbcdn.net/v/t1.0-9/67786277_2592710307438854_5055220041180512256");
         eventRepository.saveAndFlush(event);
-        publicEvent = TestsRepositoryUtil.createEvent("Ana are mere!", "KFC Krushers Party", true, address, user);
+        publicEvent = TestsRepositoryUtil.createEvent("Ana are mere!", "KFC Krushers Party", true, address, user, list1, "sfgsfgf");
         eventRepository.saveAndFlush(publicEvent);
         invitation = TestsRepositoryUtil.createInvitation(InvitationStatus.PENDING.name(), "ana are mere", event, user);
         invitationService.saveInvitation(invitation);
@@ -103,6 +116,7 @@ public class InvitationServiceTest {
         assertThat(list.get(0).getUserName()).isEqualTo(invitation.getUser().getFirstName() + " " + invitation.getUser().getLastName());
         assertThat(list.get(0).getEventName()).isEqualTo(invitation.getEvent().getName());
     }
+
     @Test
     @Transactional
     public void assertThatSaveInvitationToListIsWorking() {
@@ -113,18 +127,29 @@ public class InvitationServiceTest {
         assertThat(event.getPendingInvitations().size()).isEqualTo(2);
 
     }
+
     @Test
     @Transactional
-    public void assertThatSaveUserToParticipationListAfterAcceptInvitationIsWorking() throws NotFoundException {
-        event2 = TestsRepositoryUtil.createEvent("Dana Dana!", "KFC Krushers Party", true, address, user);
+    public void assertThatSaveUserToParticipationListAfterAcceptInvitationIsWorking() {
+        Category category1 = TestsRepositoryUtil.createCategory("Sport", "Liber pentru toate varstele!");
+        Category category3 = TestsRepositoryUtil.createCategory("Arta", "Expozitii de arta");
+        Set<Category> list1 = new HashSet<>();
+        list1.add(category1);
+        list1.add(category3);
+        Event event2 = TestsRepositoryUtil.createEvent("Ana are mere!", "KFC Krushers Party", true, address, user, list1, "https://scontent.fotp3-2.fna.fbcdn.net/v/t1.0-9/67786277_2592710307438854_5055220041180512256");
         eventRepository.save(event2);
         invitation3 = TestsRepositoryUtil.createInvitation(InvitationStatus.PENDING.name(), "ana are mere", event2, user);
         invitationService.saveInvitation(invitation3);
-        invitationService.acceptInvitation(invitation3.getId());
+        try {
+            invitationService.acceptInvitation(invitation3.getId());
+        } catch (NotFoundException e) {
+            e.printStackTrace();
+        }
         assertThat(user.getEvents().size()).isEqualTo(1);
         assertThat(event.getUsers().size()).isEqualTo(0);
 
     }
+
     @Test
     @Transactional
     public void assertThatUpdateInvitationIsWorking() {

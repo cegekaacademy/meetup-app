@@ -31,8 +31,10 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
@@ -104,7 +106,8 @@ public class UserServiceIT {
         userRepository.save(userOwner);
         Address address = TestsRepositoryUtil.createAddress("Romania", "Bucuresti", "Splai", "333", "Casa", "Casa magica");
         addressRepository.saveAndFlush(address);
-        event = TestsRepositoryUtil.createEvent("Ana are mere!", "KFC Krushers Party", true, address, userRepository.findAll().get(0));
+        Set<Category> set = new HashSet<>();
+        event = TestsRepositoryUtil.createEvent("Ana are mere!", "KFC Krushers Party", true, address, userRepository.findAll().get(0), set, null);
         Category category = TestsRepositoryUtil.createCategory("Ana", "description1");
         Category category1 = TestsRepositoryUtil.createCategory("MARIA", "description1");
         event.getCategories().add(category);

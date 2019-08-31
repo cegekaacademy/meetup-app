@@ -1,10 +1,7 @@
 package com.cegeka.academy.repository;
 
 import com.cegeka.academy.AcademyProjectApp;
-import com.cegeka.academy.domain.Address;
-import com.cegeka.academy.domain.Event;
-import com.cegeka.academy.domain.Invitation;
-import com.cegeka.academy.domain.User;
+import com.cegeka.academy.domain.*;
 import com.cegeka.academy.domain.enums.InvitationStatus;
 import com.cegeka.academy.repository.util.TestsRepositoryUtil;
 import org.junit.jupiter.api.BeforeEach;
@@ -13,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -25,20 +23,25 @@ public class InvitationRepositoryTest {
 
     @Autowired
     private InvitationRepository invitationRepository;
-    
+
     @Autowired
     private EventRepository eventRepository;
-    
+
     @Autowired
     private UserRepository userRepository;
-  
+
     @Autowired
     private AddressRepository addressRepository;
+
+    @Autowired
+    private CategoryRepository categoryRepository;
 
     private User user;
     private Event event;
     private Invitation invitation;
     private Address address;
+    private Category category1;
+    private Category category3;
 
     @BeforeEach
     public void init() {
@@ -47,7 +50,14 @@ public class InvitationRepositoryTest {
         userRepository.save(user);
         address = TestsRepositoryUtil.createAddress("Romania", "Bucuresti", "Splai", "333", "Casa", "Casa magica");
         addressRepository.saveAndFlush(address);
-        event = TestsRepositoryUtil.createEvent("Ana are mere!", "KFC Krushers Party", true, address, user);
+        category1 = TestsRepositoryUtil.createCategory("Sport", "Liber pentru toate varstele!");
+        category3 = TestsRepositoryUtil.createCategory("Arta", "Expozitii de arta");
+        Set<Category> list1 = new HashSet<>();
+        list1.add(category1);
+        list1.add(category3);
+        categoryRepository.save(category1);
+        categoryRepository.save(category3);
+        event = TestsRepositoryUtil.createEvent("Ana are mere!", "KFC Krushers Party", true, address, user, list1, "https://scontent.fotp3-2.fna.fbcdn.net/v/t1.0-9/67786277_2592710307438854_5055220041180512256");
         eventRepository.saveAndFlush(event);
         invitation = TestsRepositoryUtil.createInvitation(InvitationStatus.PENDING.name(), "ana are mere", event, user);
         invitationRepository.save(invitation);
@@ -100,13 +110,13 @@ public class InvitationRepositoryTest {
         List<Invitation> list = invitationRepository.findByUser_IdAndStatusIgnoreCase(user2.getId(), InvitationStatus.PENDING.name());
         assertThat(list.size()).isEqualTo(0);
     }
+
     @Test
     public void testFindByEventId() {
-        User user = TestsRepositoryUtil.createUser("login1", "anaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaana");
-        userRepository.save(user);
-        Address address = TestsRepositoryUtil.createAddress("Romania", "Bucuresti", "Splai", "333", "Casa", "Casa magica");
-        addressRepository.saveAndFlush(address);
-        Event event = TestsRepositoryUtil.createEvent("Ana are mere!", "KFC Krushers Party", true, address, user);
+        Set<Category> list1 = new HashSet<>();
+        list1.add(category1);
+        list1.add(category3);
+        Event event = TestsRepositoryUtil.createEvent("Ana are mere!", "KFC Krushers Party", true, address, user, list1, "https://scontent.fotp3-2.fna.fbcdn.net/v/t1.0-9/67786277_2592710307438854_5055220041180512256");
         eventRepository.save(event);
         Invitation invitation1 = TestsRepositoryUtil.createInvitation("pending", "description1", event, user);
         invitationRepository.save(invitation1);
@@ -116,7 +126,7 @@ public class InvitationRepositoryTest {
         invitationRepository.save(invitation2);
         event.getPendingInvitations().add(invitation2);
         eventRepository.save(event);
-        Set<Invitation> invitationList=invitationRepository.findAllByEvent_id(event.getId());
+        Set<Invitation> invitationList = invitationRepository.findAllByEvent_id(event.getId());
         assertThat(invitationList.size()).isEqualTo(2);
 
     }
