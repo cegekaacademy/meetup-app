@@ -55,12 +55,12 @@ public class InvitationServiceTest {
     @Autowired
     private CategoryRepository categoryRepository;
 
-    private User user, user1;
+    private User user, user1, user2;
     private Event event, event2, publicEvent;
     private Invitation invitation, invitation2, invitation3, invitationSendToGroup, invitationWithNullEvent, invitationWithPublicEvent;
     private Address address;
     private Group group;
-    private GroupUserRole groupUserRole1, groupUserRole2;
+    private GroupUserRole groupUserRole1, groupUserRole2, groupUserRole3;
     private Role role;
 
     @BeforeEach
@@ -71,6 +71,8 @@ public class InvitationServiceTest {
         userRepository.saveAndFlush(user);
         user1 = TestsRepositoryUtil.createUser("login2", "anaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaaka");
         userRepository.save(user1);
+        user2 = TestsRepositoryUtil.createUser("login3", "anaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaama");
+        userRepository.save(user2);
         address = TestsRepositoryUtil.createAddress("Romania", "Bucuresti", "Splai", "333", "Casa", "Casa magica");
         addressRepository.saveAndFlush(address);
         Category category1 = TestsRepositoryUtil.createCategory("Sport", "Liber pentru toate varstele!");
@@ -94,10 +96,11 @@ public class InvitationServiceTest {
         groupUserRoleRepository.save(groupUserRole1);
         groupUserRole2 = TestsRepositoryUtil.createGroupUserRole(userRepository.findAll().get(1), groupRepository.findAll().get(0), roleRepository.findAll().get(0));
         groupUserRoleRepository.save(groupUserRole2);
+        groupUserRole3 = TestsRepositoryUtil.createGroupUserRole(userRepository.findAll().get(2), groupRepository.findAll().get(0), roleRepository.findAll().get(0));
+        groupUserRoleRepository.save(groupUserRole3);
         invitationSendToGroup = TestsRepositoryUtil.createInvitation(InvitationStatus.PENDING.name(), "aaaa", eventRepository.findAll().get(0), null);
         invitationWithNullEvent = TestsRepositoryUtil.createInvitation(InvitationStatus.PENDING.name(), "aaaa", null, null);
         invitationWithPublicEvent = TestsRepositoryUtil.createInvitation(InvitationStatus.PENDING.name(), "aaaa", eventRepository.findAll().get(1), null);
-
     }
 
     @Test
@@ -126,6 +129,8 @@ public class InvitationServiceTest {
 
     @Test
     @Transactional
+    public void assertThatSaveUserToParticipationListAfterAcceptInvitationIsWorking() throws NotFoundException {
+        event2 = TestsRepositoryUtil.createEvent("Dana Dana!", "KFC Krushers Party", true, address, user);
     public void assertThatSaveUserToParticipationListAfterAcceptInvitationIsWorking() {
         Category category1 = TestsRepositoryUtil.createCategory("Sport", "Liber pentru toate varstele!");
         Category category3 = TestsRepositoryUtil.createCategory("Arta", "Expozitii de arta");
@@ -136,8 +141,8 @@ public class InvitationServiceTest {
         eventRepository.save(event2);
         invitation3 = TestsRepositoryUtil.createInvitation(InvitationStatus.PENDING.name(), "ana are mere", event2, user);
         invitationService.saveInvitation(invitation3);
-        invitationService.acceptInvitation(invitation3);
-        assertThat(event2.getUsers().size()).isEqualTo(1);
+        invitationService.acceptInvitation(invitation3.getId());
+        assertThat(user.getEvents().size()).isEqualTo(1);
         assertThat(event.getUsers().size()).isEqualTo(0);
 
     }
@@ -182,11 +187,34 @@ public class InvitationServiceTest {
         assertThat(pendingListUser.size()).isEqualTo(1);
 
     }
+    @Test
+    @Transactional
+    public void assertThatAcceptInvitation_ThrowsExceptionWithWrongInvitationId() {
+        Assertions.assertThrows(NotFoundException.class, () -> invitationService.acceptInvitation(40l));
+    }
 
     @Test
-    public void assertThatAcceptInvitationIsWorking() {
+    @Transactional
+    public void assertThatAcceptInvitation_ThrowsExceptionWithWrongEventId() {
+
+        invitation.getEvent().setId(111L);
+        invitationRepository.save(invitation);
+        Assertions.assertThrows(NotFoundException.class, () -> invitationService.acceptInvitation(invitation.getId()));
+    }
+
+    @Test
+    @Transactional
+    public void assertThatAcceptInvitation_ThrowsExceptionWithWrongUserId() {
+
+        invitation.getUser().setId(111l);
+        invitationRepository.save(invitation);
+        Assertions.assertThrows(NotFoundException.class, () -> invitationService.acceptInvitation(invitation.getId()));
+    }
+
+    @Test
+    public void assertThatAcceptInvitationIsWorking() throws NotFoundException {
         List<Invitation> list = invitationRepository.findAll();
-        invitationService.acceptInvitation(invitation);
+        invitationService.acceptInvitation(invitation.getId());
         assertThat(list.size()).isEqualTo(1);
         assertThat(list.get(0).getStatus()).isEqualTo(invitation.getStatus());
         assertThat(list.get(0).getStatus()).isEqualTo(InvitationStatus.ACCEPTED.name());
@@ -194,14 +222,20 @@ public class InvitationServiceTest {
         assertThat(list.get(0).getUser()).isEqualTo(invitation.getUser());
         assertThat(list.get(0).getEvent()).isEqualTo(invitation.getEvent());
         assertThat(event.getPendingInvitations().size()).isEqualTo(0);
-        assertThat(event.getUsers().size()).isEqualTo(1);
+        assertThat(user.getEvents().size()).isEqualTo(1);
     }
 
     @Test
-    public void assertThatRejectInvitationIsWorking() {
+    @Transactional
+    public void assertThatRejectInvitation_ThrowsExceptionWithWrongInvitationId() {
+        Assertions.assertThrows(NotFoundException.class, () -> invitationService.rejectInvitation(40l));
+    }
+
+    @Test
+    public void assertThatRejectInvitationIsWorking() throws NotFoundException {
         List<Invitation> list = invitationRepository.findAll();
         invitation.setStatus(InvitationStatus.PENDING.name());
-        invitationService.rejectInvitation(invitation);
+        invitationService.rejectInvitation(invitation.getId());
         assertThat(list.size()).isEqualTo(1);
         assertThat(list.get(0).getStatus()).isEqualTo(invitation.getStatus());
         assertThat(list.get(0).getStatus()).isEqualTo(InvitationStatus.REJECTED.name());
@@ -215,13 +249,19 @@ public class InvitationServiceTest {
 
         Long idGroup = groupRepository.findAll().get(0).getId();
         invitationService.sendGroupInvitationsToPrivateEvents(idGroup, invitationSendToGroup);
+        invitationSendToGroup.setId(invitationRepository.findAll().get(2).getId());
         List<Invitation> list = invitationRepository.findAll();
-        Optional<User> findUser = userRepository.findById(list.get(list.lastIndexOf(invitationSendToGroup)).getUser().getId());
-        Optional<Event> findEvent = eventRepository.findById(list.get(list.lastIndexOf(invitationSendToGroup)).getEvent().getId());
+        Optional<User> findUser1 = userRepository.findById(list.get(list.lastIndexOf(invitationSendToGroup)).getUser().getId());
+        Optional<Event> findEvent1 = eventRepository.findById(list.get(list.lastIndexOf(invitationSendToGroup)).getEvent().getId());
+        invitationSendToGroup.setId(invitationRepository.findAll().get(1).getId());
+        Optional<User> findUser2 = userRepository.findById(list.get(list.lastIndexOf(invitationSendToGroup) - 1).getUser().getId());
+        Optional<Event> findEvent2 = eventRepository.findById(list.get(list.lastIndexOf(invitationSendToGroup) - 1).getEvent().getId());
 
-        assertThat(list.size()).isEqualTo(2);
-        Assert.assertTrue(findUser.isPresent());
-        Assert.assertTrue(findEvent.isPresent());
+        assertThat(list.size()).isEqualTo(3);
+        Assert.assertTrue(findUser1.isPresent());
+        Assert.assertTrue(findEvent1.isPresent());
+        Assert.assertTrue(findUser2.isPresent());
+        Assert.assertTrue(findEvent2.isPresent());
     }
 
     @Test
@@ -254,5 +294,4 @@ public class InvitationServiceTest {
         List<Invitation> list = invitationRepository.findAll();
         assertThat(list.size()).isEqualTo(1);
     }
-
 }

@@ -92,20 +92,20 @@ public class InvitationController {
         return invitationService.getPendingInvitationsByUserId(userId);
     }
 
-    @PutMapping("/accept")
-    public void acceptInvitation(@RequestBody Invitation newInvitation) {
+    @PutMapping("/accept/{id}")
+    public void acceptInvitation(@PathVariable Long id) throws NotFoundException {
 
-        if (validationAccessService.verifyUserAccessForInvitationEntity(newInvitation.getId())) {
-            invitationService.acceptInvitation(newInvitation);
+        if (validationAccessService.verifyUserAccessForInvitationEntity(id)) {
+            invitationService.acceptInvitation(id);
 
         }
     }
 
-    @PutMapping("/reject")
-    public void rejectInvitation(@RequestBody Invitation newInvitation) {
+    @PutMapping("/reject/{id}")
+    public void rejectInvitation(@PathVariable Long id) throws NotFoundException {
 
-        if (validationAccessService.verifyUserAccessForInvitationEntity(newInvitation.getId())) {
-            invitationService.rejectInvitation(newInvitation);
+        if (validationAccessService.verifyUserAccessForInvitationEntity(id)) {
+            invitationService.rejectInvitation(id);
 
         }
     }

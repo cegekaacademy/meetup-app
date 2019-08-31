@@ -100,16 +100,21 @@ public class EventServiceT {
 
     @Test
     @Transactional
-    public void assertThatAddUserToPublicEvent_ThrowsException() {
-        Assertions.assertThrows(NotFoundException.class, () -> eventService.addUserToPublicEvent(1001l, event));
+    public void assertThatAddUserToPublicEvent_ThrowsExceptionWithWrongUserId() {
+        Assertions.assertThrows(NotFoundException.class, () -> eventService.addUserToPublicEvent(event.getId(), 1001l));
     }
 
+    @Test
+    @Transactional
+    public void assertThatAddUserToPublicEvent_ThrowsExceptionWithWrongEventId() {
+        Assertions.assertThrows(NotFoundException.class, () -> eventService.addUserToPublicEvent(102l, user.getId()));
+    }
     @Test
     @Transactional
     public void assertThatAddUserToPublicEventWorksWithPrivateEvent() throws NotFoundException {
         event.setPublic(false);
         eventRepository.save(event);
-        eventService.addUserToPublicEvent(user.getId(), event);
+        eventService.addUserToPublicEvent(event.getId(), user.getId());
         List<Event> events = eventRepository.findByUsers_id(user.getId());
         assertThat(events.size()).isEqualTo(0);
     }
@@ -117,7 +122,7 @@ public class EventServiceT {
     @Test
     @Transactional
     public void assertThatAddUserToPublicEventWorksWithUser() throws NotFoundException {
-        eventService.addUserToPublicEvent(user.getId(), event);
+        eventService.addUserToPublicEvent(event.getId(), user.getId());
         List<User> users = userRepository.findAllByEvents_id(event.getId());
         assertThat(users.size()).isEqualTo(1);
 
@@ -126,7 +131,7 @@ public class EventServiceT {
     @Test
     @Transactional
     public void assertThatAddUserToPublicEventWorksWithEvent() throws NotFoundException {
-        eventService.addUserToPublicEvent(user.getId(), event);
+        eventService.addUserToPublicEvent(event.getId(), user.getId());
         List<Event> events = eventRepository.findByUsers_id(user.getId());
         assertThat(events.size()).isEqualTo(1);
 
@@ -142,7 +147,7 @@ public class EventServiceT {
     @Test
     @Transactional
     public void getEventsByUserWorks() throws NotFoundException {
-        eventService.addUserToPublicEvent(user.getId(), event);
+        eventService.addUserToPublicEvent(event.getId(), user.getId());
         List<EventDTO> events = eventService.getEventsByUser(user.getId());
         assertThat(events.size()).isEqualTo(1);
     }
