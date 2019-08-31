@@ -35,7 +35,7 @@ public class UserController {
         return userService.findUsersByFirstAndLastName(firstName, lastName);
     }
 
-    @GetMapping("/{categoryName}")
+    @GetMapping("/category/{categoryName}")
     public List<UserDTO> getAllUsersByCategoryName(@PathVariable String categoryName) throws NotFoundException {
 
         return userService.findByInterestedCategoryName(categoryName);
