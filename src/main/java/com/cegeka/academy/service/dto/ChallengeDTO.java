@@ -1,6 +1,7 @@
 package com.cegeka.academy.service.dto;
 
 
+import javax.validation.constraints.NotNull;
 import java.util.Date;
 import java.util.Objects;
 
@@ -8,14 +9,19 @@ public class ChallengeDTO {
 
     private Long id;
 
+    @NotNull(message = "Creator must not be null")
     private UserDTO creator;
 
+    @NotNull(message = "Start date must not be null")
     private Date startDate;
 
+    @NotNull(message = "End date must not be null")
     private Date endDate;
 
+    @NotNull(message = "Status must not be null")
     private String status;
 
+    @NotNull(message = "Points must not be null")
     private double points;
 
     private String description;
