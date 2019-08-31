@@ -8,9 +8,11 @@ import com.cegeka.academy.repository.UserRepository;
 import com.cegeka.academy.security.AuthoritiesConstants;
 import com.cegeka.academy.security.SecurityUtils;
 import com.cegeka.academy.service.dto.UserDTO;
+import com.cegeka.academy.service.mapper.UserMapper;
+import com.cegeka.academy.service.serviceValidation.SearchService;
 import com.cegeka.academy.service.util.RandomUtil;
+import com.cegeka.academy.service.util.SortUtil;
 import com.cegeka.academy.web.rest.errors.*;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.CacheManager;
@@ -43,11 +45,15 @@ public class UserService {
 
     private final CacheManager cacheManager;
 
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, AuthorityRepository authorityRepository, CacheManager cacheManager) {
+    private final SearchService searchService;
+
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, AuthorityRepository authorityRepository,
+                       CacheManager cacheManager, SearchService searchService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.authorityRepository = authorityRepository;
         this.cacheManager = cacheManager;
+        this.searchService = searchService;
     }
 
     public Optional<User> activateRegistration(String key) {
@@ -293,4 +299,40 @@ public class UserService {
         Objects.requireNonNull(cacheManager.getCache(UserRepository.USERS_BY_LOGIN_CACHE)).evict(user.getLogin());
         Objects.requireNonNull(cacheManager.getCache(UserRepository.USERS_BY_EMAIL_CACHE)).evict(user.getEmail());
     }
+
+    @Transactional
+    public List<UserDTO> findByInterestedCategoryName(String categoryName) throws NotFoundException {
+
+        return SortUtil.sortUsersByName(new UserMapper().usersToUserDTOs(searchService.searchUserByInterestedEvents(searchService.searchEventsByCategoryName(categoryName))));
+    }
+
+    @Transactional
+    public List<UserDTO> findUsersByFirstAndLastName(String firstName, String lastName) throws InvalidArgumentsException, NotFoundException {
+
+        if (firstName == null || lastName == null) {
+
+            throw new InvalidArgumentsException().setMessage("Invalid first or last name");
+        }
+
+        List<UserDTO> users = userRepository.findAllByFirstNameAndLastName(firstName, lastName);
+
+        if (users.isEmpty()) {
+            throw new NotFoundException().setMessage("Users not found");
+        }
+
+        return SortUtil.sortUsersByDate(users);
+    }
+
+    @Transactional
+    public List<String> searchByKeyword(String keyword) throws NotFoundException {
+
+        List<String> result = userRepository.searchByKeyword(keyword);
+
+        if (result.isEmpty()) {
+
+            throw new NotFoundException().setMessage("Users not found");
+        }
+        return result;
+    }
+
 }

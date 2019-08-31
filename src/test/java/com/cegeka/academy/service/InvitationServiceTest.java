@@ -67,6 +67,7 @@ public class InvitationServiceTest {
     public void init() {
 
         userRepository.deleteAll();
+        categoryRepository.deleteAll();
         user = TestsRepositoryUtil.createUser("login", "anaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaana");
         userRepository.saveAndFlush(user);
         user1 = TestsRepositoryUtil.createUser("login2", "anaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaaka");
@@ -130,8 +131,8 @@ public class InvitationServiceTest {
     @Test
     @Transactional
     public void assertThatSaveUserToParticipationListAfterAcceptInvitationIsWorking() {
-        Category category1 = TestsRepositoryUtil.createCategory("Sport", "Liber pentru toate varstele!");
-        Category category3 = TestsRepositoryUtil.createCategory("Arta", "Expozitii de arta");
+        Category category1 = TestsRepositoryUtil.createCategory("Sport1", "Liber pentru toate varstele!");
+        Category category3 = TestsRepositoryUtil.createCategory("Arta1", "Expozitii de arta");
         Set<Category> list1 = new HashSet<>();
         list1.add(category1);
         list1.add(category3);

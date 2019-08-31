@@ -129,7 +129,7 @@ public class InvitationServiceImpl implements InvitationService {
     public void sendGroupInvitationsToPrivateEvents(Long idGroup, Invitation invitation) throws NotFoundException {
 
         if (invitation.getEvent() == null) {
-            throw new NotFoundException();
+            throw new NotFoundException().setMessage("Event not found");
 
         }
         if (!invitation.getEvent().isPublic()) {
