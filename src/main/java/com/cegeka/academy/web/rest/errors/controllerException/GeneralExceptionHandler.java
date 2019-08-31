@@ -89,7 +89,7 @@ public class GeneralExceptionHandler extends HttpResponseExceptionHandler {
     }
 
     @ExceptionHandler(value = InvalidArgumentsException.class)
-    public ResponseEntity<ErrorResponse> handleInvalidArgumentsExceptions(NotFoundException e) {
+    public ResponseEntity<ErrorResponse> handleInvalidArgumentsExceptions(InvalidArgumentsException e) {
         List<String> detailsList = new ArrayList<>();
         detailsList.add("ErrorMessage: " + e.getMessage());
 
