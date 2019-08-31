@@ -1,8 +1,11 @@
 package com.cegeka.academy.web.rest;
 
+import com.cegeka.academy.domain.UserChallenge;
 import com.cegeka.academy.service.dto.UserChallengeDTO;
 import com.cegeka.academy.service.userChallenge.UserChallengeService;
+import com.cegeka.academy.web.rest.errors.WrongOwnerException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.query.Param;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,6 +22,13 @@ public class UserChallengeController {
     public List<UserChallengeDTO> getChallengesByUserId(@PathVariable("userId") Long userId){
 
         return userChallengeService.getUserChallengesByUserId(userId);
+    }
+
+    @PutMapping(value = "/rate/{ownerId}")
+    public UserChallenge rateUser(@RequestBody UserChallengeDTO userChallengeDTO,
+                                  @PathVariable("ownerId") Long ownerId) throws WrongOwnerException {
+
+        return userChallengeService.rateUser(userChallengeDTO, ownerId);
     }
 
 }

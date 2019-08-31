@@ -1,5 +1,6 @@
 package com.cegeka.academy.service.invitation;
 
+import com.cegeka.academy.domain.Event;
 import com.cegeka.academy.domain.GroupUserRole;
 import com.cegeka.academy.domain.Invitation;
 import com.cegeka.academy.domain.User;
@@ -10,6 +11,7 @@ import com.cegeka.academy.repository.InvitationRepository;
 import com.cegeka.academy.repository.UserRepository;
 import com.cegeka.academy.service.dto.InvitationDTO;
 import com.cegeka.academy.service.mapper.InvitationMapper;
+import com.cegeka.academy.service.serviceValidation.CheckUniqueService;
 import com.cegeka.academy.web.rest.errors.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,17 +31,20 @@ public class InvitationServiceImpl implements InvitationService {
     private final EventRepository eventRepository;
     private final GroupUserRoleRepository groupUserRoleRepository;
     private final UserRepository userRepository;
+    private final CheckUniqueService checkUniqueService;
 
 
     private Logger logger =  LoggerFactory.getLogger(InvitationServiceImpl.class);
 
     @Autowired
     public InvitationServiceImpl(InvitationRepository invitationRepository, EventRepository eventRepository,
-                                 GroupUserRoleRepository groupUserRoleRepository, UserRepository userRepository) {
+                                 GroupUserRoleRepository groupUserRoleRepository, UserRepository userRepository,
+                                 CheckUniqueService checkUniqueService) {
         this.invitationRepository = invitationRepository;
         this.eventRepository = eventRepository;
         this.groupUserRoleRepository = groupUserRoleRepository;
         this.userRepository = userRepository;
+        this.checkUniqueService = checkUniqueService;
     }
 
     @Override
@@ -93,22 +98,28 @@ public class InvitationServiceImpl implements InvitationService {
     }
 
     @Override
-    public void acceptInvitation(Invitation invitation) {
-
+    public void acceptInvitation(Long invitationId) throws NotFoundException {
+        Invitation invitation = invitationRepository.findById(invitationId)
+                .orElseThrow(() -> new NotFoundException().setMessage("Invitation not found"));
         invitation.setStatus(InvitationStatus.ACCEPTED.name());
         logger.info("Invitation with id: " + invitationRepository.save(invitation).getId() + "  was accepted by the user.");
-        eventRepository.findById(invitation.getEvent().getId()).ifPresent(event -> {
-            event.getPendingInvitations().remove(invitation);
-            event.getUsers().add(invitation.getUser());
-            eventRepository.save(event);
-        });
 
+        Event event = eventRepository.findById(invitation.getEvent().getId()).
+                orElseThrow(() -> new NotFoundException().setMessage("Event not found"));
+        event.getPendingInvitations().remove(invitation);
+            eventRepository.save(event);
+
+        User user = userRepository.findById(invitation.getUser().getId())
+                .orElseThrow(() -> new NotFoundException().setMessage("User not found"));
+                user.getEvents().add(event);
+                userRepository.save(user);
 
     }
 
     @Override
-    public void rejectInvitation(Invitation invitation) {
-
+    public void rejectInvitation(Long invitationId) throws NotFoundException {
+        Invitation invitation = invitationRepository.findById(invitationId)
+                .orElseThrow(() -> new NotFoundException().setMessage("Invitation not found"));
         invitation.setStatus(InvitationStatus.REJECTED.name());
         logger.info("Invitation with id: " + invitationRepository.save(invitation).getId() + "  was rejected by the user.");
 
@@ -131,9 +142,11 @@ public class InvitationServiceImpl implements InvitationService {
 
                 user.orElseThrow(NotFoundException::new);
 
-                invitation.setUser(user.get());
-                invitationRepository.save(invitation);
+                if (checkUniqueService.checkUniqueInvitation(user.get(), invitation.getEvent())) {
 
+                    Invitation invitationSendToGroup = InvitationMapper.createInvitation(invitation.getDescription(), invitation.getStatus(), user.get(), invitation.getEvent());
+                    invitationRepository.save(invitationSendToGroup);
+                }
             }
         }
     }
