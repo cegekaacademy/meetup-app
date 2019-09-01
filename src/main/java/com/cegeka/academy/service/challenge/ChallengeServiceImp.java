@@ -2,14 +2,15 @@ package com.cegeka.academy.service.challenge;
 
 import com.cegeka.academy.domain.Challenge;
 import com.cegeka.academy.domain.UserChallenge;
+import com.cegeka.academy.repository.ChallengeCategoryRepository;
 import com.cegeka.academy.domain.enums.ChallengeStatus;
 import com.cegeka.academy.repository.ChallengeRepository;
 import com.cegeka.academy.repository.UserChallengeRepository;
+import com.cegeka.academy.service.dto.ChallengeCategoryDTO;
 import com.cegeka.academy.web.rest.errors.NotFoundException;
 import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import com.cegeka.academy.web.rest.errors.NotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.cegeka.academy.web.rest.errors.InvalidFieldException;
 import com.cegeka.academy.service.dto.ChallengeDTO;
 import com.cegeka.academy.service.mapper.ChallengeMapper;
 import org.slf4j.Logger;
@@ -32,6 +33,9 @@ public class ChallengeServiceImp implements ChallengeService {
 
     @Autowired
     private ChallengeRepository challengeRepository;
+
+    @Autowired
+    private ChallengeCategoryRepository challengeCategoryRepository;
 
     @Autowired
     private UserChallengeRepository userChallengeRepository;
@@ -57,6 +61,24 @@ public class ChallengeServiceImp implements ChallengeService {
 
         logger.info("Challenge has been saved");
         
+    }
+
+    @Override
+    public ChallengeDTO updateChallenge(Long challengeId, ChallengeDTO challengeDTO) throws NotFoundException {
+
+
+        validateChallengeDTOForUpdate(challengeId, challengeDTO);
+
+        Challenge challenge = challengeRepository.findById(challengeId).orElseThrow(
+                () -> new NotFoundException().setMessage("Challenge-ul " + challengeId + " nu exista")
+        );
+
+        challenge = ChallengeMapper.enrichChallenge(challengeDTO, challenge);
+
+        challengeRepository.save(challenge);
+
+        return challengeDTO;
+
     }
 
     @Override
@@ -138,6 +160,39 @@ public class ChallengeServiceImp implements ChallengeService {
 
         return DateUtils.isSameDay(challenge.getEndDate(), new Date()) || challenge.getEndDate().after(new Date());
 
+    }
+
+    private boolean  doesChallengeCategoryExist(long challengeCategoryId)
+    {
+        return challengeCategoryRepository.findById(challengeCategoryId).isPresent();
+    }
+
+
+    private void validateChallengeDTOForUpdate(long pathChallengeId, ChallengeDTO challengeDTO)
+    {
+
+        if(pathChallengeId != challengeDTO.getId()) {
+
+            throw new InvalidFieldException().setMessage("Id-ul challenge-ului din path trebuie ca corespunda cu cel din DTO");
+
+        }
+
+        ChallengeCategoryDTO challengeCategoryDTO = challengeDTO.getChallengeCategory();
+
+        if(challengeCategoryDTO != null)
+        {
+            if(challengeCategoryDTO.getId() == null) {
+
+                challengeDTO.setChallengeCategory(null);
+
+            }
+            else
+                if(!doesChallengeCategoryExist(challengeCategoryDTO.getId())){
+
+                    throw new InvalidFieldException().setMessage("Categoria aleasa nu exista in baza de date");
+
+                }
+        }
     }
 
 }
