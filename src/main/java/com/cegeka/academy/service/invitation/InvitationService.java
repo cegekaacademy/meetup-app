@@ -24,6 +24,6 @@ public interface InvitationService {
 
     Invitation createChallengeInvitationForOneUser (InvitationDTO invitationDTO, Long challengeId) throws ExistingItemException, NotFoundException;
 
-    Invitation getInvitation(Long invitationId);
+    Invitation getInvitation(Long invitationId) throws NotFoundException;
 
 }

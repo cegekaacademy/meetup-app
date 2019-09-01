@@ -1,5 +1,7 @@
 package com.cegeka.academy.service.userChallenge;
 
+import com.cegeka.academy.domain.Challenge;
+import com.cegeka.academy.domain.Invitation;
 import com.cegeka.academy.domain.UserChallenge;
 import com.cegeka.academy.service.dto.UserChallengeDTO;
 import com.cegeka.academy.web.rest.errors.WrongOwnerException;
@@ -14,5 +16,5 @@ public interface UserChallengeService {
     UserChallenge rateUser(UserChallengeDTO userChallengeDTO, Long ownerId)
             throws WrongOwnerException, NoSuchElementException;
 
-    UserChallenge createUserChallenge (UserChallenge userChallenge);
+    UserChallenge initUserChallenge (Challenge challenge, Invitation invitation);
 }

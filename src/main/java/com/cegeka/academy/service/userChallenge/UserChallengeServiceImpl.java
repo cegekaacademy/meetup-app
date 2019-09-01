@@ -1,5 +1,7 @@
 package com.cegeka.academy.service.userChallenge;
 
+import com.cegeka.academy.domain.Challenge;
+import com.cegeka.academy.domain.Invitation;
 import com.cegeka.academy.domain.UserChallenge;
 import com.cegeka.academy.repository.UserChallengeRepository;
 import com.cegeka.academy.service.dto.UserChallengeDTO;
@@ -9,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
@@ -49,7 +52,18 @@ public class UserChallengeServiceImpl implements UserChallengeService {
     }
 
     @Override
-    public UserChallenge createUserChallenge(UserChallenge userChallenge) {
+    public UserChallenge initUserChallenge(Challenge challenge, Invitation invitation) {
+
+        UserChallenge userChallenge = new UserChallenge();
+
+        userChallenge.setChallenge(challenge);
+        userChallenge.setPoints(0);
+        userChallenge.setUser(invitation.getUser());
+        userChallenge.setInvitation(invitation);
+        userChallenge.setStatus("Not started");
+        userChallenge.setChallengeAnswer(null);
+        userChallenge.setStartTime(new Date());
+        userChallenge.setEndTime(new Date());
 
         return userChallengeRepository.save(userChallenge);
     }

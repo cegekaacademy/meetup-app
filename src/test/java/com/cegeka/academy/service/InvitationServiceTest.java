@@ -2,6 +2,7 @@ package com.cegeka.academy.service;
 
 import com.cegeka.academy.AcademyProjectApp;
 import com.cegeka.academy.domain.*;
+import com.cegeka.academy.domain.enums.ChallengeStatus;
 import com.cegeka.academy.domain.enums.InvitationStatus;
 import com.cegeka.academy.repository.*;
 import com.cegeka.academy.repository.util.TestsRepositoryUtil;
@@ -18,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -54,6 +56,15 @@ public class InvitationServiceTest {
     @Autowired
     private RoleRepository roleRepository;
 
+    @Autowired
+    private ChallengeRepository challengeRepository;
+
+    @Autowired
+    private ChallengeCategoryRepository challengeCategoryRepository;
+
+    @Autowired
+    private UserChallengeRepository userChallengeRepository;
+
     private User user, user1, user2;
     private Event event, event2, publicEvent;
     private Invitation invitation, invitation2, invitation3, invitationSendToGroup, invitationWithNullEvent, invitationWithPublicEvent;
@@ -61,6 +72,11 @@ public class InvitationServiceTest {
     private Group group;
     private GroupUserRole groupUserRole1, groupUserRole2, groupUserRole3;
     private Role role;
+    private Challenge challenge;
+    private ChallengeCategory challengeCategory;
+    private UserChallenge userChallenge;
+
+    private UserChallengeServiceTest userChallengeServiceTest;
 
     @BeforeEach
     public void init() {
@@ -93,6 +109,14 @@ public class InvitationServiceTest {
         invitationSendToGroup = TestsRepositoryUtil.createInvitation(InvitationStatus.PENDING.name(), "aaaa", eventRepository.findAll().get(0), null);
         invitationWithNullEvent = TestsRepositoryUtil.createInvitation(InvitationStatus.PENDING.name(), "aaaa", null, null);
         invitationWithPublicEvent = TestsRepositoryUtil.createInvitation(InvitationStatus.PENDING.name(), "aaaa", eventRepository.findAll().get(1), null);
+        challengeCategory = TestsRepositoryUtil.createChallengeCategory("Description", "Name");
+        challengeCategoryRepository.save(challengeCategory);
+        challenge = TestsRepositoryUtil.createChallenge(challengeCategory, "Description", user1,
+                "Status", new Date(), new Date(), 50.0);
+        challengeRepository.save(challenge);
+        userChallenge  = TestsRepositoryUtil.createUserChallenge(challenge, user2,50.0, "Status", invitation,
+                new Date(), new Date());
+        userChallengeRepository.save(userChallenge);
     }
 
     @Test
@@ -281,10 +305,14 @@ public class InvitationServiceTest {
     public void assertThatCreateChallengeInvitationIsWorking() throws NotFoundException, ExistingItemException {
         InvitationDTO invitationDTO = new InvitationDTO();
         invitationDTO.setStatus(InvitationStatus.PENDING.toString());
-        invitationDTO.setUserId((long)4);
+        invitationDTO.setUserId(user.getId());
         invitationDTO.setDescription("Description");
         invitationDTO.setEventName(null);
-        Invitation actual = InvitationMapper.convertInvitationDTOToInvitation(invitationDTO);
+        Invitation actual = InvitationMapper.createInvitation(
+                invitationDTO.getDescription(),
+                invitationDTO.getStatus(),
+                user,
+                null);
 
         Invitation expected = invitationService.createChallengeInvitationForOneUser(invitationDTO, (long)1);
 
@@ -295,22 +323,22 @@ public class InvitationServiceTest {
     public void assertThatCreateChallengeInvitationThrowsExistingItemException() {
         InvitationDTO invitationDTO = new InvitationDTO();
         invitationDTO.setStatus(InvitationStatus.PENDING.toString());
-        invitationDTO.setUserId((long)4);
+        invitationDTO.setUserId(user2.getId());
         invitationDTO.setDescription("Description");
         invitationDTO.setEventName(null);
 
         try {
-            invitationService.createChallengeInvitationForOneUser(invitationDTO, (long)1);
-            fail();
+            invitationService.createChallengeInvitationForOneUser(invitationDTO, userChallenge.getChallenge().getId());
+            fail("Continued");
         } catch (ExistingItemException e) {
             assertTrue(true);
         } catch (NotFoundException e) {
-            fail();
+            fail("NotFoundExceptionMessage");
         }
     }
 
     @Test
-    public void assertThatCreateChallengeInvitationThrowsNotFoundException() {
+    public void assertThatCreateChallengeInvitationThrowsNotFoundExceptionForMissingChallenge() {
         InvitationDTO invitationDTO = new InvitationDTO();
         invitationDTO.setStatus(InvitationStatus.PENDING.toString());
         invitationDTO.setUserId((long)4);
@@ -325,6 +353,23 @@ public class InvitationServiceTest {
         } catch (NotFoundException e) {
             assertTrue(true);
         }
+    }
 
+    @Test
+    public void assertThatCreateChallengeInvitationThrowsNotFoundExceptionForMissingUser() {
+        InvitationDTO invitationDTO = new InvitationDTO();
+        invitationDTO.setStatus(InvitationStatus.PENDING.toString());
+        invitationDTO.setUserId((long)200);
+        invitationDTO.setDescription("Description");
+        invitationDTO.setEventName(null);
+
+        try {
+            invitationService.createChallengeInvitationForOneUser(invitationDTO, challenge.getId());
+            fail();
+        } catch (ExistingItemException e) {
+            fail();
+        } catch (NotFoundException e) {
+            assertTrue(true);
+        }
     }
 }

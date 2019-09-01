@@ -161,32 +161,29 @@ public class InvitationServiceImpl implements InvitationService {
 
         long userId = invitationDTO.getUserId();
 
-        if (userChallengeRepository.findByUserIdAndChallengeId(userId, challengeId).isPresent()) {
+        if(userChallengeRepository.findByUserIdAndChallengeId(userId, challengeId).isPresent()){
             throw new ExistingItemException();
         } else {
-            Invitation invitation = invitationRepository.save(InvitationMapper.convertInvitationDTOToInvitation(invitationDTO));
-            UserChallenge userChallenge = new UserChallenge();
 
+            User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException().setMessage("User not found"));
+            Invitation invitation = invitationRepository.save(
+                    InvitationMapper.createInvitation(
+                            invitationDTO.getDescription(),
+                            invitationDTO.getStatus(),
+                            user,
+                            null));
             Challenge challenge = challengeRepository.findById(challengeId).orElseThrow(() -> new NotFoundException().setMessage("Challenge not found"));
 
-            userChallenge.setChallenge(challenge);
-            userChallenge.setPoints(0);
-            userChallenge.setUser(invitation.getUser());
-            userChallenge.setInvitation(invitation);
-            userChallenge.setStatus("Not started");
-            userChallenge.setChallengeAnswer(null);
-            userChallenge.setStartTime(new Date());
-            userChallenge.setEndTime(new Date());
-
-            userChallengeService.createUserChallenge(userChallenge);
+            userChallengeService.initUserChallenge(challenge, invitation);
 
             return invitation;
         }
     }
 
     @Override
-    public Invitation getInvitation(Long invitationId) {
-        return invitationRepository.findById(invitationId).get();
+    public Invitation getInvitation(Long invitationId) throws NotFoundException {
+        return invitationRepository.findById(invitationId).orElseThrow(() -> new NotFoundException()
+                .setMessage("Invitation not found"));
     }
 
 

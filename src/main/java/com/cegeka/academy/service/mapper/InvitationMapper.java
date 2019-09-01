@@ -7,6 +7,9 @@ import com.cegeka.academy.service.dto.InvitationDTO;
 
 public class InvitationMapper {
 
+    private static UserMapper userMapper;
+    private static EventMapper eventMapper;
+
     public static InvitationDTO convertInvitationEntityToInvitationDTO(Invitation invitation) {
 
         InvitationDTO invitationDTO = new InvitationDTO();
@@ -26,24 +29,6 @@ public class InvitationMapper {
         }
 
         return invitationDTO;
-    }
-
-    public static Invitation convertInvitationDTOToInvitation(InvitationDTO invitationDTO) {
-
-        Invitation invitation = new Invitation();
-        invitation.setStatus(invitationDTO.getStatus());
-        invitation.setDescription(invitationDTO.getDescription());
-        invitation.setEvent(null);
-
-        if(invitationDTO.getUserId() != null){
-
-            User newUser = new User();
-            newUser.setId(invitationDTO.getUserId());
-            invitation.setUser(newUser);
-
-        }
-
-        return invitation;
     }
 
     public static Invitation createInvitation(String description, String status, User user, Event event) {

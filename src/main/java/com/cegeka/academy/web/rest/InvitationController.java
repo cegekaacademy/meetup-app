@@ -118,15 +118,15 @@ public class InvitationController {
         invitationService.sendGroupInvitationsToPrivateEvents(idGroup, newInvitation);
     }
 
-    @PostMapping("/createChallengeInvitation/{challengeId}")
+    @PostMapping("/challenge-invitation/{challengeId}")
     public Invitation createChallengeInvitationForOneUser(@RequestBody InvitationDTO invitationDTO,
                                                     @PathVariable Long challengeId) throws NotFoundException, ExistingItemException {
 
         return invitationService.createChallengeInvitationForOneUser(invitationDTO, challengeId);
     }
 
-    @GetMapping("/getInvitation/{invitationId}")
-    public Invitation getInvitation(@PathVariable Long invitationId) {
+    @GetMapping("/{invitationId}")
+    public Invitation getInvitation(@PathVariable Long invitationId) throws NotFoundException {
 
         return invitationService.getInvitation(invitationId);
     }
