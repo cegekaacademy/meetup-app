@@ -239,11 +239,9 @@ public class ChallengeServiceTest {
 
         Challenge actualChallenge = ChallengeMapper.convertChallengeDTOToChallenge(actualChallengeDTO);
 
-        long actualId = actualChallenge.getId();
         String actualStatus = actualChallenge.getStatus();
         ChallengeCategory actualChallengeCategory = actualChallenge.getChallengeCategory();
 
-        Assertions.assertEquals(expectedId, actualId);
         Assertions.assertEquals(expectedStatus, actualStatus);
         Assertions.assertEquals(expectedChallengeCategory, actualChallengeCategory);
     }
