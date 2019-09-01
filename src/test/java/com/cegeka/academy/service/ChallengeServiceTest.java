@@ -147,8 +147,8 @@ public class ChallengeServiceTest {
 
        challengeService.saveChallenge(challengeDTO);
 
-       assertThat(challengeRepository.findAll().get(0).getCreator()).isEqualTo(new UserMapper().userDTOToUser(challengeDTO.getCreator()));
-       assertThat(challengeRepository.findAll().get(0).getChallengeCategory()).isEqualTo(ChallengeMapper.convertChallengeCategoryDTOToChallengeCategory(challengeDTO.getChallengeCategory()));
+       assertThat(challengeRepository.findAll().get(0).getCreator().getId()).isEqualTo(challengeDTO.getCreator().getId());
+       assertThat(challengeRepository.findAll().get(0).getChallengeCategory().getId()).isEqualTo(challengeDTO.getChallengeCategory().getId());
        assertThat(challengeRepository.findAll().get(0).getDescription()).isEqualTo(challengeDTO.getDescription());
        assertThat(challengeRepository.findAll().get(0).getStartDate()).isEqualTo(challengeDTO.getStartDate());
        assertThat(challengeRepository.findAll().get(0).getEndDate()).isEqualTo(challengeDTO.getEndDate());
@@ -203,9 +203,15 @@ public class ChallengeServiceTest {
 
         ChallengeDTO challengeDTO = challengeService.getChallengeById(expectedChallenge.getId());
 
-        Challenge actualChallenge = ChallengeMapper.convertChallengeDTOToChallenge(challengeDTO);
+        Assertions.assertEquals(expectedChallenge.getId(), challengeDTO.getId());
+        Assertions.assertEquals(expectedChallenge.getCreator().getId(), challengeDTO.getCreator().getId());
+        Assertions.assertEquals(expectedChallenge.getChallengeCategory().getId(), challengeDTO.getChallengeCategory().getId());
+        Assertions.assertEquals(expectedChallenge.getDescription(), challengeDTO.getDescription());
+        Assertions.assertEquals(expectedChallenge.getStartDate(), challengeDTO.getStartDate());
+        Assertions.assertEquals(expectedChallenge.getEndDate(), challengeDTO.getEndDate());
+        Assertions.assertEquals(expectedChallenge.getStatus(), challengeDTO.getStatus());
+        Assertions.assertEquals(expectedChallenge.getPoints(), challengeDTO.getPoints());
 
-        Assertions.assertEquals(expectedChallenge, actualChallenge);
     }
 
     @Test

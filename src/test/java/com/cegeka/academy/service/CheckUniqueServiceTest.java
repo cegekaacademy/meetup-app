@@ -1,15 +1,9 @@
 package com.cegeka.academy.service;
 
 import com.cegeka.academy.AcademyProjectApp;
-import com.cegeka.academy.domain.Address;
-import com.cegeka.academy.domain.Event;
-import com.cegeka.academy.domain.Invitation;
-import com.cegeka.academy.domain.User;
+import com.cegeka.academy.domain.*;
 import com.cegeka.academy.domain.enums.InvitationStatus;
-import com.cegeka.academy.repository.AddressRepository;
-import com.cegeka.academy.repository.EventRepository;
-import com.cegeka.academy.repository.InvitationRepository;
-import com.cegeka.academy.repository.UserRepository;
+import com.cegeka.academy.repository.*;
 import com.cegeka.academy.repository.util.TestsRepositoryUtil;
 import com.cegeka.academy.service.invitation.InvitationService;
 import com.cegeka.academy.service.serviceValidation.CheckUniqueService;
@@ -19,6 +13,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @SpringBootTest(classes = AcademyProjectApp.class)
 @Transactional
@@ -42,6 +39,9 @@ public class CheckUniqueServiceTest {
     @Autowired
     private InvitationRepository invitationRepository;
 
+    @Autowired
+    private CategoryRepository categoryRepository;
+
     private User user, uninvitedUser;
     private Invitation invitation;
     private Address address;
@@ -56,9 +56,16 @@ public class CheckUniqueServiceTest {
         userRepository.save(uninvitedUser);
         address = TestsRepositoryUtil.createAddress("Romania", "Bucuresti", "Splai", "333", "Casa", "Casa magica");
         addressRepository.saveAndFlush(address);
-        event = TestsRepositoryUtil.createEvent("Ana are mere!", "KFC Krushers Party", false, address, user);
+        Category category1 = TestsRepositoryUtil.createCategory("Sport", "Liber pentru toate varstele!");
+        Category category3 = TestsRepositoryUtil.createCategory("Arta", "Expozitii de arta");
+        categoryRepository.save(category1);
+        categoryRepository.save(category3);
+        Set<Category> list1 = new HashSet<>();
+        list1.add(category1);
+        list1.add(category3);
+        event = TestsRepositoryUtil.createEvent("Ana are mere!", "KFC Krushers Party", false, address, user, list1, "https://scontent.fotp3-2.fna.fbcdn.net/v/t1.0-9/67786277_2592710307438854_5055220041180512256");
         eventRepository.saveAndFlush(event);
-        newEvent = TestsRepositoryUtil.createEvent("Ana are mere!", "KFC Krushers Party", false, address, user);
+        newEvent = TestsRepositoryUtil.createEvent("Ana are mere!", "KFC Krushers Party", false, address, user, list1, "https://scontent.fotp3-2.fna.fbcdn.net/v/t1.0-9/67786277_2592710307438854_5055220041180512256");
         eventRepository.saveAndFlush(newEvent);
         invitation = TestsRepositoryUtil.createInvitation(InvitationStatus.PENDING.name(), "ana are mere", event, user);
         invitationService.saveInvitation(invitation);
@@ -87,15 +94,6 @@ public class CheckUniqueServiceTest {
     @Test
     public void assertThatCheckUniqueServiceIsWorkingWithNullEventOnValidation() {
         Invitation newInvitation = TestsRepositoryUtil.createInvitation(InvitationStatus.ACCEPTED.name(), "aaa", null, user);
-        newInvitation.setId(invitationRepository.findAll().get(0).getId());
-        invitationService.updateInvitation(newInvitation);
-        System.out.println(invitationRepository.findAll().get(0).toString());
-        Assert.assertTrue(checkUniqueService.checkUniqueInvitation(user, event));
-    }
-
-    @Test
-    public void assertThatCheckUniqueServiceIsWorkingWithNullUserOnValidation() {
-        Invitation newInvitation = TestsRepositoryUtil.createInvitation(InvitationStatus.ACCEPTED.name(), "aaa", event, null);
         newInvitation.setId(invitationRepository.findAll().get(0).getId());
         invitationService.updateInvitation(newInvitation);
         System.out.println(invitationRepository.findAll().get(0).toString());

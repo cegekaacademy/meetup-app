@@ -14,15 +14,37 @@ public class UserChallengeMapper {
         if(userChallengeDTO != null){
 
             UserChallenge userChallenge = new UserChallenge();
-            userChallenge.setId(userChallengeDTO.getId());
-            userChallenge.setUser(new UserMapper().userDTOToUser(userChallengeDTO.getUser()));
-            userChallenge.setInvitation(convertInvitationChallengeDTOTOInvitation(userChallengeDTO.getInvitation()));
-            userChallenge.setChallenge(convertChallengeDTOToChallenge(userChallengeDTO.getChallenge()));
             userChallenge.setStatus(userChallengeDTO.getStatus());
             userChallenge.setPoints(userChallengeDTO.getPoints());
             userChallenge.setStartTime(userChallengeDTO.getStartTime());
             userChallenge.setEndTime(userChallengeDTO.getEndTime());
-            userChallenge.setChallengeAnswer(convertChallengeAnswerDTOToChallengeAnswer(userChallengeDTO.getChallengeAnswer()));
+
+            if(userChallengeDTO.getUser() != null) {
+
+                userChallenge.setUser(new UserMapper().userDTOToUser(userChallengeDTO.getUser()));
+                userChallenge.getUser().setId(userChallengeDTO.getUser().getId());
+            }
+
+            if(userChallengeDTO.getInvitation() != null) {
+
+                userChallenge.setInvitation(convertInvitationChallengeDTOTOInvitation(userChallengeDTO.getInvitation()));
+                userChallenge.getInvitation().setId(userChallengeDTO.getInvitation().getId());
+
+            }
+
+            if(userChallengeDTO.getChallenge() != null) {
+
+                userChallenge.setChallenge(convertChallengeDTOToChallenge(userChallengeDTO.getChallenge()));
+                userChallenge.getChallenge().setId(userChallengeDTO.getChallenge().getId());
+
+            }
+
+            if(userChallengeDTO.getChallengeAnswer() != null){
+
+                userChallenge.setChallengeAnswer(convertChallengeAnswerDTOToChallengeAnswer(userChallengeDTO.getChallengeAnswer()));
+                userChallenge.getChallengeAnswer().setId(userChallengeDTO.getChallengeAnswer().getId());
+
+            }
 
             return userChallenge;
         }
@@ -69,14 +91,25 @@ public class UserChallengeMapper {
     public static Challenge convertChallengeDTOToChallenge(ChallengeDTO challengeDTO){
 
         Challenge challenge = new Challenge();
-        challenge.setId(challengeDTO.getId());
-        challenge.setCreator(new UserMapper().userDTOToUser(challengeDTO.getCreator()));
+
+        if(challengeDTO.getCreator() != null) {
+
+             challenge.setCreator(new UserMapper().userDTOToUser(challengeDTO.getCreator()));
+             challenge.getCreator().setId(challengeDTO.getCreator().getId());
+        }
+
         challenge.setStartDate(challengeDTO.getStartDate());
         challenge.setEndDate(challengeDTO.getEndDate());
         challenge.setPoints(challengeDTO.getPoints());
         challenge.setDescription(challengeDTO.getDescription());
         challenge.setStatus(challengeDTO.getStatus());
-        challenge.setChallengeCategory(ChallengeMapper.convertChallengeCategoryDTOToChallengeCategory(challengeDTO.getChallengeCategory()));
+
+        if(challengeDTO.getChallengeCategory() != null) {
+
+            challenge.setChallengeCategory(ChallengeMapper.convertChallengeCategoryDTOToChallengeCategory(challengeDTO.getChallengeCategory()));
+            challenge.getChallengeCategory().setId(challengeDTO.getChallengeCategory().getId());
+
+        }
 
         return challenge;
     }
@@ -95,7 +128,6 @@ public class UserChallengeMapper {
 
         Invitation invitation = new Invitation();
         invitation.setUser(new UserMapper().userDTOToUser(invitationChallengeDTO.getUser()));
-        invitation.setId(invitationChallengeDTO.getId());
         invitation.setStatus(invitationChallengeDTO.getStatus());
 
         return invitation;
@@ -110,7 +142,6 @@ public class UserChallengeMapper {
         } else {
 
             ChallengeAnswer challengeAnswer = new ChallengeAnswer();
-            challengeAnswer.setId(challengeAnswerDTO.getId());
             challengeAnswer.setImagePath(challengeAnswerDTO.getImagePath());
             challengeAnswer.setVideoAt(challengeAnswerDTO.getVideoAt());
             challengeAnswer.setAnswer(challengeAnswerDTO.getAnswer());

@@ -85,12 +85,14 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public void addUserToPublicEvent(Long userId, Event event) throws NotFoundException {
+    public void addUserToPublicEvent(Long eventId, Long userId) throws NotFoundException {
+        Event event = eventRepository.findById(eventId).
+                orElseThrow(() -> new NotFoundException().setMessage("Event not found"));
         if (event.isPublic()) {
-            Optional<User> user = userRepository.findById(userId);
-            user.orElseThrow(() -> new NotFoundException().setMessage("User not found"));
-            user.get().getEvents().add(event);
-            logger.info("Event with id: " + event.getId() + " has a new user with id " + userRepository.save(user.get()).getId());
+            User user = userRepository.findById(userId).
+                    orElseThrow(() -> new NotFoundException().setMessage("User not found"));
+            user.getEvents().add(event);
+            logger.info("Event with id: " + event.getId() + " has a new user with id " + userRepository.save(user).getId());
 
         }
     }

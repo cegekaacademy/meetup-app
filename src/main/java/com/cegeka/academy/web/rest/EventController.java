@@ -100,13 +100,17 @@ public class EventController {
 
     }
 
-    @PutMapping("addUser/{id}")
-    public void addUserToPublicEvent(@PathVariable(value = "id") Long id, @Valid @RequestBody Event event) throws NotFoundException {
+    @PutMapping("user/{eventId}/{userId}")
+    public void addUserToPublicEvent(@PathVariable(value = "eventId") Long eventId, @PathVariable(value = "userId") Long userId) throws NotFoundException {
 
-        eventService.addUserToPublicEvent(id, event);
+        eventService.addUserToPublicEvent(eventId, userId);
 
     }
 
+    @GetMapping("/all/category/{id}")
+    public List<Event> getAllCategoryEvents(@PathVariable(value = "id") Long id) {
+        return eventRepository.findAllByCategories_id(id);
+    }
     @GetMapping("/user/{id}")
     public List<EventDTO> getEventsByUser(@PathVariable(value = "id") Long id) throws NotFoundException {
         return eventService.getEventsByUser(id);

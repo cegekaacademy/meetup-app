@@ -8,23 +8,22 @@ import java.util.Objects;
 
 public class ChallengeDTO {
 
-    @NotNull
     private Long id;
 
+    @NotNull(message = "Creator must not be null")
     @Valid
-    @NotNull
     private UserDTO creator;
 
-    @NotNull
+    @NotNull(message = "Start date must not be null")
     private Date startDate;
 
-    @NotNull
+    @NotNull(message = "End date must not be null")
     private Date endDate;
 
-    @NotNull
+    @NotNull(message = "Status must not be null")
     private String status;
 
-    @NotNull
+    @NotNull(message = "Points must not be null")
     private double points;
 
     private String description;

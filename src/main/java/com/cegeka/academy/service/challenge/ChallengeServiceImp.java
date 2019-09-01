@@ -57,7 +57,9 @@ public class ChallengeServiceImp implements ChallengeService {
 
         Challenge challenge = ChallengeMapper.convertChallengeDTOToChallenge(challengeDTO);
 
-        logger.info("Challenge with id: " + challengeRepository.save(challenge).getId() + " has been saved");
+        challengeRepository.save(challenge);
+
+        logger.info("Challenge has been saved");
         
     }
 

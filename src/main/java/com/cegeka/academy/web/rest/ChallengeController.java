@@ -44,7 +44,7 @@ public class ChallengeController {
 
 
     @PostMapping
-    public void saveChallenge(@RequestBody ChallengeDTO challenge) {
+    public void saveChallenge(@Valid @RequestBody ChallengeDTO challenge) {
 
         challengeService.saveChallenge(challenge);
 
