@@ -19,8 +19,6 @@ import java.util.stream.Collectors;
  */
 public class UserDTO {
 
-
-    @NotNull(message = "Un user nu poate avea id-ul null")
     private Long id;
 
     @NotBlank

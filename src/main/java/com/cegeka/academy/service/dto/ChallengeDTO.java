@@ -11,7 +11,6 @@ public class ChallengeDTO {
     private Long id;
 
     @NotNull(message = "Creator must not be null")
-    @Valid
     private UserDTO creator;
 
     @NotNull(message = "Start date must not be null")
