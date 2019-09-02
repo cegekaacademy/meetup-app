@@ -12,7 +12,6 @@ public class ChallengeMapper {
     public static Challenge convertChallengeDTOToChallenge(ChallengeDTO challengeDTO){
 
         Challenge challenge = new Challenge();
-        challenge.setId(challengeDTO.getId());
         challenge.setEndDate(challengeDTO.getEndDate());
         challenge.setStartDate(challengeDTO.getStartDate());
         challenge.setDescription(challengeDTO.getDescription());
@@ -23,11 +22,14 @@ public class ChallengeMapper {
         if (challengeDTO.getCreator() != null) {
 
             challenge.setCreator(new UserMapper().userDTOToUser(challengeDTO.getCreator()));
+            challenge.getCreator().setId(challengeDTO.getCreator().getId());
         }
 
         if(challengeDTO.getChallengeCategory() != null) {
 
             challenge.setChallengeCategory(convertChallengeCategoryDTOToChallengeCategory(challengeDTO.getChallengeCategory()));
+            challenge.getChallengeCategory().setId(challengeDTO.getChallengeCategory().getId());
+
         }
 
         return challenge;
@@ -66,7 +68,6 @@ public class ChallengeMapper {
         } else {
 
             ChallengeCategory challengeCategory = new ChallengeCategory();
-            challengeCategory.setId(challengeCategoryDTO.getId());
             challengeCategory.setName(challengeCategoryDTO.getName());
             challengeCategory.setDescription(challengeCategoryDTO.getDescription());
 
@@ -92,4 +93,30 @@ public class ChallengeMapper {
         }
 
     }
+
+    public static Challenge enrichChallenge(ChallengeDTO challengeDTO, Challenge challenge)
+    {
+        challenge.setStartDate(challengeDTO.getStartDate());
+        challenge.setEndDate(challengeDTO.getEndDate());
+        challenge.setPoints(challengeDTO.getPoints());
+        challenge.setDescription(challengeDTO.getDescription());
+        challenge.setStatus(challengeDTO.getStatus());
+        challenge.setChallengeCategory(enrichChallengeCategory(challenge.getChallengeCategory() , challengeDTO.getChallengeCategory()));
+
+        return challenge;
+    }
+
+    public static ChallengeCategory enrichChallengeCategory(ChallengeCategory challengeCategory, ChallengeCategoryDTO challengeCategoryDTO)
+    {
+        if(!challengeCategory.getId().equals(challengeCategoryDTO.getId())) {
+
+            challengeCategory = new ChallengeCategory();
+            challengeCategory.setId(challengeCategoryDTO.getId());
+        }
+        challengeCategory.setDescription(challengeCategoryDTO.getDescription());
+        challengeCategory.setName(challengeCategoryDTO.getName());
+
+        return challengeCategory;
+    }
+
 }

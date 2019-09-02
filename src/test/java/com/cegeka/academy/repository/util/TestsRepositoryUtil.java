@@ -2,6 +2,8 @@ package com.cegeka.academy.repository.util;
 
 import com.cegeka.academy.domain.*;
 
+import java.util.Set;
+
 import java.util.Date;
 
 public class TestsRepositoryUtil {
@@ -17,13 +19,15 @@ public class TestsRepositoryUtil {
         return address;
     }
 
-    public static Event createEvent(String description, String name, boolean isPublic, Address address, User user) {
+    public static Event createEvent(String description, String name, boolean isPublic, Address address, User user, Set<Category> categories, String coverPhoto) {
         Event event = new Event();
         event.setDescription(description);
         event.setName(name);
         event.setPublic(isPublic);
         event.setOwner(user);
         event.setAddressId(address);
+        event.setCategories(categories);
+        event.setCoverPhoto(coverPhoto);
         return event;
     }
 
@@ -33,8 +37,9 @@ public class TestsRepositoryUtil {
         user.setPassword(password);
         return user;
     }
-    public static Category createCategory(String name,String description){
-        Category category=new Category();
+
+    public static Category createCategory(String name, String description) {
+        Category category = new Category();
         category.setName(name);
         category.setDescription(description);
         return category;

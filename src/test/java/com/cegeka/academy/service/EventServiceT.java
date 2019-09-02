@@ -2,9 +2,11 @@ package com.cegeka.academy.service;
 
 import com.cegeka.academy.AcademyProjectApp;
 import com.cegeka.academy.domain.Address;
+import com.cegeka.academy.domain.Category;
 import com.cegeka.academy.domain.Event;
 import com.cegeka.academy.domain.User;
 import com.cegeka.academy.repository.AddressRepository;
+import com.cegeka.academy.repository.CategoryRepository;
 import com.cegeka.academy.repository.EventRepository;
 import com.cegeka.academy.repository.UserRepository;
 import com.cegeka.academy.repository.util.TestsRepositoryUtil;
@@ -18,7 +20,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -26,14 +30,21 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Transactional
 public class EventServiceT {
 
-    private @Autowired
-    UserRepository userRepository;
-    private @Autowired
-    AddressRepository addressRepository;
-    private @Autowired
-    EventService eventService;
-    private @Autowired
-    EventRepository eventRepository;
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private AddressRepository addressRepository;
+
+    @Autowired
+    private EventService eventService;
+
+    @Autowired
+    private EventRepository eventRepository;
+
+    @Autowired
+    private CategoryRepository categoryRepository;
+
 
     private Event event;
     private User user;
@@ -44,7 +55,14 @@ public class EventServiceT {
         userRepository.saveAndFlush(user);
         Address address = TestsRepositoryUtil.createAddress("Romania", "Bucuresti", "Splai", "333", "Casa", "Casa magica");
         addressRepository.save(address);
-        event = TestsRepositoryUtil.createEvent("Petrecere", "GAIA party", true, address, user);
+        Category category1 = TestsRepositoryUtil.createCategory("Sport", "Liber pentru toate varstele!");
+        Category category3 = TestsRepositoryUtil.createCategory("Arta", "Expozitii de arta");
+        categoryRepository.save(category1);
+        categoryRepository.save(category3);
+        Set<Category> list1 = new HashSet<>();
+        list1.add(category1);
+        list1.add(category3);
+        event = TestsRepositoryUtil.createEvent("Ana are mere!", "KFC Krushers Party", true, address, user, list1, "https://scontent.fotp3-2.fna.fbcdn.net/v/t1.0-9/67786277_2592710307438854_5055220041180512256");
         eventService.createEvent(event);
     }
 
