@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.io.IOException;
 
 
 @RestController
@@ -42,6 +43,16 @@ public class ChallengeAnswerController {
 
         return ResponseEntity.ok("Challenge answer was deleted.");
 
+    }
+
+    @PostMapping(value = "/{userId}/{challengeId}")
+    public ResponseEntity<String> uploadAnswer(@PathVariable("userId") Long userId,
+                                               @PathVariable("challengeId") Long challengeId,
+                                               @ModelAttribute ChallengeAnswerDTO challengeAnswerDTO) throws IOException, NotFoundException {
+
+        challengeAnswerService.uploadAnswer(userId, challengeId, challengeAnswerDTO);
+
+        return ResponseEntity.ok("Answer has been uploaded.");
     }
 
 }

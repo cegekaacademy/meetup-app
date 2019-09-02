@@ -1,6 +1,8 @@
 package com.cegeka.academy.service.dto;
 
 
+import org.springframework.web.multipart.MultipartFile;
+
 import javax.validation.constraints.NotNull;
 
 public class ChallengeAnswerDTO {
@@ -8,6 +10,8 @@ public class ChallengeAnswerDTO {
     private Long id;
     private String videoAt;
     private String imagePath;
+    private MultipartFile image;
+
     @NotNull(message = "Answer must not be null.")
     private String answer;
 
@@ -42,6 +46,10 @@ public class ChallengeAnswerDTO {
     public void setAnswer(String answer) {
         this.answer = answer;
     }
+
+    public MultipartFile getImage() { return image; }
+
+    public void setImage(MultipartFile image) { this.image = image; }
 
     @Override
     public String toString() {

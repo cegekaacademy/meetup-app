@@ -1,5 +1,6 @@
 package com.cegeka.academy.service.userChallenge;
 
+import com.cegeka.academy.domain.ChallengeAnswer;
 import com.cegeka.academy.domain.UserChallenge;
 import com.cegeka.academy.domain.enums.InvitationStatus;
 import com.cegeka.academy.domain.enums.UserChallengeStatus;
@@ -75,5 +76,12 @@ public class UserChallengeServiceImpl implements UserChallengeService {
         } else {
             throw new WrongOwnerException();
         }
+    }
+
+    @Override
+    public void updateUserChallengeAnswer(UserChallenge userChallenge, ChallengeAnswer challengeAnswer) {
+        userChallenge.setChallengeAnswer(challengeAnswer);
+
+        userChallengeRepository.save(userChallenge);
     }
 }
