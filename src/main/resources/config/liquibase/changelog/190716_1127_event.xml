@@ -31,4 +31,19 @@
                                  referencedColumnNames="id"
                                  referencedTableName="jhi_user"/>
     </changeSet>
+
+    <changeSet id="190806190702" author="">
+        <addForeignKeyConstraint baseColumnNames="address_id"
+                                 baseTableName="event"
+                                 constraintName="fk_event_address"
+                                 referencedColumnNames="id"
+                                 referencedTableName="address"/>
+    </changeSet>
+
+    <changeSet id="190826021103" author="cosmin">
+
+        <addColumn tableName="event">
+            <column name="cover_photo" type="varchar(250)"/>
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>

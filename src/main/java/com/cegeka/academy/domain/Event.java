@@ -4,6 +4,9 @@ package com.cegeka.academy.domain;
 import javax.persistence.*;
 import javax.validation.constraints.Size;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @Table
@@ -13,11 +16,11 @@ public class Event {
     @Column(name = "id")
     private Long id;
 
-    @Size(max = 45)
+    @Size(max = 45, message = "Name size must have max 45 letters")
     @Column(name = "name", length = 45)
     private String name;
 
-    @Size(max = 250)
+    @Size(max = 250, message = "Description size must have max 250 letters")
     @Column(name = "description", length = 250)
     private String description;
 
@@ -37,8 +40,28 @@ public class Event {
     @Column(name = "is_public")
     private Boolean isPublic;
 
-    @Column(name = "address_id")
-    private Long addressId;
+    @Size(max = 250, message = "Image path must have 250 letters")
+    @Column(name = "cover_photo")
+    private String coverPhoto;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "address_id", referencedColumnName = "id")
+    private Address addressId;
+
+    @ManyToMany(mappedBy = "events")
+    private Set<User> users = new HashSet<>();
+
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.ALL})
+    @JoinTable(
+            name = "event_category",
+            joinColumns = @JoinColumn(name = "event_id"),
+            inverseJoinColumns = @JoinColumn(name = "category_id"))
+    private Set<Category>categories=new HashSet<>();
+
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_event",referencedColumnName = "id")
+    Set<Invitation>pendingInvitations=new HashSet<>();
+
 
     public Long getId() {
         return id;
@@ -96,7 +119,7 @@ public class Event {
         this.notes = notes;
     }
 
-    public Boolean getPublic() {
+    public Boolean isPublic() {
         return isPublic;
     }
 
@@ -104,12 +127,57 @@ public class Event {
         isPublic = aPublic;
     }
 
-    public Long getAddressId() {
+    public Address getAddressId() {
         return addressId;
     }
 
-    public void setAddressId(Long addressId) {
+    public void setAddressId(Address addressId) {
         this.addressId = addressId;
+    }
+
+    public Set<User> getUsers() {
+        return users;
+    }
+
+    public void setUsers(Set<User> users) {
+        this.users = users;
+    }
+
+    public Set<Category> getCategories() {
+        return categories;
+    }
+
+    public void setCategories(Set<Category> categories) {
+        this.categories = categories;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Event event = (Event) o;
+
+        if (!id.equals(event.id)) return false;
+        return name.equals(event.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
+
+
+    public String getCoverPhoto() {
+        return coverPhoto;
+    }
+
+    public void setCoverPhoto(String coverPhoto) {
+        this.coverPhoto = coverPhoto;
+    }
+
+    public Set<Invitation> getPendingInvitations() {
+        return pendingInvitations;
     }
 
     @Override
@@ -123,7 +191,11 @@ public class Event {
                 ", owner=" + owner +
                 ", notes='" + notes + '\'' +
                 ", isPublic=" + isPublic +
+                ", coverPhoto='" + coverPhoto + '\'' +
                 ", addressId=" + addressId +
+                ", users=" + users +
+                ", categories=" + categories +
+                ", pendingInvitations=" + pendingInvitations +
                 '}';
     }
 }

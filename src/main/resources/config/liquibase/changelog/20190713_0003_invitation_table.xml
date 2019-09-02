@@ -22,5 +22,31 @@
         </createTable>
 
     </changeSet>
+    <changeSet author="georgiana" id="20190730192102">
+        <addColumn tableName="invitation">
+            <column name="id_invitation_user" type="bigint"/>
+            <column name="id_event" type="bigint"/>
+        </addColumn>
 
+    </changeSet>
+
+    <changeSet author="georgiana" id="20190730192103">
+
+        <addForeignKeyConstraint baseColumnNames="id_event"
+                                 baseTableName="invitation"
+                                 constraintName="fk_event_invitation"
+                                 referencedColumnNames="id"
+                                 referencedTableName="event"/>
+
+    </changeSet>
+
+    <changeSet author="georgiana" id="20190730192104">
+
+        <addForeignKeyConstraint baseColumnNames="id_invitation_user"
+                                 baseTableName="invitation"
+                                 constraintName="fk_user_invitation"
+                                 referencedColumnNames="id"
+                                 referencedTableName="jhi_user"/>
+
+    </changeSet>
 </databaseChangeLog>
