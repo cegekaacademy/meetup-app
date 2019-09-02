@@ -339,7 +339,7 @@ public class InvitationServiceTest {
                 user,
                 null);
 
-        Invitation expected = invitationService.createChallengeInvitationForOneUser(invitationDTO, (long)1);
+        Invitation expected = invitationService.createChallengeInvitationForOneUser(invitationDTO, challenge.getId());
 
         assertThat(actual.hashCode() == expected.hashCode());
     }
