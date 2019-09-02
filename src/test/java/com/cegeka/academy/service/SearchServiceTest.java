@@ -41,6 +41,9 @@ public class SearchServiceTest {
     private SearchService searchService;
 
     private Event event;
+    private User user;
+    private Address address;
+    private Category category;
 
     @BeforeEach
     public void init() {
@@ -50,15 +53,15 @@ public class SearchServiceTest {
         userRepository.deleteAll();
         User userOwner = TestsRepositoryUtil.createUser("login", "anaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaana");
         userRepository.save(userOwner);
-        Address address = TestsRepositoryUtil.createAddress("Romania", "Bucuresti", "Splai", "333", "Casa", "Casa magica");
+        address = TestsRepositoryUtil.createAddress("Romania", "Bucuresti", "Splai", "333", "Casa", "Casa magica");
         addressRepository.saveAndFlush(address);
         Set<Category> set = new HashSet<>();
         event = TestsRepositoryUtil.createEvent("Ana are mere!", "KFC Krushers Party", true, address, userRepository.findAll().get(0), set, null);
-        Category category = TestsRepositoryUtil.createCategory("Ana", "description1");
+        category = TestsRepositoryUtil.createCategory("Ana", "description1");
         Category category1 = TestsRepositoryUtil.createCategory("MARIA", "description1");
         event.getCategories().add(category);
         category.getEvents().add(event);
-        User user = TestsRepositoryUtil.createUser("login1", "anaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaana");
+        user = TestsRepositoryUtil.createUser("login1", "anaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaana");
         user.getEvents().add(event);
         event.getUsers().add(user);
         userRepository.save(user);
@@ -115,4 +118,38 @@ public class SearchServiceTest {
         Assertions.assertThrows(NotFoundException.class, () -> searchService.searchUserByInterestedEvents(null));
 
     }
+
+    @Test
+    public void assertSearchUserInterestCategoriesWithInvalidArgument() {
+
+        Assertions.assertThrows(NotFoundException.class, () -> searchService.searchUserInterestCategories(100L));
+    }
+
+    @Test
+    public void assertSearchUserInterestCategoriesWithNullArgument() {
+
+        Assertions.assertThrows(NotFoundException.class, () -> searchService.searchUserInterestCategories(null));
+    }
+
+
+    @Test
+    public void assertSearchUserInterestCategoriesWithNoUserEvents() {
+        User user1 = TestsRepositoryUtil.createUser("login100", "anaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaana");
+        Assertions.assertThrows(NotFoundException.class, () -> searchService.searchUserInterestCategories(user1.getId()));
+    }
+
+    @Test
+    public void assertSearchUserInterestCategoriesWithValidData() throws NotFoundException {
+        Set<Category> set = new HashSet<>();
+        set.add(category);
+        Category category2 = TestsRepositoryUtil.createCategory("cat", "ss");
+        set.add(category2);
+        Event event2 = TestsRepositoryUtil.createEvent("Ana are mere!", "KFC Krushers Party", true, address, user, set, null);
+        eventRepository.save(event2);
+        user.getEvents().add(event2);
+        userRepository.save(user);
+        List<Category> categories = searchService.searchUserInterestCategories(user.getId());
+        assertThat(categories.size()).isEqualTo(2);
+    }
+
 }
