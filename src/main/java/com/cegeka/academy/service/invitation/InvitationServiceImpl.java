@@ -149,6 +149,24 @@ public class InvitationServiceImpl implements InvitationService {
                 }
             }
         }
+
+    }
+
+    @Override
+    public void sendInvitationForPrivateEventsToUserList(List<User> userList, Invitation invitation) throws NotFoundException {
+        if (invitation.getEvent() == null) {
+            throw new NotFoundException().setMessage("Event not found");
+        }
+        if (!invitation.getEvent().isPublic()) {
+            for (User userInvitation : userList) {
+
+                if (checkUniqueService.checkUniqueInvitation(userInvitation, invitation.getEvent())) {
+
+                    Invitation invitationForUserList = InvitationMapper.createInvitation(invitation.getDescription(), invitation.getStatus(), userInvitation, invitation.getEvent());
+                    invitationRepository.save(invitationForUserList);
+                }
+            }
+        }
     }
 
 }
