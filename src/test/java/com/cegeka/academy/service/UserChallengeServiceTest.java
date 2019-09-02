@@ -89,7 +89,7 @@ public class UserChallengeServiceTest  {
         challengeCategoryRepository.save(challengeCategory);
 
         challenge = new Challenge();
-        challenge.setCreator(userRepository.findAll().get(1));
+        challenge.setCreator(usedUser);
         challenge.setPoints(5.22);
         challenge.setStartDate(startDate);
         challenge.setEndDate(endDate);
