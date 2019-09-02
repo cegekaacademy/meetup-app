@@ -73,6 +73,7 @@ public class InvitationServiceTest {
     private User user, user1, user2;
     private Event event, event2, publicEvent;
     private Invitation invitation, invitation2, invitation3, invitationSendToGroup, invitationWithNullEvent, invitationWithPublicEvent;
+    private InvitationDTO invitationDTO;
     private Address address;
     private Group group;
     private GroupUserRole groupUserRole1, groupUserRole2, groupUserRole3;
@@ -130,6 +131,19 @@ public class InvitationServiceTest {
         userChallenge  = TestsRepositoryUtil.createUserChallenge(challenge, user2,50.0, "Status", invitation,
                 new Date(), new Date());
         userChallengeRepository.save(userChallenge);
+
+        invitationDTO = initInvitationDTO();
+    }
+
+    public InvitationDTO initInvitationDTO() {
+        InvitationDTO invitationDTO = new InvitationDTO();
+
+        invitationDTO.setStatus(InvitationStatus.PENDING.toString());
+        invitationDTO.setDescription("Description");
+        invitationDTO.setUserId(user.getId());
+        invitationDTO.setEventName(null);
+
+        return invitationDTO;
     }
 
     @Test
@@ -328,11 +342,7 @@ public class InvitationServiceTest {
 
     @Test
     public void assertThatCreateChallengeInvitationIsWorking() throws NotFoundException, ExistingItemException {
-        InvitationDTO invitationDTO = new InvitationDTO();
-        invitationDTO.setStatus(InvitationStatus.PENDING.toString());
-        invitationDTO.setUserId(user.getId());
-        invitationDTO.setDescription("Description");
-        invitationDTO.setEventName(null);
+
         Invitation actual = InvitationMapper.createInvitation(
                 invitationDTO.getDescription(),
                 invitationDTO.getStatus(),
@@ -346,55 +356,28 @@ public class InvitationServiceTest {
 
     @Test
     public void assertThatCreateChallengeInvitationThrowsExistingItemException() {
-        InvitationDTO invitationDTO = new InvitationDTO();
-        invitationDTO.setStatus(InvitationStatus.PENDING.toString());
-        invitationDTO.setUserId(user2.getId());
-        invitationDTO.setDescription("Description");
-        invitationDTO.setEventName(null);
 
-        try {
-            invitationService.createChallengeInvitationForOneUser(invitationDTO, userChallenge.getChallenge().getId());
-            fail("Continued");
-        } catch (ExistingItemException e) {
-            assertTrue(true);
-        } catch (NotFoundException e) {
-            fail("NotFoundExceptionMessage");
-        }
+        invitationDTO.setUserId(user2.getId());
+
+        Assertions.assertThrows(ExistingItemException.class,
+                () -> invitationService
+                        .createChallengeInvitationForOneUser(invitationDTO, userChallenge.getChallenge().getId()));
+
     }
 
     @Test
     public void assertThatCreateChallengeInvitationThrowsNotFoundExceptionForMissingChallenge() {
-        InvitationDTO invitationDTO = new InvitationDTO();
-        invitationDTO.setStatus(InvitationStatus.PENDING.toString());
-        invitationDTO.setUserId((long)4);
-        invitationDTO.setDescription("Description");
-        invitationDTO.setEventName(null);
 
-        try {
-            invitationService.createChallengeInvitationForOneUser(invitationDTO, (long)2);
-            fail();
-        } catch (ExistingItemException e) {
-            fail();
-        } catch (NotFoundException e) {
-            assertTrue(true);
-        }
+        Assertions.assertThrows(NotFoundException.class,
+                () -> invitationService.createChallengeInvitationForOneUser(invitationDTO, (long)2));
     }
 
     @Test
     public void assertThatCreateChallengeInvitationThrowsNotFoundExceptionForMissingUser() {
-        InvitationDTO invitationDTO = new InvitationDTO();
-        invitationDTO.setStatus(InvitationStatus.PENDING.toString());
-        invitationDTO.setUserId((long)200);
-        invitationDTO.setDescription("Description");
-        invitationDTO.setEventName(null);
 
-        try {
-            invitationService.createChallengeInvitationForOneUser(invitationDTO, challenge.getId());
-            fail();
-        } catch (ExistingItemException e) {
-            fail();
-        } catch (NotFoundException e) {
-            assertTrue(true);
-        }
+        invitationDTO.setUserId((long)200);
+
+        Assertions.assertThrows(NotFoundException.class,
+                () -> invitationService.createChallengeInvitationForOneUser(invitationDTO, challenge.getId()));
     }
 }

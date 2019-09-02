@@ -165,14 +165,16 @@ public class InvitationServiceImpl implements InvitationService {
             throw new ExistingItemException();
         } else {
 
-            User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException().setMessage("User not found"));
+            User user = userRepository.findById(userId).orElseThrow(
+                    () -> new NotFoundException().setMessage("User not found"));
             Invitation invitation = invitationRepository.save(
                     InvitationMapper.createInvitation(
                             invitationDTO.getDescription(),
                             invitationDTO.getStatus(),
                             user,
                             null));
-            Challenge challenge = challengeRepository.findById(challengeId).orElseThrow(() -> new NotFoundException().setMessage("Challenge not found"));
+            Challenge challenge = challengeRepository.findById(challengeId).orElseThrow(
+                    () -> new NotFoundException().setMessage("Challenge not found"));
 
             userChallengeService.initUserChallenge(challenge, invitation);
 

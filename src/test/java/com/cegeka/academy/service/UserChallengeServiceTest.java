@@ -53,7 +53,7 @@ public class UserChallengeServiceTest  {
 
     private Invitation invitation;
     private User user;
-    private Challenge challenge;
+    private Challenge challenge, challenge2;
     private ChallengeCategory challengeCategory;
     private UserChallengeDTO userChallengeDTO;
     private UserChallenge userChallenge;
@@ -97,6 +97,16 @@ public class UserChallengeServiceTest  {
         challenge.setDescription("description");
         challenge.setChallengeCategory(challengeCategoryRepository.findAll().get(0));
         challengeRepository.save(challenge);
+
+        challenge2 = new Challenge();
+        challenge2.setCreator(usedUser);
+        challenge2.setPoints(5.22);
+        challenge2.setStartDate(startDate);
+        challenge2.setEndDate(endDate);
+        challenge2.setStatus("new");
+        challenge2.setDescription("description");
+        challenge2.setChallengeCategory(challengeCategoryRepository.findAll().get(0));
+        challengeRepository.save(challenge2);
 
         userChallenge = new UserChallenge();
         userChallenge.setUser(usedUser);
@@ -266,4 +276,15 @@ public class UserChallengeServiceTest  {
         }
     }
 
+
+    @Test
+    public void  testInitUserChallengeIsWorking() {
+
+        userChallengeService.initUserChallenge(challenge2, invitation);
+        assertThat(userChallengeRepository
+                .findByUserIdAndChallengeIdAndInvitationId(
+                        invitation.getUser().getId(),
+                        challenge2.getId(),
+                        invitation.getId()).isPresent()).isEqualTo(true);
+    }
 }
