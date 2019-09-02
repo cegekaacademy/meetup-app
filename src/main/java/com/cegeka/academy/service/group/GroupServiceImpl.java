@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 
 @Service
@@ -20,6 +21,8 @@ public class GroupServiceImpl implements GroupService {
 
     @Autowired
     private GroupUserRoleRepository groupRepository;
+
+    @Autowired GroupRepository groupRepo;
 
     @Autowired
     private UserRepository userRepository;
@@ -36,6 +39,18 @@ public class GroupServiceImpl implements GroupService {
         }
 
         return users;
+    }
+
+    @Override
+    public Group findGroupById(Long id) {
+        Optional<Group> group;
+        group =  groupRepo.findById(id);
+        if(group.isPresent())
+        {
+            return group.get();
+        }
+
+        return new Group();
     }
 
 

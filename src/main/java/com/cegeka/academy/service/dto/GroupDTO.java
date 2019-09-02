@@ -15,7 +15,6 @@ public class GroupDTO {
     private String description;
 
     public GroupDTO(){
-
     }
 
     public GroupDTO(Long id, @NotNull @Size(min = 1, max = 45) String name, @Size(max = 45) String description) {
