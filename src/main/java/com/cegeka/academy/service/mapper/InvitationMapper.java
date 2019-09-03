@@ -7,6 +7,9 @@ import com.cegeka.academy.service.dto.InvitationDTO;
 
 public class InvitationMapper {
 
+    private static UserMapper userMapper;
+    private static EventMapper eventMapper;
+
     public static InvitationDTO convertInvitationEntityToInvitationDTO(Invitation invitation) {
 
         InvitationDTO invitationDTO = new InvitationDTO();

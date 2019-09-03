@@ -24,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Date;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertTrue;
@@ -53,7 +54,7 @@ public class UserChallengeServiceTest  {
 
     private Invitation invitation;
     private User user;
-    private Challenge challenge;
+    private Challenge challenge, challenge2;
     private ChallengeCategory challengeCategory;
     private UserChallengeDTO userChallengeDTO;
     private UserChallenge userChallenge;
@@ -89,7 +90,7 @@ public class UserChallengeServiceTest  {
         challengeCategoryRepository.save(challengeCategory);
 
         challenge = new Challenge();
-        challenge.setCreator(userRepository.findAll().get(1));
+        challenge.setCreator(usedUser);
         challenge.setPoints(5.22);
         challenge.setStartDate(startDate);
         challenge.setEndDate(endDate);
@@ -97,6 +98,16 @@ public class UserChallengeServiceTest  {
         challenge.setDescription("description");
         challenge.setChallengeCategory(challengeCategoryRepository.findAll().get(0));
         challengeRepository.save(challenge);
+
+        challenge2 = new Challenge();
+        challenge2.setCreator(usedUser);
+        challenge2.setPoints(5.22);
+        challenge2.setStartDate(startDate);
+        challenge2.setEndDate(endDate);
+        challenge2.setStatus("new");
+        challenge2.setDescription("description");
+        challenge2.setChallengeCategory(challengeCategoryRepository.findAll().get(0));
+        challengeRepository.save(challenge2);
 
         userChallenge = new UserChallenge();
         userChallenge.setUser(usedUser);
@@ -216,7 +227,7 @@ public class UserChallengeServiceTest  {
         userChallengeDTO.setPoints(49);
         double actual = userChallengeDTO.getPoints();
         double expected = userChallengeService.rateUser(userChallengeDTO, usedUser.getId()).getPoints();
-        assertThat(actual == expected);
+        assertThat(actual).isEqualTo(expected);
     }
 
     @Test
@@ -266,4 +277,49 @@ public class UserChallengeServiceTest  {
         }
     }
 
+    @Test
+    public void testInitUserChallengeIsWorking() throws NotFoundException {
+
+        userChallengeService.initUserChallenge(challenge2, invitation);
+
+        Optional<UserChallenge> userChallengeOptional = userChallengeRepository
+                .findByUserIdAndChallengeIdAndInvitationId(
+                        invitation.getUser().getId(),
+                        challenge2.getId(),
+                        invitation.getId());
+        assertThat(userChallengeOptional.isPresent()).isEqualTo(true);
+    }
+
+    @Test
+    public void testInitUserChallengeThrowsNotFoundExceptionForMissingChallenge() throws NotFoundException {
+
+        Challenge temporaryChallenge = new Challenge();
+        temporaryChallenge.setId((long)200);
+
+        Assertions.assertThrows(NotFoundException.class,
+                () -> userChallengeService.initUserChallenge(temporaryChallenge, invitation));
+
+    }
+
+    @Test
+    public void testInitUserChallengeThrowsNotFoundExceptionForMissingInvitation() {
+        Invitation temporaryInvitation = new Invitation();
+        temporaryInvitation.setId((long)200);
+
+        Assertions.assertThrows(NotFoundException.class,
+                () -> userChallengeService.initUserChallenge(challenge2, temporaryInvitation));
+    }
+
+    @Test
+    public void testInitUserChallengeThrowsNotFoundExceptionForMissingUser() {
+        User temporaryUser = new User();
+        temporaryUser.setId((long)200);
+
+        Invitation temporaryInvitation = new Invitation();
+        temporaryInvitation.setId((long)5);
+        temporaryInvitation.setUser(temporaryUser);
+
+        Assertions.assertThrows(NotFoundException.class,
+                () -> userChallengeService.initUserChallenge(challenge2, temporaryInvitation));
+    }
 }
