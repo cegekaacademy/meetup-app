@@ -7,8 +7,10 @@ import com.cegeka.academy.repository.*;
 import com.cegeka.academy.service.challenge.ChallengeService;
 import com.cegeka.academy.service.dto.ChallengeCategoryDTO;
 import com.cegeka.academy.service.dto.ChallengeDTO;
+import com.cegeka.academy.service.dto.UserChallengeDTO;
 import com.cegeka.academy.service.dto.UserDTO;
 import com.cegeka.academy.service.mapper.ChallengeMapper;
+import com.cegeka.academy.service.mapper.UserChallengeMapper;
 import com.cegeka.academy.service.mapper.UserMapper;
 import com.cegeka.academy.web.rest.errors.InvalidFieldException;
 import com.cegeka.academy.web.rest.errors.NotFoundException;
@@ -22,9 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -47,7 +47,9 @@ public class ChallengeServiceTest {
 
     private UserChallenge userChallenge;
     private UserChallenge userChallenge2;
+    private UserChallenge userChallenge3;
     private Invitation invitation;
+    private Invitation invitation2;
     private Challenge challenge;
     private Challenge challenge2;
 
@@ -65,6 +67,7 @@ public class ChallengeServiceTest {
 
         user = new User();
         user.setLogin("login");
+        user.setLastName("coximorinas");
         user.setPassword("anaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaana");
         Long idUser = userRepository.save(user).getId();
 
@@ -122,12 +125,19 @@ public class ChallengeServiceTest {
         invitation.setUser(user);
         invitation.setEvent(null);
 
+        invitation2 = new Invitation();
+        invitation2.setDescription("invitationDescription");
+        invitation2.setStatus("invitationStat");
+        invitation2.setUser(userRepository.findById(2L).get());
+        invitation2.setEvent(null);
+
+
         userChallenge = new UserChallenge();
         userChallenge.setUser(user);
         userChallenge.setInvitation(invitation);
         userChallenge.setChallenge(challenge);
         userChallenge.setStatus("status");
-        userChallenge.setPoints(2.22);
+        userChallenge.setPoints(10);
         userChallenge.setStartTime(new Date());
         userChallenge.setEndTime(new Date());
 
@@ -140,6 +150,15 @@ public class ChallengeServiceTest {
         userChallenge2.setPoints(2.22);
         userChallenge2.setStartTime(new Date());
         userChallenge2.setEndTime(new Date());
+
+        userChallenge3 = new UserChallenge();
+        userChallenge3.setUser(userRepository.findById(2L).get());
+        userChallenge3.setInvitation(invitation2);
+        userChallenge3.setChallenge(challenge);
+        userChallenge3.setStatus("status");
+        userChallenge3.setPoints(2.2);
+        userChallenge3.setStartTime(new Date());
+        userChallenge3.setEndTime(new Date());
     }
 
     @Test
@@ -344,6 +363,50 @@ public class ChallengeServiceTest {
             challengeService.getPublicChallenges();
         });
 
+    }
+
+    @Test
+    void testGetChallengeRankOrderedByPoints() throws NotFoundException {
+        invitationRepository.save(invitation);
+        invitationRepository.save(invitation2);
+        challengeRepository.save(challenge);
+        userChallengeRepository.save(userChallenge);
+        userChallengeRepository.save(userChallenge3);
+
+        List<UserChallengeDTO> userChallengeDTOListExpected = new ArrayList<>();
+        userChallengeDTOListExpected.add(UserChallengeMapper.convertUserChallengeToUserChallengeDTO(userChallenge));
+        userChallengeDTOListExpected.add(UserChallengeMapper.convertUserChallengeToUserChallengeDTO(userChallenge3));
+
+        List<UserChallengeDTO> userChallengeDTOListActual = challengeService.getChallengeRanking(challenge.getId(), "points");
+
+        userChallengeDTOListExpected.sort((o1, o2) -> -Double.compare(o1.getPoints(), o2.getPoints()));
+
+        Assertions.assertEquals(userChallengeDTOListExpected, userChallengeDTOListActual);
+    }
+
+
+    @Test
+    void testGetChallengeRankOrderedByName() throws NotFoundException {
+        invitationRepository.save(invitation);
+        invitationRepository.save(invitation2);
+        challengeRepository.save(challenge);
+        userChallengeRepository.save(userChallenge);
+        userChallengeRepository.save(userChallenge3);
+
+        List<UserChallengeDTO> userChallengeDTOListExpected = new ArrayList<>();
+        userChallengeDTOListExpected.add(UserChallengeMapper.convertUserChallengeToUserChallengeDTO(userChallenge));
+        userChallengeDTOListExpected.add(UserChallengeMapper.convertUserChallengeToUserChallengeDTO(userChallenge3));
+
+        List<UserChallengeDTO> userChallengeDTOListActual = challengeService.getChallengeRanking(challenge.getId(), "points");
+
+        userChallengeDTOListExpected.sort((o1, o2) -> o1.getUser().getLastName().compareToIgnoreCase(o2.getUser().getLastName()));
+
+        Assertions.assertEquals(userChallengeDTOListExpected, userChallengeDTOListActual);
+    }
+
+    @Test
+    void testGetChallengeRankException(){
+        Assertions.assertThrows(NotFoundException.class, ()->challengeService.getChallengeRanking(0L, "points"));
     }
 
 }

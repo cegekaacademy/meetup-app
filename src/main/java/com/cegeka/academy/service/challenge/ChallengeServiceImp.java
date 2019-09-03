@@ -7,6 +7,9 @@ import com.cegeka.academy.domain.enums.ChallengeStatus;
 import com.cegeka.academy.repository.ChallengeRepository;
 import com.cegeka.academy.repository.UserChallengeRepository;
 import com.cegeka.academy.service.dto.ChallengeCategoryDTO;
+import com.cegeka.academy.service.dto.UserChallengeDTO;
+import com.cegeka.academy.service.dto.UserDTO;
+import com.cegeka.academy.service.mapper.UserChallengeMapper;
 import com.cegeka.academy.web.rest.errors.NotFoundException;
 import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -148,6 +151,29 @@ public class ChallengeServiceImp implements ChallengeService {
         Challenge challenge = challengeOptional.get();
 
         return ChallengeMapper.convertChallengeToChallengeDTO(challenge);
+    }
+
+    @Override
+    public List<UserChallengeDTO> getChallengeRanking(Long challengeId, String sortingParam) throws NotFoundException {
+        List<UserChallenge> userChallengeList = userChallengeRepository.findAllByChallengeId(challengeId);
+
+        if(userChallengeList.isEmpty())
+        {
+            throw new NotFoundException().setMessage("Nu exista participanti la challenge-ul: " + challengeId);
+        }
+
+        if(sortingParam.equals("name"))
+        {
+            userChallengeList.sort((o1, o2) -> o1.getUser().getLastName().compareToIgnoreCase(o2.getUser().getLastName()));
+        }
+
+        if(sortingParam.equals("points"))
+        {
+            userChallengeList.sort((o1, o2) -> -Double.compare(o1.getPoints(), o2.getPoints()));
+        }
+
+        return userChallengeList.stream()
+                .map(UserChallengeMapper::convertUserChallengeToUserChallengeDTO).collect(Collectors.toList());
     }
 
     private ChallengeDTO getChallengeDTOFromUserChallenge(UserChallenge userChallenge)

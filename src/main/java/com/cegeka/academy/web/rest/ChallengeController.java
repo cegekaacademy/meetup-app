@@ -1,6 +1,7 @@
 package com.cegeka.academy.web.rest;
 
 import com.cegeka.academy.service.challenge.ChallengeService;
+import com.cegeka.academy.service.dto.UserChallengeDTO;
 import com.cegeka.academy.web.rest.errors.NotFoundException;
 import org.springframework.web.bind.annotation.*;
 import com.cegeka.academy.service.dto.ChallengeDTO;
@@ -62,5 +63,10 @@ public class ChallengeController {
 
         return challengeService.getPublicChallenges();
 
+    }
+
+    @GetMapping("/rank/{challengeId}")
+    public List<UserChallengeDTO> getChallengeRankById(@PathVariable Long challengeId, @RequestParam(value = "orderBy") String orderBy) throws NotFoundException {
+        return challengeService.getChallengeRanking(challengeId, orderBy);
     }
 }
