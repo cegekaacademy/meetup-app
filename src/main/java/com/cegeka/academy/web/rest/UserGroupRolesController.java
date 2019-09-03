@@ -93,9 +93,11 @@ public class UserGroupRolesController {
     public void addMember(@Valid @RequestBody GroupUserRole user){
         userGroupRolesService.addMember(user);
     }
+//
+//    @DeleteMapping("deleteMember/{groupId}/{userId}")
+//    public void removeMember(@PathVariable("groupId") Long groupId, @PathVariable("userId") Long userId){
+//        userGroupRolesService.removeMember(groupId, userId);
 
-    @DeleteMapping("deleteMember/{groupId}/{userId}")
-    public void removeMember(@PathVariable("groupId") Long groupId, @PathVariable("userId") Long userId){
-        userGroupRolesService.removeMember(groupId, userId);
-    }
+
+//    }
 }

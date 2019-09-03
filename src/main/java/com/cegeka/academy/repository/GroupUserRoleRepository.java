@@ -22,8 +22,7 @@ public interface GroupUserRoleRepository extends JpaRepository<GroupUserRole, Lo
     GroupUserRole findOneByGroupIdAndUserId (Long groupId, Long userId);
 
 
-    @Query("SELECT u from GroupUserRole  where u.user.i<>?1")
+    @Query("SELECT u from GroupUserRole u where u.user.id<>?1")
     List<GroupUserRole> findGroupsUserNotMember(Long id);
-
 
 }
