@@ -1,6 +1,6 @@
 import {NgModule} from '@angular/core';
 import {Routes, RouterModule} from '@angular/router';
-import {EventsListComponent} from "app/meetup-events/list/events-list.component";
+import {EventsListComponent} from "app/meetup-events/event-list/events-list.component";
 import {EventEditComponent} from "app/meetup-events/event-edit/event-edit.component";
 
 const routes: Routes = [

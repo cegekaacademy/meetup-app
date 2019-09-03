@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {MeetupEvent} from "app/meetup-events/model/MeetupEvent";
 import {EventsService} from "app/meetup-events/events.service";
 import {Router} from "@angular/router";
+import {AccountService, IUser, UserService} from "app/core";
 
 @Component({
     selector: 'jhi-events-list',
@@ -11,38 +12,54 @@ import {Router} from "@angular/router";
 export class EventsListComponent implements OnInit {
 
     events: MeetupEvent[] = [];
-    isFutureEventsActive: boolean = true;
-    isMyEventsActive: boolean = false;
-    isGetPendingActive: boolean = false;
+    isFutureEventsActive: boolean;
+    isMyEventsActive: boolean;
+    isGetPendingActive: boolean;
+    user: IUser;
 
-    constructor(private service: EventsService, private router: Router) {
+    constructor(private service: EventsService, private router: Router,
+                private accountService: AccountService,
+                private  userService: UserService) {
     }
 
     ngOnInit() {
+        this.getCurrentUser();
+    }
+
+    getCurrentUser() {
+        return this.accountService.identity().then((userIdentity) => {
+            this.userService.find(userIdentity.login).toPromise()
+                .then(
+                    response => this.onUserFound(response.body));
+        })
+    }
+
+    onUserFound(data) {
+        this.user = data;
         this.getEvents();
     }
 
     getEvents() {
         if (this.isFutureEventsActive) {
-            this.service.getFutureEvents().subscribe((response) => {
+            this.service.getFutureEvents(this.user.id).subscribe((response) => {
                 if (response) {
-                    this.events = response;
+                    this.events = response.body;
                 }
             }, () => {
 
             });
         } else if (this.isGetPendingActive) {
-            this.service.getPendingEvents().subscribe((response) => {
+            this.service.getPendingEvents(this.user.id).subscribe((response) => {
                 if (response) {
-                    this.events = response;
+                    this.events = response.body;
                 }
             }, () => {
 
             });
         } else {
-            this.service.getMyEvents().subscribe((response) => {
+            this.service.getMyEvents(this.user.id).subscribe((response) => {
                 if (response) {
-                    this.events = response;
+                    this.events = response.body
                 }
             }, () => {
 
@@ -53,8 +70,8 @@ export class EventsListComponent implements OnInit {
     setTabFutureEvents() {
         if (!this.isFutureEventsActive) {
             this.isFutureEventsActive = true;
-            this.isGetPendingActive=false;
-            this.isMyEventsActive=false;
+            this.isGetPendingActive = false;
+            this.isMyEventsActive = false;
         }
     }
 
@@ -62,7 +79,7 @@ export class EventsListComponent implements OnInit {
         if (!this.isMyEventsActive) {
             this.isMyEventsActive = true;
             this.isFutureEventsActive = false;
-            this.isGetPendingActive=false;
+            this.isGetPendingActive = false;
         }
     }
 
@@ -71,11 +88,11 @@ export class EventsListComponent implements OnInit {
         if (!this.isGetPendingActive) {
             this.isGetPendingActive = true;
             this.isFutureEventsActive = false;
-            this.isMyEventsActive=false;
+            this.isMyEventsActive = false;
         }
     }
 
-    onEventClick(event){
+    onEventClick(event) {
         this.router.navigate(['events/edit/' + event.id]);
     }
 }
