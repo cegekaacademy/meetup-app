@@ -22,7 +22,6 @@ public class Invitation {
     @Column(name = "description", length = 45)
     private String description;
 
-
     @NotNull(message = "Status must not be null")
     @Size(max = 15, message = "Status size must have max 15 letters")
     @Column(name = "status", length = 45)
