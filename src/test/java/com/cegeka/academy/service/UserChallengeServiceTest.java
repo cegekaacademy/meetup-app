@@ -24,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Date;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertTrue;
@@ -226,7 +227,7 @@ public class UserChallengeServiceTest  {
         userChallengeDTO.setPoints(49);
         double actual = userChallengeDTO.getPoints();
         double expected = userChallengeService.rateUser(userChallengeDTO, usedUser.getId()).getPoints();
-        assertThat(actual == expected);
+        assertThat(actual).isEqualTo(expected);
     }
 
     @Test
@@ -276,15 +277,49 @@ public class UserChallengeServiceTest  {
         }
     }
 
-
     @Test
-    public void  testInitUserChallengeIsWorking() {
+    public void testInitUserChallengeIsWorking() throws NotFoundException {
 
         userChallengeService.initUserChallenge(challenge2, invitation);
-        assertThat(userChallengeRepository
+
+        Optional<UserChallenge> userChallengeOptional = userChallengeRepository
                 .findByUserIdAndChallengeIdAndInvitationId(
                         invitation.getUser().getId(),
                         challenge2.getId(),
-                        invitation.getId()).isPresent()).isEqualTo(true);
+                        invitation.getId());
+        assertThat(userChallengeOptional.isPresent()).isEqualTo(true);
+    }
+
+    @Test
+    public void testInitUserChallengeThrowsNotFoundExceptionForMissingChallenge() throws NotFoundException {
+
+        Challenge temporaryChallenge = new Challenge();
+        temporaryChallenge.setId((long)200);
+
+        Assertions.assertThrows(NotFoundException.class,
+                () -> userChallengeService.initUserChallenge(temporaryChallenge, invitation));
+
+    }
+
+    @Test
+    public void testInitUserChallengeThrowsNotFoundExceptionForMissingInvitation() {
+        Invitation temporaryInvitation = new Invitation();
+        temporaryInvitation.setId((long)200);
+
+        Assertions.assertThrows(NotFoundException.class,
+                () -> userChallengeService.initUserChallenge(challenge2, temporaryInvitation));
+    }
+
+    @Test
+    public void testInitUserChallengeThrowsNotFoundExceptionForMissingUser() {
+        User temporaryUser = new User();
+        temporaryUser.setId((long)200);
+
+        Invitation temporaryInvitation = new Invitation();
+        temporaryInvitation.setId((long)5);
+        temporaryInvitation.setUser(temporaryUser);
+
+        Assertions.assertThrows(NotFoundException.class,
+                () -> userChallengeService.initUserChallenge(challenge2, temporaryInvitation));
     }
 }

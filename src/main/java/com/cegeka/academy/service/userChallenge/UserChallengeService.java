@@ -24,5 +24,5 @@ public interface UserChallengeService {
     UserChallenge rateUser(UserChallengeDTO userChallengeDTO, Long ownerId)
             throws WrongOwnerException, NoSuchElementException;
 
-    UserChallenge initUserChallenge (Challenge challenge, Invitation invitation);
+    UserChallenge initUserChallenge (Challenge challenge, Invitation invitation) throws NotFoundException;
 }

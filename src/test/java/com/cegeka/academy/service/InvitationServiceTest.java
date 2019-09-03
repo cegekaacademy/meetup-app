@@ -328,7 +328,8 @@ public class InvitationServiceTest {
     @Test
     void assertThatSendGroupInvitationToPrivateEventThrowsNotFoundExceptionTest() {
 
-        Assertions.assertThrows(NotFoundException.class, () -> invitationService.sendGroupInvitationsToPrivateEvents(1L, invitationWithNullEvent));
+        Assertions.assertThrows(NotFoundException.class,
+                () -> invitationService.sendGroupInvitationsToPrivateEvents(1L, invitationWithNullEvent));
     }
 
     @Test
