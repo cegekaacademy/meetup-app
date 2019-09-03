@@ -10,6 +10,7 @@ import com.cegeka.academy.service.dto.ChallengeDTO;
 import com.cegeka.academy.service.dto.UserDTO;
 import com.cegeka.academy.service.mapper.ChallengeMapper;
 import com.cegeka.academy.service.mapper.UserMapper;
+import com.cegeka.academy.web.rest.errors.InvalidFieldException;
 import com.cegeka.academy.web.rest.errors.NotFoundException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
@@ -146,8 +147,8 @@ public class ChallengeServiceTest {
 
        challengeService.saveChallenge(challengeDTO);
 
-       assertThat(challengeRepository.findAll().get(0).getCreator()).isEqualTo(new UserMapper().userDTOToUser(challengeDTO.getCreator()));
-       assertThat(challengeRepository.findAll().get(0).getChallengeCategory()).isEqualTo(ChallengeMapper.convertChallengeCategoryDTOToChallengeCategory(challengeDTO.getChallengeCategory()));
+       assertThat(challengeRepository.findAll().get(0).getCreator().getId()).isEqualTo(challengeDTO.getCreator().getId());
+       assertThat(challengeRepository.findAll().get(0).getChallengeCategory().getId()).isEqualTo(challengeDTO.getChallengeCategory().getId());
        assertThat(challengeRepository.findAll().get(0).getDescription()).isEqualTo(challengeDTO.getDescription());
        assertThat(challengeRepository.findAll().get(0).getStartDate()).isEqualTo(challengeDTO.getStartDate());
        assertThat(challengeRepository.findAll().get(0).getEndDate()).isEqualTo(challengeDTO.getEndDate());
@@ -202,9 +203,93 @@ public class ChallengeServiceTest {
 
         ChallengeDTO challengeDTO = challengeService.getChallengeById(expectedChallenge.getId());
 
-        Challenge actualChallenge = ChallengeMapper.convertChallengeDTOToChallenge(challengeDTO);
+        Assertions.assertEquals(expectedChallenge.getId(), challengeDTO.getId());
+        Assertions.assertEquals(expectedChallenge.getCreator().getId(), challengeDTO.getCreator().getId());
+        Assertions.assertEquals(expectedChallenge.getChallengeCategory().getId(), challengeDTO.getChallengeCategory().getId());
+        Assertions.assertEquals(expectedChallenge.getDescription(), challengeDTO.getDescription());
+        Assertions.assertEquals(expectedChallenge.getStartDate(), challengeDTO.getStartDate());
+        Assertions.assertEquals(expectedChallenge.getEndDate(), challengeDTO.getEndDate());
+        Assertions.assertEquals(expectedChallenge.getStatus(), challengeDTO.getStatus());
+        Assertions.assertEquals(expectedChallenge.getPoints(), challengeDTO.getPoints());
 
-        Assertions.assertEquals(expectedChallenge, actualChallenge);
+    }
+
+    @Test
+    void updateChallenge() throws NotFoundException {
+        challengeRepository.save(challenge);
+
+        ChallengeDTO challengeDTO = ChallengeMapper.convertChallengeToChallengeDTO(challenge);
+
+        long expectedId = challenge.getId();
+        String expectedStatus = "updatedStatus";
+
+        ChallengeCategory expectedChallengeCategory = new ChallengeCategory();
+        expectedChallengeCategory.setName("updatedCategory");
+        expectedChallengeCategory.setDescription("updatePerformed");
+
+        challengeCategoryRepository.save(expectedChallengeCategory);
+
+        ChallengeCategoryDTO expectedChallengeCategoryDTO;
+        expectedChallengeCategoryDTO  = ChallengeMapper.convertChallengeCategoryToChallengeCategoryDTO(expectedChallengeCategory);
+
+        challengeDTO.setStatus(expectedStatus);
+        challengeDTO.setChallengeCategory(expectedChallengeCategoryDTO);
+
+        ChallengeDTO actualChallengeDTO = challengeService.updateChallenge(challenge.getId(), challengeDTO);
+
+        Challenge actualChallenge = ChallengeMapper.convertChallengeDTOToChallenge(actualChallengeDTO);
+
+        String actualStatus = actualChallenge.getStatus();
+        ChallengeCategory actualChallengeCategory = actualChallenge.getChallengeCategory();
+
+        Assertions.assertEquals(expectedStatus, actualStatus);
+        Assertions.assertEquals(expectedChallengeCategory, actualChallengeCategory);
+    }
+
+    @Test
+    void updateChallengeNotFoundExceptionTest(){
+        challengeDTO.setId(0L);
+        Assertions.assertThrows(NotFoundException.class, ()->challengeService.updateChallenge(0L, challengeDTO));
+    }
+
+
+    @Test
+    void invalidFieldExceptionTest_WITH_invalidChallengeCategoryId() {
+        challengeRepository.save(challenge);
+
+        ChallengeDTO challengeDTO = ChallengeMapper.convertChallengeToChallengeDTO(challenge);
+
+        ChallengeCategory expectedChallengeCategory = new ChallengeCategory();
+        expectedChallengeCategory.setId(0L);
+        expectedChallengeCategory.setName("updatedCategory");
+        expectedChallengeCategory.setDescription("updatePerformed");
+
+        ChallengeCategoryDTO expectedChallengeCategoryDTO;
+        expectedChallengeCategoryDTO  = ChallengeMapper.convertChallengeCategoryToChallengeCategoryDTO(expectedChallengeCategory);
+
+        challengeDTO.setChallengeCategory(expectedChallengeCategoryDTO);
+
+        Assertions.assertThrows(InvalidFieldException.class, () -> challengeService.updateChallenge(challenge.getId(), challengeDTO));
+    }
+
+    @Test
+    void invalidFieldExceptionTest_WITH_differentCreatorId() {
+        challengeRepository.save(challenge);
+
+        ChallengeDTO challengeDTO = ChallengeMapper.convertChallengeToChallengeDTO(challenge);
+
+        challengeDTO.getCreator().setId(0L);
+
+        Assertions.assertThrows(InvalidFieldException.class, () -> challengeService.updateChallenge(0L, challengeDTO));
+    }
+
+    @Test
+    void invalidFieldExceptionTest_WITH_pathCreatorIdDistinctFromDtoCreatorId() {
+        challengeRepository.save(challenge);
+
+        ChallengeDTO challengeDTO = ChallengeMapper.convertChallengeToChallengeDTO(challenge);
+
+        Assertions.assertThrows(InvalidFieldException.class, () -> challengeService.updateChallenge(0L, challengeDTO));
     }
 
     @AfterEach

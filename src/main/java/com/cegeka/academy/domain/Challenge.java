@@ -4,6 +4,7 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.Date;
 import java.util.Objects;
@@ -19,17 +20,22 @@ public class Challenge {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "creator")
+    @NotNull(message = "Pentru un challenge este necesar un creator")
     private User creator;
 
     @Column(name = "start_date")
+    @NotNull
     private Date startDate;
 
     @Column(name = "end_date")
+    @NotNull
     private Date endDate;
 
     @Size(min = 1, max = 50)
+    @NotNull
     private String status;
 
+    @NotNull
     private double points;
 
     @Column(name = "description")

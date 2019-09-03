@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Set;
 
@@ -31,6 +32,11 @@ public class ChallengeController {
         challengeService.deleteChallenge(id);
     }
 
+    @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
+    public ChallengeDTO updateChallenge(@Valid @RequestBody ChallengeDTO challengeDTO, @PathVariable(value ="id") Long challengeId) throws NotFoundException {
+        return challengeService.updateChallenge(challengeId, challengeDTO);
+    }
+
     @GetMapping(path = "/user/{id}")
     public Set<ChallengeDTO> getUserChallengesByUserId(@PathVariable long id) throws NotFoundException {
         return challengeService.getChallengesByUserId(id);
@@ -38,7 +44,7 @@ public class ChallengeController {
 
 
     @PostMapping
-    public void saveChallenge(@RequestBody ChallengeDTO challenge) {
+    public void saveChallenge(@Valid @RequestBody ChallengeDTO challenge) {
 
         challengeService.saveChallenge(challenge);
 

@@ -15,4 +15,19 @@ public class EventMapper {
         event.setEndDate(eventDTO.getEndDate());
         return event;
     }
+
+    public static EventDTO convertEventtoEventDTO(Event event) {
+        EventDTO eventDTO = new EventDTO();
+        eventDTO.setPublic(event.isPublic());
+        eventDTO.setName(event.getName());
+        eventDTO.setDescription(event.getDescription());
+        eventDTO.setNotes(event.getNotes());
+        eventDTO.setStartDate(event.getStartDate());
+        eventDTO.setEndDate(event.getEndDate());
+
+        if (event.getOwner() != null) {
+            eventDTO.setCreatedBy(event.getOwner().getLogin());
+        }
+        return eventDTO;
+    }
 }

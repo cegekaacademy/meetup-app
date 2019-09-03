@@ -7,8 +7,13 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+
 @Repository
 public interface CategoryRepository extends JpaRepository<Category, Long> {
+
     List<Category> findAllByEvents_id(Long eventId);
 
+    Category findByName(String categoryName);
+
+    List<Category> findDistinctByEventsIn(List<Event> events);
 }

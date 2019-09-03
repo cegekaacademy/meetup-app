@@ -2,12 +2,13 @@ package com.cegeka.academy.service.dto;
 
 public class InvitationDTO {
 
-
     private String description;
 
     private String status;
 
     private String userName;
+
+    private Long userId;
 
     private String eventName;
 
@@ -34,6 +35,10 @@ public class InvitationDTO {
     public void setUserName(String userName) {
         this.userName = userName;
     }
+
+    public Long getUserId() { return userId; }
+
+    public void setUserId(Long userId) { this.userId = userId; }
 
     public String getEventName() {
         return eventName;

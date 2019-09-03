@@ -2,12 +2,15 @@ package com.cegeka.academy.service;
 
 import com.cegeka.academy.AcademyProjectApp;
 import com.cegeka.academy.domain.Address;
+import com.cegeka.academy.domain.Category;
 import com.cegeka.academy.domain.Event;
 import com.cegeka.academy.domain.User;
 import com.cegeka.academy.repository.AddressRepository;
+import com.cegeka.academy.repository.CategoryRepository;
 import com.cegeka.academy.repository.EventRepository;
 import com.cegeka.academy.repository.UserRepository;
 import com.cegeka.academy.repository.util.TestsRepositoryUtil;
+import com.cegeka.academy.service.dto.EventDTO;
 import com.cegeka.academy.service.event.EventService;
 import com.cegeka.academy.web.rest.errors.NotFoundException;
 import org.junit.jupiter.api.Assertions;
@@ -17,7 +20,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -25,25 +30,41 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Transactional
 public class EventServiceT {
 
-    private @Autowired
-    UserRepository userRepository;
-    private @Autowired
-    AddressRepository addressRepository;
-    private @Autowired
-    EventService eventService;
-    private @Autowired
-    EventRepository eventRepository;
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private AddressRepository addressRepository;
+
+    @Autowired
+    private EventService eventService;
+
+    @Autowired
+    private EventRepository eventRepository;
+
+    @Autowired
+    private CategoryRepository categoryRepository;
+
 
     private Event event;
     private User user;
+    private Category category1, category3;
+    private Address address;
 
     @BeforeEach
     void init() {
         user = TestsRepositoryUtil.createUser("cosminalex", "anaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaana");
         userRepository.saveAndFlush(user);
-        Address address = TestsRepositoryUtil.createAddress("Romania", "Bucuresti", "Splai", "333", "Casa", "Casa magica");
+        address = TestsRepositoryUtil.createAddress("Romania", "Bucuresti", "Splai", "333", "Casa", "Casa magica");
         addressRepository.save(address);
-        event = TestsRepositoryUtil.createEvent("Petrecere", "GAIA party", true, address, user);
+        category1 = TestsRepositoryUtil.createCategory("Sport", "Liber pentru toate varstele!");
+        category3 = TestsRepositoryUtil.createCategory("Arta", "Expozitii de arta");
+        categoryRepository.save(category1);
+        categoryRepository.save(category3);
+        Set<Category> list1 = new HashSet<>();
+        list1.add(category1);
+        list1.add(category3);
+        event = TestsRepositoryUtil.createEvent("Ana are mere!", "KFC Krushers Party", true, address, user, list1, "https://scontent.fotp3-2.fna.fbcdn.net/v/t1.0-9/67786277_2592710307438854_5055220041180512256");
         eventService.createEvent(event);
     }
 
@@ -81,16 +102,21 @@ public class EventServiceT {
 
     @Test
     @Transactional
-    public void assertThatAddUserToPublicEvent_ThrowsException() {
-        Assertions.assertThrows(NotFoundException.class, () -> eventService.addUserToPublicEvent(1001l, event));
+    public void assertThatAddUserToPublicEvent_ThrowsExceptionWithWrongUserId() {
+        Assertions.assertThrows(NotFoundException.class, () -> eventService.addUserToPublicEvent(event.getId(), 1001l));
     }
 
+    @Test
+    @Transactional
+    public void assertThatAddUserToPublicEvent_ThrowsExceptionWithWrongEventId() {
+        Assertions.assertThrows(NotFoundException.class, () -> eventService.addUserToPublicEvent(102l, user.getId()));
+    }
     @Test
     @Transactional
     public void assertThatAddUserToPublicEventWorksWithPrivateEvent() throws NotFoundException {
         event.setPublic(false);
         eventRepository.save(event);
-        eventService.addUserToPublicEvent(user.getId(), event);
+        eventService.addUserToPublicEvent(event.getId(), user.getId());
         List<Event> events = eventRepository.findByUsers_id(user.getId());
         assertThat(events.size()).isEqualTo(0);
     }
@@ -98,7 +124,7 @@ public class EventServiceT {
     @Test
     @Transactional
     public void assertThatAddUserToPublicEventWorksWithUser() throws NotFoundException {
-        eventService.addUserToPublicEvent(user.getId(), event);
+        eventService.addUserToPublicEvent(event.getId(), user.getId());
         List<User> users = userRepository.findAllByEvents_id(event.getId());
         assertThat(users.size()).isEqualTo(1);
 
@@ -107,11 +133,93 @@ public class EventServiceT {
     @Test
     @Transactional
     public void assertThatAddUserToPublicEventWorksWithEvent() throws NotFoundException {
-        eventService.addUserToPublicEvent(user.getId(), event);
+        eventService.addUserToPublicEvent(event.getId(), user.getId());
         List<Event> events = eventRepository.findByUsers_id(user.getId());
         assertThat(events.size()).isEqualTo(1);
 
     }
 
 
+    @Test
+    @Transactional
+    public void getEventsByUser_ThrowsException() {
+        Assertions.assertThrows(NotFoundException.class, () -> eventService.getEventsByUser(1002l));
+    }
+
+    @Test
+    @Transactional
+    public void getEventsByUserWorks() throws NotFoundException {
+        eventService.addUserToPublicEvent(event.getId(), user.getId());
+        List<EventDTO> events = eventService.getEventsByUser(user.getId());
+        assertThat(events.size()).isEqualTo(1);
+    }
+
+    @Test
+    @Transactional
+    public void getAllByOwner_ThrowsException() {
+        User notOwner = TestsRepositoryUtil.createUser("loginx", "anaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaana");
+        userRepository.saveAndFlush(notOwner);
+        Assertions.assertThrows(NotFoundException.class, () -> eventService.getAllByOwner(notOwner));
+    }
+
+    @Test
+    @Transactional
+    public void getAllByOwnerWorks() throws NotFoundException {
+        List<EventDTO> events = eventService.getAllByOwner(user);
+        assertThat(events.size()).isEqualTo(1);
+    }
+
+    @Test
+    public void assertGetEventsByUserInterestedCategoriesIsWorkingWithInvalidArgument() {
+        Assertions.assertThrows(NotFoundException.class, () -> eventService.getEventsByUserInterestedCategories(100L));
+    }
+
+    @Test
+    public void assertGetEventsByUserInterestedCategoriesIsWorkingWithNoEvents() {
+        User user2 = TestsRepositoryUtil.createUser("aaaaaa", "anaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaana");
+        userRepository.saveAndFlush(user2);
+        Assertions.assertThrows(NotFoundException.class, () -> eventService.getEventsByUserInterestedCategories(user2.getId()));
+    }
+
+    @Test
+    public void assertGetEventsByUserInterestedCategoriesIsWorkingWithValidData() throws NotFoundException {
+
+        Set<Category> list2 = new HashSet<>();
+        list2.add(category1);
+        list2.add(category3);
+        Event event2 = TestsRepositoryUtil.createEvent("Ana are mere!", "name", true, address, user, list2, null);
+        eventRepository.save(event2);
+        user.getEvents().add(event2);
+        userRepository.save(user);
+        List<EventDTO> eventDTOS = eventService.getEventsByUserInterestedCategories(user.getId());
+        assertThat(eventDTOS.size()).isEqualTo(1);
+        assertThat(eventDTOS.get(0).getName()).isEqualTo(event.getName());
+
+    }
+
+    @Test
+    public void assertGetEventsByUserInterestedCategoriesIsWorkingWithNoResult() throws NotFoundException {
+
+        eventRepository.save(event);
+        user.getEvents().add(event);
+        userRepository.save(user);
+        List<EventDTO> eventDTOS = eventService.getEventsByUserInterestedCategories(user.getId());
+        assertThat(eventDTOS.size()).isEqualTo(0);
+
+    }
+
+    @Test
+    public void assertGetEventsByUserInterestedCategoriesIsWorkingWithWrongCategory() throws NotFoundException {
+
+        Set<Category> list2 = new HashSet<>();
+        Category categoryNotInterested = TestsRepositoryUtil.createCategory("notinterested", "not interested");
+        list2.add(categoryNotInterested);
+        Event event2 = TestsRepositoryUtil.createEvent("Ana are mere!", "name", true, address, user, list2, null);
+        eventRepository.save(event2);
+        user.getEvents().add(event);
+        userRepository.save(user);
+        List<EventDTO> eventDTOS = eventService.getEventsByUserInterestedCategories(user.getId());
+        assertThat(eventDTOS.size()).isEqualTo(0);
+
+    }
 }

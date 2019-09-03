@@ -2,11 +2,14 @@ package com.cegeka.academy.service;
 
 import com.cegeka.academy.AcademyProjectApp;
 import com.cegeka.academy.domain.*;
+import com.cegeka.academy.domain.enums.ChallengeStatus;
 import com.cegeka.academy.domain.enums.InvitationStatus;
 import com.cegeka.academy.repository.*;
 import com.cegeka.academy.repository.util.TestsRepositoryUtil;
 import com.cegeka.academy.service.dto.InvitationDTO;
 import com.cegeka.academy.service.invitation.InvitationService;
+import com.cegeka.academy.service.mapper.InvitationMapper;
+import com.cegeka.academy.web.rest.errors.ExistingItemException;
 import com.cegeka.academy.web.rest.errors.NotFoundException;
 import org.junit.Assert;
 import org.junit.jupiter.api.Assertions;
@@ -16,10 +19,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashSet;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 @SpringBootTest(classes = AcademyProjectApp.class)
 @Transactional
@@ -50,27 +58,55 @@ public class InvitationServiceTest {
     @Autowired
     private RoleRepository roleRepository;
 
-    private User user, user1;
+    @Autowired
+    private ChallengeRepository challengeRepository;
+
+    @Autowired
+    private ChallengeCategoryRepository challengeCategoryRepository;
+
+    @Autowired
+    private UserChallengeRepository userChallengeRepository;
+
+    @Autowired
+    private CategoryRepository categoryRepository;
+
+    private User user, user1, user2;
     private Event event, event2, publicEvent;
     private Invitation invitation, invitation2, invitation3, invitationSendToGroup, invitationWithNullEvent, invitationWithPublicEvent;
+    private InvitationDTO invitationDTO;
     private Address address;
     private Group group;
-    private GroupUserRole groupUserRole1, groupUserRole2;
+    private GroupUserRole groupUserRole1, groupUserRole2, groupUserRole3;
     private Role role;
+    private Challenge challenge;
+    private ChallengeCategory challengeCategory;
+    private UserChallenge userChallenge;
+
+    private UserChallengeServiceTest userChallengeServiceTest;
 
     @BeforeEach
     public void init() {
 
         userRepository.deleteAll();
+        categoryRepository.deleteAll();
         user = TestsRepositoryUtil.createUser("login", "anaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaana");
         userRepository.saveAndFlush(user);
         user1 = TestsRepositoryUtil.createUser("login2", "anaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaaka");
         userRepository.save(user1);
+        user2 = TestsRepositoryUtil.createUser("login3", "anaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaama");
+        userRepository.save(user2);
         address = TestsRepositoryUtil.createAddress("Romania", "Bucuresti", "Splai", "333", "Casa", "Casa magica");
         addressRepository.saveAndFlush(address);
-        event = TestsRepositoryUtil.createEvent("Ana are mere!", "KFC Krushers Party", false, address, user);
+        Category category1 = TestsRepositoryUtil.createCategory("Sport", "Liber pentru toate varstele!");
+        Category category3 = TestsRepositoryUtil.createCategory("Arta", "Expozitii de arta");
+        categoryRepository.save(category1);
+        categoryRepository.save(category3);
+        Set<Category> list1 = new HashSet<>();
+        list1.add(category1);
+        list1.add(category3);
+        event = TestsRepositoryUtil.createEvent("Ana are mere!", "KFC Krushers Party", false, address, user, list1, "https://scontent.fotp3-2.fna.fbcdn.net/v/t1.0-9/67786277_2592710307438854_5055220041180512256");
         eventRepository.saveAndFlush(event);
-        publicEvent = TestsRepositoryUtil.createEvent("Ana are mere!", "KFC Krushers Party", true, address, user);
+        publicEvent = TestsRepositoryUtil.createEvent("Ana are mere!", "KFC Krushers Party", true, address, user, list1, "sfgsfgf");
         eventRepository.saveAndFlush(publicEvent);
         invitation = TestsRepositoryUtil.createInvitation(InvitationStatus.PENDING.name(), "ana are mere", event, user);
         invitationService.saveInvitation(invitation);
@@ -82,11 +118,34 @@ public class InvitationServiceTest {
         groupUserRoleRepository.save(groupUserRole1);
         groupUserRole2 = TestsRepositoryUtil.createGroupUserRole(userRepository.findAll().get(1), groupRepository.findAll().get(0), roleRepository.findAll().get(0));
         groupUserRoleRepository.save(groupUserRole2);
+        groupUserRole3 = TestsRepositoryUtil.createGroupUserRole(userRepository.findAll().get(2), groupRepository.findAll().get(0), roleRepository.findAll().get(0));
+        groupUserRoleRepository.save(groupUserRole3);
         invitationSendToGroup = TestsRepositoryUtil.createInvitation(InvitationStatus.PENDING.name(), "aaaa", eventRepository.findAll().get(0), null);
         invitationWithNullEvent = TestsRepositoryUtil.createInvitation(InvitationStatus.PENDING.name(), "aaaa", null, null);
         invitationWithPublicEvent = TestsRepositoryUtil.createInvitation(InvitationStatus.PENDING.name(), "aaaa", eventRepository.findAll().get(1), null);
+        challengeCategory = TestsRepositoryUtil.createChallengeCategory("Description", "Name");
+        challengeCategoryRepository.save(challengeCategory);
+        challenge = TestsRepositoryUtil.createChallenge(challengeCategory, "Description", user1,
+                "Status", new Date(), new Date(), 50.0);
+        challengeRepository.save(challenge);
+        userChallenge  = TestsRepositoryUtil.createUserChallenge(challenge, user2,50.0, "Status", invitation,
+                new Date(), new Date());
+        userChallengeRepository.save(userChallenge);
 
+        invitationDTO = initInvitationDTO();
     }
+
+    public InvitationDTO initInvitationDTO() {
+        InvitationDTO invitationDTO = new InvitationDTO();
+
+        invitationDTO.setStatus(InvitationStatus.PENDING.toString());
+        invitationDTO.setDescription("Description");
+        invitationDTO.setUserId(user.getId());
+        invitationDTO.setEventName(null);
+
+        return invitationDTO;
+    }
+
     @Test
     @Transactional
     public void assertThatSaveInvitationIsWorking() {
@@ -99,6 +158,7 @@ public class InvitationServiceTest {
         assertThat(list.get(0).getUserName()).isEqualTo(invitation.getUser().getFirstName() + " " + invitation.getUser().getLastName());
         assertThat(list.get(0).getEventName()).isEqualTo(invitation.getEvent().getName());
     }
+
     @Test
     @Transactional
     public void assertThatSaveInvitationToListIsWorking() {
@@ -109,18 +169,29 @@ public class InvitationServiceTest {
         assertThat(event.getPendingInvitations().size()).isEqualTo(2);
 
     }
+
     @Test
     @Transactional
     public void assertThatSaveUserToParticipationListAfterAcceptInvitationIsWorking() {
-        event2 = TestsRepositoryUtil.createEvent("Dana Dana!", "KFC Krushers Party", true, address, user);
+        Category category1 = TestsRepositoryUtil.createCategory("Sport1", "Liber pentru toate varstele!");
+        Category category3 = TestsRepositoryUtil.createCategory("Arta1", "Expozitii de arta");
+        Set<Category> list1 = new HashSet<>();
+        list1.add(category1);
+        list1.add(category3);
+        Event event2 = TestsRepositoryUtil.createEvent("Ana are mere!", "KFC Krushers Party", true, address, user, list1, "https://scontent.fotp3-2.fna.fbcdn.net/v/t1.0-9/67786277_2592710307438854_5055220041180512256");
         eventRepository.save(event2);
         invitation3 = TestsRepositoryUtil.createInvitation(InvitationStatus.PENDING.name(), "ana are mere", event2, user);
         invitationService.saveInvitation(invitation3);
-        invitationService.acceptInvitation(invitation3);
-        assertThat(event2.getUsers().size()).isEqualTo(1);
+        try {
+            invitationService.acceptInvitation(invitation3.getId());
+        } catch (NotFoundException e) {
+            e.printStackTrace();
+        }
+        assertThat(user.getEvents().size()).isEqualTo(1);
         assertThat(event.getUsers().size()).isEqualTo(0);
 
     }
+
     @Test
     @Transactional
     public void assertThatUpdateInvitationIsWorking() {
@@ -161,11 +232,34 @@ public class InvitationServiceTest {
         assertThat(pendingListUser.size()).isEqualTo(1);
 
     }
+    @Test
+    @Transactional
+    public void assertThatAcceptInvitation_ThrowsExceptionWithWrongInvitationId() {
+        Assertions.assertThrows(NotFoundException.class, () -> invitationService.acceptInvitation(40l));
+    }
 
     @Test
-    public void assertThatAcceptInvitationIsWorking() {
+    @Transactional
+    public void assertThatAcceptInvitation_ThrowsExceptionWithWrongEventId() {
+
+        invitation.getEvent().setId(111L);
+        invitationRepository.save(invitation);
+        Assertions.assertThrows(NotFoundException.class, () -> invitationService.acceptInvitation(invitation.getId()));
+    }
+
+    @Test
+    @Transactional
+    public void assertThatAcceptInvitation_ThrowsExceptionWithWrongUserId() {
+
+        invitation.getUser().setId(111l);
+        invitationRepository.save(invitation);
+        Assertions.assertThrows(NotFoundException.class, () -> invitationService.acceptInvitation(invitation.getId()));
+    }
+
+    @Test
+    public void assertThatAcceptInvitationIsWorking() throws NotFoundException {
         List<Invitation> list = invitationRepository.findAll();
-        invitationService.acceptInvitation(invitation);
+        invitationService.acceptInvitation(invitation.getId());
         assertThat(list.size()).isEqualTo(1);
         assertThat(list.get(0).getStatus()).isEqualTo(invitation.getStatus());
         assertThat(list.get(0).getStatus()).isEqualTo(InvitationStatus.ACCEPTED.name());
@@ -173,14 +267,20 @@ public class InvitationServiceTest {
         assertThat(list.get(0).getUser()).isEqualTo(invitation.getUser());
         assertThat(list.get(0).getEvent()).isEqualTo(invitation.getEvent());
         assertThat(event.getPendingInvitations().size()).isEqualTo(0);
-        assertThat(event.getUsers().size()).isEqualTo(1);
+        assertThat(user.getEvents().size()).isEqualTo(1);
     }
 
     @Test
-    public void assertThatRejectInvitationIsWorking() {
+    @Transactional
+    public void assertThatRejectInvitation_ThrowsExceptionWithWrongInvitationId() {
+        Assertions.assertThrows(NotFoundException.class, () -> invitationService.rejectInvitation(40l));
+    }
+
+    @Test
+    public void assertThatRejectInvitationIsWorking() throws NotFoundException {
         List<Invitation> list = invitationRepository.findAll();
         invitation.setStatus(InvitationStatus.PENDING.name());
-        invitationService.rejectInvitation(invitation);
+        invitationService.rejectInvitation(invitation.getId());
         assertThat(list.size()).isEqualTo(1);
         assertThat(list.get(0).getStatus()).isEqualTo(invitation.getStatus());
         assertThat(list.get(0).getStatus()).isEqualTo(InvitationStatus.REJECTED.name());
@@ -194,13 +294,19 @@ public class InvitationServiceTest {
 
         Long idGroup = groupRepository.findAll().get(0).getId();
         invitationService.sendGroupInvitationsToPrivateEvents(idGroup, invitationSendToGroup);
+        invitationSendToGroup.setId(invitationRepository.findAll().get(2).getId());
         List<Invitation> list = invitationRepository.findAll();
-        Optional<User> findUser = userRepository.findById(list.get(list.lastIndexOf(invitationSendToGroup)).getUser().getId());
-        Optional<Event> findEvent = eventRepository.findById(list.get(list.lastIndexOf(invitationSendToGroup)).getEvent().getId());
+        Optional<User> findUser1 = userRepository.findById(list.get(list.lastIndexOf(invitationSendToGroup)).getUser().getId());
+        Optional<Event> findEvent1 = eventRepository.findById(list.get(list.lastIndexOf(invitationSendToGroup)).getEvent().getId());
+        invitationSendToGroup.setId(invitationRepository.findAll().get(1).getId());
+        Optional<User> findUser2 = userRepository.findById(list.get(list.lastIndexOf(invitationSendToGroup) - 1).getUser().getId());
+        Optional<Event> findEvent2 = eventRepository.findById(list.get(list.lastIndexOf(invitationSendToGroup) - 1).getEvent().getId());
 
-        assertThat(list.size()).isEqualTo(2);
-        Assert.assertTrue(findUser.isPresent());
-        Assert.assertTrue(findEvent.isPresent());
+        assertThat(list.size()).isEqualTo(3);
+        Assert.assertTrue(findUser1.isPresent());
+        Assert.assertTrue(findEvent1.isPresent());
+        Assert.assertTrue(findUser2.isPresent());
+        Assert.assertTrue(findEvent2.isPresent());
     }
 
     @Test
@@ -222,7 +328,8 @@ public class InvitationServiceTest {
     @Test
     void assertThatSendGroupInvitationToPrivateEventThrowsNotFoundExceptionTest() {
 
-        Assertions.assertThrows(NotFoundException.class, () -> invitationService.sendGroupInvitationsToPrivateEvents(1L, invitationWithNullEvent));
+        Assertions.assertThrows(NotFoundException.class,
+                () -> invitationService.sendGroupInvitationsToPrivateEvents(1L, invitationWithNullEvent));
     }
 
     @Test
@@ -234,4 +341,44 @@ public class InvitationServiceTest {
         assertThat(list.size()).isEqualTo(1);
     }
 
+    @Test
+    public void assertThatCreateChallengeInvitationIsWorking() throws NotFoundException, ExistingItemException {
+
+        Invitation actual = InvitationMapper.createInvitation(
+                invitationDTO.getDescription(),
+                invitationDTO.getStatus(),
+                user,
+                null);
+
+        Invitation expected = invitationService.createChallengeInvitationForOneUser(invitationDTO, challenge.getId());
+
+        assertThat(actual.hashCode() == expected.hashCode());
+    }
+
+    @Test
+    public void assertThatCreateChallengeInvitationThrowsExistingItemException() {
+
+        invitationDTO.setUserId(user2.getId());
+
+        Assertions.assertThrows(ExistingItemException.class,
+                () -> invitationService
+                        .createChallengeInvitationForOneUser(invitationDTO, userChallenge.getChallenge().getId()));
+
+    }
+
+    @Test
+    public void assertThatCreateChallengeInvitationThrowsNotFoundExceptionForMissingChallenge() {
+
+        Assertions.assertThrows(NotFoundException.class,
+                () -> invitationService.createChallengeInvitationForOneUser(invitationDTO, (long)2));
+    }
+
+    @Test
+    public void assertThatCreateChallengeInvitationThrowsNotFoundExceptionForMissingUser() {
+
+        invitationDTO.setUserId((long)200);
+
+        Assertions.assertThrows(NotFoundException.class,
+                () -> invitationService.createChallengeInvitationForOneUser(invitationDTO, challenge.getId()));
+    }
 }

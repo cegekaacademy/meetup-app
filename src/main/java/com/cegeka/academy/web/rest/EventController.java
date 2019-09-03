@@ -1,7 +1,11 @@
 package com.cegeka.academy.web.rest;
 
 import com.cegeka.academy.domain.Event;
+import com.cegeka.academy.domain.User;
 import com.cegeka.academy.repository.EventRepository;
+import com.cegeka.academy.repository.UserRepository;
+import com.cegeka.academy.service.UserService;
+import com.cegeka.academy.service.dto.EventDTO;
 import com.cegeka.academy.service.event.EventService;
 import com.cegeka.academy.service.serviceValidation.ExpirationCheckService;
 import com.cegeka.academy.service.serviceValidation.ValidationAccessService;
@@ -23,14 +27,19 @@ public class EventController {
     private final ValidationAccessService validationAccessService;
     private final ExpirationCheckService expirationCheckService;
     private final EventRepository eventRepository;
+    private final UserRepository userRepository;
+    private final UserService userService;
 
     @Autowired
     public EventController(EventService eventService, ValidationAccessService validationAccessService,
-                           ExpirationCheckService expirationCheckService, EventRepository eventRepository) {
+                           ExpirationCheckService expirationCheckService, EventRepository eventRepository,
+                           UserRepository userRepository, UserService userService) {
         this.eventService = eventService;
         this.validationAccessService = validationAccessService;
         this.expirationCheckService = expirationCheckService;
         this.eventRepository = eventRepository;
+        this.userRepository = userRepository;
+        this.userService = userService;
     }
 
     @GetMapping("/all_public")
@@ -94,11 +103,34 @@ public class EventController {
 
     }
 
-    @PutMapping("addUser/{id}")
-    public void addUserToPublicEvent(@PathVariable(value = "id") Long id, @Valid @RequestBody Event event) throws NotFoundException {
+    @PutMapping("user/{eventId}/{userId}")
+    public void addUserToPublicEvent(@PathVariable(value = "eventId") Long eventId, @PathVariable(value = "userId") Long userId) throws NotFoundException {
 
-        eventService.addUserToPublicEvent(id, event);
+        eventService.addUserToPublicEvent(eventId, userId);
 
+    }
+
+    @GetMapping("/all/category/{id}")
+    public List<Event> getAllCategoryEvents(@PathVariable(value = "id") Long id) {
+        return eventRepository.findAllByCategories_id(id);
+    }
+    @GetMapping("/user/{id}")
+    public List<EventDTO> getEventsByUser(@PathVariable(value = "id") Long id) throws NotFoundException {
+        return eventService.getEventsByUser(id);
+    }
+
+    @GetMapping("/owner/{id}")
+    public List<EventDTO> getEventsByOwner(@PathVariable(value = "id") Long id) throws NotFoundException {
+        Optional<User> user = userRepository.findById(id);
+        user.orElseThrow(() -> new NotFoundException().setMessage("User not found"));
+        return eventService.getAllByOwner(user.get());
+    }
+
+    @GetMapping("/interest")
+    public List<EventDTO> getEventsByUserInterest() throws NotFoundException {
+
+        User currentUser = userService.getUserWithAuthorities().orElseThrow(() -> new NotFoundException().setMessage("User not found"));
+        return eventService.getEventsByUserInterestedCategories(currentUser.getId());
     }
 
 }

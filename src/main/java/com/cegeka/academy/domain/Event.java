@@ -40,6 +40,10 @@ public class Event {
     @Column(name = "is_public")
     private Boolean isPublic;
 
+    @Size(max = 250, message = "Image path must have 250 letters")
+    @Column(name = "cover_photo")
+    private String coverPhoto;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "address_id", referencedColumnName = "id")
     private Address addressId;
@@ -47,7 +51,7 @@ public class Event {
     @ManyToMany(mappedBy = "events")
     private Set<User> users = new HashSet<>();
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.ALL})
     @JoinTable(
             name = "event_category",
             joinColumns = @JoinColumn(name = "event_id"),
@@ -163,6 +167,15 @@ public class Event {
         return Objects.hash(id);
     }
 
+
+    public String getCoverPhoto() {
+        return coverPhoto;
+    }
+
+    public void setCoverPhoto(String coverPhoto) {
+        this.coverPhoto = coverPhoto;
+    }
+
     public Set<Invitation> getPendingInvitations() {
         return pendingInvitations;
     }
@@ -178,8 +191,11 @@ public class Event {
                 ", owner=" + owner +
                 ", notes='" + notes + '\'' +
                 ", isPublic=" + isPublic +
+                ", coverPhoto='" + coverPhoto + '\'' +
                 ", addressId=" + addressId +
+                ", users=" + users +
+                ", categories=" + categories +
+                ", pendingInvitations=" + pendingInvitations +
                 '}';
     }
-
 }
