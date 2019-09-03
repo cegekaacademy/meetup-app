@@ -17,7 +17,8 @@ export class EventsListComponent implements OnInit {
     isGetPendingActive: boolean;
     user: IUser;
 
-    constructor(private service: EventsService, private router: Router,
+    constructor(private service: EventsService,
+                private router: Router,
                 private accountService: AccountService,
                 private  userService: UserService) {
     }

@@ -44,6 +44,8 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import {faArrowCircleRight} from '@fortawesome/free-solid-svg-icons/faArrowCircleRight';
 import {faCalendarCheck} from '@fortawesome/free-solid-svg-icons/faCalendarCheck';
+import {faPlusCircle} from "@fortawesome/free-solid-svg-icons/faPlusCircle";
+import {faRecycle} from "@fortawesome/free-solid-svg-icons/faRecycle";
 
 // Adds the SVG icon to the library so you can use it in your page
 library.add(faUser);
@@ -86,5 +88,6 @@ library.add(faPenFancy);
 library.add(faArrowCircleRight);
 library.add(faCalendarCheck);
 library.add(faStar);
+library.add(faPlusCircle);
 
 // jhipster-needle-add-element-to-vendor - JHipster will add new menu items here
