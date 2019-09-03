@@ -1,9 +1,11 @@
 package com.cegeka.academy.web.rest;
+        import com.cegeka.academy.domain.UserStatistics;
         import com.cegeka.academy.service.dto.*;
         import com.cegeka.academy.domain.Group;
         import com.cegeka.academy.domain.GroupUserRole;
         import com.cegeka.academy.service.groupUserRole.UserGroupRolesServiceImpl;
         import com.cegeka.academy.service.group.GroupService;
+        import com.cegeka.academy.service.userStatistics.UserStatisticsService;
         import org.modelmapper.ModelMapper;
         import org.springframework.beans.factory.annotation.Autowired;
         import org.springframework.web.bind.annotation.*;
@@ -24,6 +26,9 @@ public class UserGroupRolesController {
     private ModelMapper modelMapper;
 
     @Autowired
+    private UserStatisticsService userStatisticsService;
+
+    @Autowired
     private GroupService groupService;
 
     private GroupUserRoleDTO convertToDTO(GroupUserRole groupUserRole){
@@ -42,7 +47,7 @@ public class UserGroupRolesController {
     return groupDTO;
     }
 
-    @GetMapping("getGroups")
+    @GetMapping("/getGroups")
     public List<GroupUserRoleDTO> getGroupsByUserId(@Valid @RequestBody UserIdDTO userIdDTO){
         List<GroupUserRoleDTO> result = new ArrayList<>();
         List<GroupUserRole> list = userGroupRolesService.getById(userIdDTO.id);
@@ -52,15 +57,21 @@ public class UserGroupRolesController {
         return result;
     }
 
+
+    @GetMapping("getStatistics")
+    public UserStatistics getUserStatistics(@Valid @RequestBody GetUserStatisticsDTO userDTO){
+        return userStatisticsService.getUserStatistics(userDTO.age, userDTO.gender);
+    }
+
     @GetMapping("getUsersByGroup")
-    public List<UserDTO> getUsersByGroup(@Valid @RequestBody GetPossibleGroupsDTO groupDTO)
+    public List<ReturnUserDTO> getUsersByGroup(@Valid @RequestBody GetPossibleGroupsDTO groupDTO)
     {
         List<User> users = groupService.getAllUsersByGroup(groupDTO.id);
-        List<UserDTO> userDTOS = new ArrayList<>();
+        List<ReturnUserDTO> userDTOS = new ArrayList<>();
 
         for(User user : users)
         {
-            userDTOS.add(convertToUserDTO((user)));
+            userDTOS.add(new ReturnUserDTO(user.getFirstName(), user.getLastName(), user.getEmail()));
         }
 
         return userDTOS;
