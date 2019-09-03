@@ -2,9 +2,8 @@ package com.cegeka.academy.repository.util;
 
 import com.cegeka.academy.domain.*;
 
-import java.util.Set;
-
 import java.util.Date;
+import java.util.Set;
 
 public class TestsRepositoryUtil {
 
@@ -25,7 +24,6 @@ public class TestsRepositoryUtil {
         event.setName(name);
         event.setPublic(isPublic);
         event.setOwner(user);
-        event.setAddressId(address);
         event.setCategories(categories);
         event.setCoverPhoto(coverPhoto);
         return event;

@@ -56,6 +56,5 @@ public class SearchService {
         }
 
         return categoryRepository.findDistinctByEventsIn(userEvents);
-
     }
 }
