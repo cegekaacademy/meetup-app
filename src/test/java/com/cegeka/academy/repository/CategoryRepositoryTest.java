@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -30,7 +31,7 @@ public class CategoryRepositoryTest {
     @Autowired
     private CategoryRepository categoryRepository;
 
-    private Event event;
+    private Event event, event1;
 
     @BeforeEach
     public void init() {
@@ -64,6 +65,12 @@ public class CategoryRepositoryTest {
         categoryRepository.save(category3);
         event.getCategories().add(category3);
         eventRepository.save(event);
+        Set<Category> list2 = new HashSet<>();
+        list2.add(category1);
+        list2.add(category2);
+        event1 = TestsRepositoryUtil.createEvent("Ana are mere", "Krushers Party", true, address, user, list2, "https://scontent.fotp3-2.fna.fbcdn.net/v/t1.0-9/67786277_2592710307438854_5055220041180512256");
+        eventRepository.save(event1);
+
     }
 
     @Test
@@ -94,5 +101,16 @@ public class CategoryRepositoryTest {
 
         Category findCategory = categoryRepository.findByName(null);
         assertThat(findCategory).isEqualTo(null);
+    }
+
+    @Test
+    public void assertThatFindDistinctByEventsIsWorking() {
+
+        List<Event> events = new ArrayList<>();
+        events.add(event);
+        events.add(event1);
+        List<Category> categories = categoryRepository.findDistinctByEventsIn(events);
+        assertThat(categories.size()).isEqualTo(5);
+
     }
 }
