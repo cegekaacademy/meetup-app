@@ -1,10 +1,12 @@
 package com.cegeka.academy.service.userChallenge;
 
-import com.cegeka.academy.domain.ChallengeAnswer;
-import com.cegeka.academy.domain.UserChallenge;
+import com.cegeka.academy.domain.*;
 import com.cegeka.academy.domain.enums.InvitationStatus;
 import com.cegeka.academy.domain.enums.UserChallengeStatus;
+import com.cegeka.academy.repository.ChallengeRepository;
+import com.cegeka.academy.repository.InvitationRepository;
 import com.cegeka.academy.repository.UserChallengeRepository;
+import com.cegeka.academy.repository.UserRepository;
 import com.cegeka.academy.service.dto.UserChallengeDTO;
 import com.cegeka.academy.service.mapper.UserChallengeMapper;
 import com.cegeka.academy.web.rest.errors.InvalidInvitationStatusException;
@@ -15,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
@@ -25,6 +28,15 @@ public class UserChallengeServiceImpl implements UserChallengeService {
 
     @Autowired
     private UserChallengeRepository userChallengeRepository;
+
+    @Autowired
+    private ChallengeRepository challengeRepository;
+
+    @Autowired
+    private InvitationRepository invitationRepository;
+
+    @Autowired
+    private UserRepository userRepository;
 
     @Override
     public List<UserChallengeDTO> getUserChallengesByUserId(Long userId) {
@@ -76,6 +88,31 @@ public class UserChallengeServiceImpl implements UserChallengeService {
         } else {
             throw new WrongOwnerException();
         }
+    }
+
+    @Override
+    public UserChallenge initUserChallenge(Challenge challenge, Invitation invitation) throws NotFoundException {
+
+        UserChallenge userChallenge = new UserChallenge();
+
+        challengeRepository.findById(challenge.getId()).orElseThrow(
+                () -> new NotFoundException().setMessage("Challenge not found"));
+        invitationRepository.findById(invitation.getId()).orElseThrow(
+                () -> new NotFoundException().setMessage("Invitation not found"));
+        User invitedUser = invitation.getUser();
+        userRepository.findById(invitedUser.getId()).orElseThrow(
+                () -> new NotFoundException().setMessage("User not found"));
+
+        userChallenge.setChallenge(challenge);
+        userChallenge.setPoints(0);
+        userChallenge.setUser(invitation.getUser());
+        userChallenge.setInvitation(invitation);
+        userChallenge.setStatus("Not started");
+        userChallenge.setChallengeAnswer(null);
+        userChallenge.setStartTime(new Date());
+        userChallenge.setEndTime(new Date());
+
+        return userChallengeRepository.save(userChallenge);
     }
 
     @Override

@@ -4,6 +4,8 @@ import com.cegeka.academy.domain.*;
 
 import java.util.Set;
 
+import java.util.Date;
+
 public class TestsRepositoryUtil {
 
     public static Address createAddress(String country, String city, String street, String number, String details, String name) {
@@ -71,5 +73,42 @@ public class TestsRepositoryUtil {
         Role role = new Role();
         role.setName(name);
         return role;
+    }
+
+    public static Challenge createChallenge(ChallengeCategory challengeCategory, String description, User creator,
+                                            String status, Date startDate, Date endDate, Double points) {
+        Challenge challenge = new Challenge();
+        challenge.setChallengeCategory(challengeCategory);
+        challenge.setDescription(description);
+        challenge.setCreator(creator);
+        challenge.setStatus(status);
+        challenge.setEndDate(startDate);
+        challenge.setStartDate(endDate);
+        challenge.setPoints(points);
+
+        return challenge;
+    }
+
+    public static ChallengeCategory createChallengeCategory (String description, String name) {
+        ChallengeCategory challengeCategory = new ChallengeCategory();
+        challengeCategory.setDescription(description);
+        challengeCategory.setName(name);
+
+        return challengeCategory;
+    }
+
+    public static UserChallenge createUserChallenge (Challenge challenge, User user, Double points, String status,
+                                                     Invitation invitation, Date startTIme, Date endTime) {
+        UserChallenge userChallenge = new UserChallenge();
+        userChallenge.setChallengeAnswer(null);
+        userChallenge.setChallenge(challenge);
+        userChallenge.setUser(user);
+        userChallenge.setPoints(points);
+        userChallenge.setStatus(status);
+        userChallenge.setInvitation(invitation);
+        userChallenge.setStartTime(startTIme);
+        userChallenge.setEndTime(endTime);
+
+        return userChallenge;
     }
 }

@@ -1,6 +1,8 @@
 package com.cegeka.academy.service.userChallenge;
 
 import com.cegeka.academy.domain.ChallengeAnswer;
+import com.cegeka.academy.domain.Challenge;
+import com.cegeka.academy.domain.Invitation;
 import com.cegeka.academy.domain.UserChallenge;
 import com.cegeka.academy.service.dto.ChallengeAnswerDTO;
 import com.cegeka.academy.service.dto.UserChallengeDTO;
@@ -21,8 +23,11 @@ public interface UserChallengeService {
 
     void updateUserChallengeInvitationStatus(Long userChallengeId, String status) throws NotFoundException, InvalidInvitationStatusException;
 
+
     UserChallenge rateUser(UserChallengeDTO userChallengeDTO, Long ownerId)
             throws WrongOwnerException, NoSuchElementException;
 
     void updateUserChallengeAnswer(UserChallenge userChallenge, ChallengeAnswer challengeAnswer);
+
+    UserChallenge initUserChallenge (Challenge challenge, Invitation invitation) throws NotFoundException;
 }

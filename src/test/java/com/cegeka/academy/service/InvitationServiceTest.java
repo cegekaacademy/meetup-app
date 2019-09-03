@@ -2,11 +2,14 @@ package com.cegeka.academy.service;
 
 import com.cegeka.academy.AcademyProjectApp;
 import com.cegeka.academy.domain.*;
+import com.cegeka.academy.domain.enums.ChallengeStatus;
 import com.cegeka.academy.domain.enums.InvitationStatus;
 import com.cegeka.academy.repository.*;
 import com.cegeka.academy.repository.util.TestsRepositoryUtil;
 import com.cegeka.academy.service.dto.InvitationDTO;
 import com.cegeka.academy.service.invitation.InvitationService;
+import com.cegeka.academy.service.mapper.InvitationMapper;
+import com.cegeka.academy.web.rest.errors.ExistingItemException;
 import com.cegeka.academy.web.rest.errors.NotFoundException;
 import org.junit.Assert;
 import org.junit.jupiter.api.Assertions;
@@ -17,11 +20,14 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 @SpringBootTest(classes = AcademyProjectApp.class)
 @Transactional
@@ -53,15 +59,30 @@ public class InvitationServiceTest {
     private RoleRepository roleRepository;
 
     @Autowired
+    private ChallengeRepository challengeRepository;
+
+    @Autowired
+    private ChallengeCategoryRepository challengeCategoryRepository;
+
+    @Autowired
+    private UserChallengeRepository userChallengeRepository;
+
+    @Autowired
     private CategoryRepository categoryRepository;
 
     private User user, user1, user2;
     private Event event, event2, publicEvent;
     private Invitation invitation, invitation2, invitation3, invitationSendToGroup, invitationWithNullEvent, invitationWithPublicEvent;
+    private InvitationDTO invitationDTO;
     private Address address;
     private Group group;
     private GroupUserRole groupUserRole1, groupUserRole2, groupUserRole3;
     private Role role;
+    private Challenge challenge;
+    private ChallengeCategory challengeCategory;
+    private UserChallenge userChallenge;
+
+    private UserChallengeServiceTest userChallengeServiceTest;
 
     @BeforeEach
     public void init() {
@@ -102,6 +123,27 @@ public class InvitationServiceTest {
         invitationSendToGroup = TestsRepositoryUtil.createInvitation(InvitationStatus.PENDING.name(), "aaaa", eventRepository.findAll().get(0), null);
         invitationWithNullEvent = TestsRepositoryUtil.createInvitation(InvitationStatus.PENDING.name(), "aaaa", null, null);
         invitationWithPublicEvent = TestsRepositoryUtil.createInvitation(InvitationStatus.PENDING.name(), "aaaa", eventRepository.findAll().get(1), null);
+        challengeCategory = TestsRepositoryUtil.createChallengeCategory("Description", "Name");
+        challengeCategoryRepository.save(challengeCategory);
+        challenge = TestsRepositoryUtil.createChallenge(challengeCategory, "Description", user1,
+                "Status", new Date(), new Date(), 50.0);
+        challengeRepository.save(challenge);
+        userChallenge  = TestsRepositoryUtil.createUserChallenge(challenge, user2,50.0, "Status", invitation,
+                new Date(), new Date());
+        userChallengeRepository.save(userChallenge);
+
+        invitationDTO = initInvitationDTO();
+    }
+
+    public InvitationDTO initInvitationDTO() {
+        InvitationDTO invitationDTO = new InvitationDTO();
+
+        invitationDTO.setStatus(InvitationStatus.PENDING.toString());
+        invitationDTO.setDescription("Description");
+        invitationDTO.setUserId(user.getId());
+        invitationDTO.setEventName(null);
+
+        return invitationDTO;
     }
 
     @Test
@@ -175,7 +217,7 @@ public class InvitationServiceTest {
         assertThat(listAfterDelete.size()).isEqualTo(0);
     }
 
-    @Test()
+    @Test
     @Transactional
     public void assertThatDeleteInvitationIsWorkingWithInvalidId() {
 
@@ -193,7 +235,7 @@ public class InvitationServiceTest {
     @Test
     @Transactional
     public void assertThatAcceptInvitation_ThrowsExceptionWithWrongInvitationId() {
-        Assertions.assertThrows(NotFoundException.class, () -> invitationService.acceptInvitation(40l));
+        Assertions.assertThrows(NotFoundException.class, () -> invitationService.acceptInvitation(10000l));
     }
 
     @Test
@@ -286,7 +328,8 @@ public class InvitationServiceTest {
     @Test
     void assertThatSendGroupInvitationToPrivateEventThrowsNotFoundExceptionTest() {
 
-        Assertions.assertThrows(NotFoundException.class, () -> invitationService.sendGroupInvitationsToPrivateEvents(1L, invitationWithNullEvent));
+        Assertions.assertThrows(NotFoundException.class,
+                () -> invitationService.sendGroupInvitationsToPrivateEvents(1L, invitationWithNullEvent));
     }
 
     @Test
@@ -296,5 +339,46 @@ public class InvitationServiceTest {
         invitationService.sendGroupInvitationsToPrivateEvents(idGroup, invitationWithPublicEvent);
         List<Invitation> list = invitationRepository.findAll();
         assertThat(list.size()).isEqualTo(1);
+    }
+
+    @Test
+    public void assertThatCreateChallengeInvitationIsWorking() throws NotFoundException, ExistingItemException {
+
+        Invitation actual = InvitationMapper.createInvitation(
+                invitationDTO.getDescription(),
+                invitationDTO.getStatus(),
+                user,
+                null);
+
+        Invitation expected = invitationService.createChallengeInvitationForOneUser(invitationDTO, challenge.getId());
+
+        assertThat(actual.hashCode() == expected.hashCode());
+    }
+
+    @Test
+    public void assertThatCreateChallengeInvitationThrowsExistingItemException() {
+
+        invitationDTO.setUserId(user2.getId());
+
+        Assertions.assertThrows(ExistingItemException.class,
+                () -> invitationService
+                        .createChallengeInvitationForOneUser(invitationDTO, userChallenge.getChallenge().getId()));
+
+    }
+
+    @Test
+    public void assertThatCreateChallengeInvitationThrowsNotFoundExceptionForMissingChallenge() {
+
+        Assertions.assertThrows(NotFoundException.class,
+                () -> invitationService.createChallengeInvitationForOneUser(invitationDTO, (long)2));
+    }
+
+    @Test
+    public void assertThatCreateChallengeInvitationThrowsNotFoundExceptionForMissingUser() {
+
+        invitationDTO.setUserId((long)200);
+
+        Assertions.assertThrows(NotFoundException.class,
+                () -> invitationService.createChallengeInvitationForOneUser(invitationDTO, challenge.getId()));
     }
 }

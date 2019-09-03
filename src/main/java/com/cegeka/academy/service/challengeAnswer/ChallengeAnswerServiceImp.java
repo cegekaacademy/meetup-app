@@ -74,7 +74,7 @@ public class ChallengeAnswerServiceImp implements ChallengeAnswerService {
     public void deleteChallengeAnswer(Long userId, Long challengeId) throws NotFoundException {
 
         UserChallenge userChallenge = userChallengeRepository
-                .findAllByUserIdAndChallengeId(userId, challengeId)
+                .findByUserIdAndChallengeId(userId, challengeId)
                 .orElseThrow(() -> new NotFoundException().setMessage("User challenge not found"));
 
         if (userChallenge == null || userChallenge.getChallengeAnswer() == null) {
@@ -107,7 +107,7 @@ public class ChallengeAnswerServiceImp implements ChallengeAnswerService {
 
         userRepository.findById(userId).orElseThrow(() -> new NotFoundException().setMessage("User not found"));
         challengeRepository.findById(challengeId).orElseThrow(() -> new NotFoundException().setMessage("Challenge not found"));
-        UserChallenge userChallenge = userChallengeRepository.findAllByUserIdAndChallengeId(userId, challengeId)
+        UserChallenge userChallenge = userChallengeRepository.findByUserIdAndChallengeId(userId, challengeId)
                 .orElseThrow(() -> new NotFoundException().setMessage("User challenge not found"));
 
         if (userChallenge.getChallengeAnswer() == null) {
