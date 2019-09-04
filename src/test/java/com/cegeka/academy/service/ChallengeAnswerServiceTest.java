@@ -257,5 +257,4 @@ public class ChallengeAnswerServiceTest {
             challengeAnswerService.uploadAnswer(user.getId(), challenge.getId(), challengeAnswerDTO);
         });
     }
-
 }

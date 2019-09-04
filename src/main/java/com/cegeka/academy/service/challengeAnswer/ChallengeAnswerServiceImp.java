@@ -3,13 +3,12 @@ package com.cegeka.academy.service.challengeAnswer;
 import com.cegeka.academy.domain.ChallengeAnswer;
 import com.cegeka.academy.domain.UserChallenge;
 import com.cegeka.academy.repository.ChallengeAnswerRepository;
-import com.cegeka.academy.repository.ChallengeRepository;
 import com.cegeka.academy.repository.UserChallengeRepository;
-import com.cegeka.academy.repository.UserRepository;
 import com.cegeka.academy.service.dto.ChallengeAnswerDTO;
 import com.cegeka.academy.service.mapper.ChallengeAnswerMapper;
 import com.cegeka.academy.service.userChallenge.UserChallengeService;
 import com.cegeka.academy.web.rest.errors.NotFoundException;
+import org.omg.CosNaming.NamingContextPackage.NotFound;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +21,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Date;
+import java.util.Optional;
 
 
 @Service
@@ -32,10 +32,6 @@ public class ChallengeAnswerServiceImp implements ChallengeAnswerService {
     private ChallengeAnswerRepository challengeAnswerRepository;
     @Autowired
     private UserChallengeRepository userChallengeRepository;
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private ChallengeRepository challengeRepository;
     @Autowired
     private UserChallengeService userChallengeService;
 
@@ -73,66 +69,64 @@ public class ChallengeAnswerServiceImp implements ChallengeAnswerService {
     @Override
     public void deleteChallengeAnswer(Long userId, Long challengeId) throws NotFoundException {
 
-        UserChallenge userChallenge = userChallengeRepository
-                .findByUserIdAndChallengeId(userId, challengeId)
-                .orElseThrow(() -> new NotFoundException().setMessage("User challenge not found"));
+        UserChallenge userChallenge = getUserChallengeByUserIdAndChallengeId(userId, challengeId);
 
-        if (userChallenge == null || userChallenge.getChallengeAnswer() == null) {
-
-            throw new NotFoundException().setMessage("Challenge answer not exists.");
+        if(userChallenge.getChallengeAnswer() == null) {
+            throw new NotFoundException().setMessage("Answer doesn't exist");
         }
 
-        boolean isChallengeAnswerValid = challengeAnswerRepository.findById(userChallenge.getChallengeAnswer().getId()).isPresent();
-
-        if (!isChallengeAnswerValid) {
-
-            throw new NotFoundException().setMessage("Challenge answer not exists.");
-
-        }
+        challengeAnswerRepository.findById(userChallenge.getChallengeAnswer().getId())
+                .orElseThrow(() -> new NotFoundException().setMessage("Answer not found"));
 
         ChallengeAnswer deleteChallengeAnswer = userChallenge.getChallengeAnswer();
 
         userChallenge.setChallengeAnswer(null);
-
         userChallengeRepository.save(userChallenge);
 
         challengeAnswerRepository.delete(deleteChallengeAnswer);
 
         logger.info("Challenge answer was deleted.");
-
     }
 
     @Override
-    public void uploadAnswer(Long userId, Long challengeId, ChallengeAnswerDTO challengeAnswerDTO) throws IOException, NotFoundException {
+    public void uploadAnswer(Long userId, Long challengeId, ChallengeAnswerDTO challengeAnswerDTO) throws NotFoundException, IOException {
 
-        userRepository.findById(userId).orElseThrow(() -> new NotFoundException().setMessage("User not found"));
-        challengeRepository.findById(challengeId).orElseThrow(() -> new NotFoundException().setMessage("Challenge not found"));
-        UserChallenge userChallenge = userChallengeRepository.findByUserIdAndChallengeId(userId, challengeId)
-                .orElseThrow(() -> new NotFoundException().setMessage("User challenge not found"));
+        UserChallenge userChallenge = getUserChallengeByUserIdAndChallengeId(userId, challengeId);
 
         if (userChallenge.getChallengeAnswer() == null) {
 
-            String imagePath = UPLOAD_ROOT_DIRECTORY + UPLOAD_CHALLENGE_DIRECTORY + userId + "\\" + challengeId + "\\";
-            File file = new File(imagePath);
-            if (!file.exists()) {
-                file.mkdirs();
-            }
-
-            byte[] bytes = challengeAnswerDTO.getImage().getBytes();
-            String imageName = "answer_" + userId + "_" + challengeId + "_" + new Date().getTime();
-
-            Path path = Paths.get(imagePath + imageName + JPG_EXTENSION);
-            Files.write(path, bytes);
-
-            challengeAnswerDTO.setImagePath(path.toString());
+            String imagePath = saveImage(challengeAnswerDTO, userId, challengeId);
 
             ChallengeAnswer challengeAnswer = ChallengeAnswerMapper.convertChallengeAnswerDTOToChallengeAnswer(challengeAnswerDTO);
-
+            challengeAnswer.setImagePath(imagePath);
             challengeAnswerRepository.save(challengeAnswer);
 
-            userChallengeService.updateUserChallengeAnswer(userChallenge, challengeAnswer);
+            userChallengeService.addUserChallengeAnswer(userChallenge, challengeAnswer);
         } else {
             throw new IllegalArgumentException("An answer has been given for this challenge");
         }
+    }
+
+    public String saveImage(ChallengeAnswerDTO challengeAnswerDTO, Long userId, Long challengeId) throws IOException {
+        String imagePath = UPLOAD_ROOT_DIRECTORY + UPLOAD_CHALLENGE_DIRECTORY + userId + "\\" + challengeId + "\\";
+        File file = new File(imagePath);
+        if (!file.exists()) {
+            file.mkdirs();
+        }
+
+        byte[] bytes = challengeAnswerDTO.getImage().getBytes();
+        String imageName = "answer_" + userId + "_" + challengeId + "_" + new Date().getTime();
+
+        Path path = Paths.get(imagePath + imageName + JPG_EXTENSION);
+        Files.write(path, bytes);
+
+        return path.toString();
+    }
+
+    public UserChallenge getUserChallengeByUserIdAndChallengeId(Long userId, Long challengeId) throws NotFoundException {
+        UserChallenge userChallenge = userChallengeRepository.findByUserIdAndChallengeId(userId, challengeId)
+                .orElseThrow(() -> new NotFoundException().setMessage("User challenge not found"));
+
+        return userChallenge;
     }
 }
