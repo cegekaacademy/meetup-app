@@ -13,6 +13,7 @@ import com.cegeka.academy.service.dto.UserChallengeDTO;
 import com.cegeka.academy.service.dto.UserDTO;
 import com.cegeka.academy.service.mapper.UserChallengeMapper;
 import com.cegeka.academy.web.rest.errors.NotFoundException;
+import liquibase.util.CollectionUtil;
 import net.bytebuddy.description.type.TypeDefinition;
 import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 
 import java.util.*;
@@ -160,7 +162,7 @@ public class ChallengeServiceImp implements ChallengeService {
     public List<UserChallengeDTO> getChallengeRanking(Long challengeId, String sortingParam) throws NotFoundException {
         List<UserChallenge> userChallengeList = userChallengeRepository.findAllByChallengeId(challengeId);
 
-        if(userChallengeList.isEmpty())
+        if(CollectionUtils.isEmpty(userChallengeList))
         {
             throw new NotFoundException().setMessage("Nu exista participanti la challenge-ul: " + challengeId);
         }
