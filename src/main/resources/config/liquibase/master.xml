@@ -31,6 +31,14 @@
     <include file="config/liquibase/changelog/20190730162701_challenge_table.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/190821_1322_Event_Category.xml" relativeToChangelogFile="false"/>
 
+
+    <include file="config/liquibase/changelog/190806_1853_age_intervals.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/190806_1925_user_statistics.xml" relativeToChangelogFile="false"/>
+
+    <include file="config/liquibase/changelog/20190820_1401_change_group.xml" relativeToChangelogFile="false"/>
+
+
+
     <!-- jhipster-needle-liquibase-add-changelog - JHipster will add liquibase changelogs here -->
     <!-- jhipster-needle-liquibase-add-constraints-changelog - JHipster will add liquibase constraints changelogs here -->
 </databaseChangeLog>
