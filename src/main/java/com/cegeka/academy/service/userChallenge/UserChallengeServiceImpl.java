@@ -134,25 +134,25 @@ public class UserChallengeServiceImpl implements UserChallengeService {
 
         }
 
-        List<UserChallenge> userChallengeListWithValidInvitation = userChallengeList.stream().filter(userChallenge -> hasUserChallengeValidChallenge(userChallenge)).collect(Collectors.toList());
+        List<UserChallenge> userChallengeListWithValidChallenge = userChallengeList.stream().filter(userChallenge -> hasUserChallengeValidChallenge(userChallenge)).collect(Collectors.toList());
 
-        if(userChallengeListWithValidInvitation ==  null || userChallengeListWithValidInvitation.isEmpty()){
-
-            throw new NotFoundException().setMessage("List is empty");
-
-        }
-
-        List<Challenge> challengeList = userChallengeListWithValidInvitation.stream().map(userChallenge -> userChallenge.getChallenge()).collect(Collectors.toList());
-
-        List<Challenge> validChallengeList = challengeList.stream().filter(challenge -> isAfterToday(challenge.getStartDate())).collect(Collectors.toList());
-
-        if(validChallengeList == null || validChallengeList.isEmpty()){
+        if(userChallengeListWithValidChallenge ==  null || userChallengeListWithValidChallenge.isEmpty()){
 
             throw new NotFoundException().setMessage("List is empty");
 
         }
 
-        return validChallengeList.stream().map(challenge -> ChallengeMapper.convertChallengeToChallengeDTO(challenge)).collect(Collectors.toList());
+        List<Challenge> challengeList = userChallengeListWithValidChallenge.stream().map(userChallenge -> userChallenge.getChallenge()).collect(Collectors.toList());
+
+        List<Challenge> futureChallengeList = challengeList.stream().filter(challenge -> isAfterToday(challenge.getStartDate())).collect(Collectors.toList());
+
+        if(futureChallengeList == null || futureChallengeList.isEmpty()){
+
+            throw new NotFoundException().setMessage("List is empty");
+
+        }
+
+        return futureChallengeList.stream().map(challenge -> ChallengeMapper.convertChallengeToChallengeDTO(challenge)).collect(Collectors.toList());
 
     }
 
