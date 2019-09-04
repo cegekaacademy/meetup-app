@@ -7,15 +7,14 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
-import java.util.Objects;
 
 /**
- * A group.
+ * An  age interval.
  */
 @Entity
-@Table(name = "academyproject_groups")
+@Table(name = "Age_Intervals")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class Group implements Serializable {
+public class AgeIntervals implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -23,34 +22,40 @@ public class Group implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull
     @Size(min = 1, max = 45)
-    @Column(name = "name", length = 45, nullable = false)
-    private String name;
-
-
-    @Size(max = 45)
-    @Column(name = "description", length = 45)
+    @Column(name = "description", length = 45, nullable = false)
     private String description;
 
+    @Column(name = "min_age")
+    private int minAge;
+
+    @Column(name = "max_age")
+    private int maxAge;
 
     public Long getId() {
         return id;
     }
 
+    public int getMinAge() {
+        return minAge;
+    }
 
+    public void setMinAge(int minAge) {
+        this.minAge = minAge;
+    }
+
+    public int getMaxAge() {
+        return maxAge;
+    }
+
+    public void setMaxAge(int maxAge) {
+        this.maxAge = maxAge;
+    }
 
     public void setId(Long id) {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
 
     public String getDescription() {
         return description;
@@ -62,26 +67,20 @@ public class Group implements Serializable {
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(id);
+        return 93;
     }
 
-    @Override
-    public String toString() {
-        return "Group{" +
-                "name='" + name + '\'' +
-                ", description='" + description + '\'' +
-                "}";
-    }
+
 
     @Override
     public boolean equals(Object o) {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof Group)) {
+        if (!(o instanceof AgeIntervals)) {
             return false;
         }
-        return id != null && id.equals(((Group) o).id);
+        return id != null && id.equals(((AgeIntervals) o).id);
     }
 
 }
