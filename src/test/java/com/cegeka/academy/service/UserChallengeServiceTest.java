@@ -355,8 +355,8 @@ public class UserChallengeServiceTest  {
     @Test
     public void testGetNextChallengesWithNoChallengesWithValidInvitation() {
 
-        userChallengeRepository.deleteAll();
         userChallenge.getInvitation().setStatus(InvitationStatus.CANCELED.toString());
+        userChallengeRepository.save(userChallenge);
 
         Assertions.assertThrows(NotFoundException.class, () -> {
             userChallengeService.getNextChallengesForAnUser(usedUser.getId());
@@ -366,7 +366,6 @@ public class UserChallengeServiceTest  {
     @Test
     public void testGetNextChallengesWithNoChallengeWithValidDate() {
 
-        userChallengeRepository.deleteAll();
         Date startDate = null;
         try {
             startDate = sdf.parse("12/03/2019");
@@ -374,6 +373,7 @@ public class UserChallengeServiceTest  {
             e.printStackTrace();
         }
         userChallenge.getChallenge().setStartDate(startDate);
+        userChallengeRepository.save(userChallenge);
 
         Assertions.assertThrows(NotFoundException.class, () -> {
             userChallengeService.getNextChallengesForAnUser(usedUser.getId());

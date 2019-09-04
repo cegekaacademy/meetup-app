@@ -165,7 +165,7 @@ public class UserChallengeServiceImpl implements UserChallengeService {
 
     private boolean hasUserChallengeValidInvitation(UserChallenge userChallenge){
 
-        return userChallenge.getInvitation() != null && (!userChallenge.getInvitation().getStatus().equalsIgnoreCase(InvitationStatus.CANCELED.toString()) || !userChallenge.getInvitation().getStatus().equalsIgnoreCase(InvitationStatus.REJECTED.toString()));
+        return userChallenge.getInvitation() != null && (!userChallenge.getInvitation().getStatus().equalsIgnoreCase(InvitationStatus.CANCELED.toString()) && !userChallenge.getInvitation().getStatus().equalsIgnoreCase(InvitationStatus.REJECTED.toString()));
 
     }
 }
