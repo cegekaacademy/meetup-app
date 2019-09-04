@@ -2,6 +2,8 @@ package com.cegeka.academy.service.challenge;
 
 import com.cegeka.academy.domain.Challenge;
 import com.cegeka.academy.domain.UserChallenge;
+import com.cegeka.academy.domain.enums.InvitationStatus;
+import com.cegeka.academy.domain.enums.SortingParam;
 import com.cegeka.academy.repository.ChallengeCategoryRepository;
 import com.cegeka.academy.domain.enums.ChallengeStatus;
 import com.cegeka.academy.repository.ChallengeRepository;
@@ -11,6 +13,7 @@ import com.cegeka.academy.service.dto.UserChallengeDTO;
 import com.cegeka.academy.service.dto.UserDTO;
 import com.cegeka.academy.service.mapper.UserChallengeMapper;
 import com.cegeka.academy.web.rest.errors.NotFoundException;
+import net.bytebuddy.description.type.TypeDefinition;
 import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.cegeka.academy.web.rest.errors.InvalidFieldException;
@@ -162,15 +165,8 @@ public class ChallengeServiceImp implements ChallengeService {
             throw new NotFoundException().setMessage("Nu exista participanti la challenge-ul: " + challengeId);
         }
 
-        if(sortingParam.equals("name"))
-        {
-            userChallengeList.sort((o1, o2) -> o1.getUser().getLastName().compareToIgnoreCase(o2.getUser().getLastName()));
-        }
-
-        if(sortingParam.equals("points"))
-        {
-            userChallengeList.sort((o1, o2) -> -Double.compare(o1.getPoints(), o2.getPoints()));
-        }
+        SortingParam eSortingParam = SortingParam.getSortingParam(sortingParam);
+        eSortingParam.sort(userChallengeList);
 
         return userChallengeList.stream()
                 .map(UserChallengeMapper::convertUserChallengeToUserChallengeDTO).collect(Collectors.toList());
