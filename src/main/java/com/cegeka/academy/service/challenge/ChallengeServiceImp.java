@@ -139,22 +139,6 @@ public class ChallengeServiceImp implements ChallengeService {
 
     }
 
-    @Override
-    public List<ChallengeDTO> getNextChallenges() throws NotFoundException {
-
-        List<Challenge> challengeList = challengeRepository.findAll();
-
-        List<Challenge> validChallengeList = challengeList.stream().filter(challenge -> isNextDay(challenge.getStartDate())).collect(Collectors.toList());
-
-        if(validChallengeList == null || validChallengeList.isEmpty()){
-
-            throw new NotFoundException().setMessage("List is empty");
-
-        }
-
-        return validChallengeList.stream().map(challenge -> ChallengeMapper.convertChallengeToChallengeDTO(challenge)).collect(Collectors.toList());
-
-    }
 
     @Override
     public ChallengeDTO getChallengeById(long id) throws NotFoundException {
@@ -182,13 +166,6 @@ public class ChallengeServiceImp implements ChallengeService {
 
     }
 
-    private boolean isNextDay(Date date){
-
-        return date.toInstant()
-                .atZone(ZoneId.systemDefault())
-                .toLocalDate()
-                .isAfter(LocalDate.now());
-    }
 
     private boolean  doesChallengeCategoryExist(long challengeCategoryId)
     {

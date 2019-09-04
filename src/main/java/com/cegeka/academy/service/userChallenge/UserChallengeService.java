@@ -3,6 +3,7 @@ package com.cegeka.academy.service.userChallenge;
 import com.cegeka.academy.domain.Challenge;
 import com.cegeka.academy.domain.Invitation;
 import com.cegeka.academy.domain.UserChallenge;
+import com.cegeka.academy.service.dto.ChallengeDTO;
 import com.cegeka.academy.service.dto.UserChallengeDTO;
 import com.cegeka.academy.web.rest.errors.InvalidInvitationStatusException;
 import com.cegeka.academy.web.rest.errors.InvalidUserChallengeStatusException;
@@ -25,4 +26,6 @@ public interface UserChallengeService {
             throws WrongOwnerException, NoSuchElementException;
 
     UserChallenge initUserChallenge (Challenge challenge, Invitation invitation) throws NotFoundException;
+
+    List<ChallengeDTO> getNextChallengesForAnUser(Long userId) throws NotFoundException;
 }

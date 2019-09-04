@@ -346,27 +346,6 @@ public class ChallengeServiceTest {
 
     }
 
-    @Test
-    public void testGetNextChallenges() throws NotFoundException {
 
-        Challenge savedChallenge = challengeRepository.save(challenge);
-        ChallengeDTO savedChallengeDTO = ChallengeMapper.convertChallengeToChallengeDTO(savedChallenge);
-        System.out.println(savedChallengeDTO.getStartDate());
-
-        List<ChallengeDTO> challengeDTOList = challengeService.getNextChallenges();
-
-        assertThat(challengeDTOList.size()).isEqualTo(1);
-        assertThat(challengeDTOList.get(0)).isEqualTo(savedChallengeDTO);
-
-    }
-
-    @Test
-    public void testGetNextChallengesEmptyList() {
-
-        Assertions.assertThrows(NotFoundException.class, () -> {
-            challengeService.getNextChallenges();
-        });
-
-    }
 
 }
