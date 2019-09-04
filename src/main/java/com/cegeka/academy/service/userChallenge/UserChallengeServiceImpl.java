@@ -134,26 +134,20 @@ public class UserChallengeServiceImpl implements UserChallengeService {
 
         }
 
-        List<UserChallenge> userChallengeListWithValidChallenge = userChallengeList.stream().filter(userChallenge -> hasUserChallengeValidChallenge(userChallenge)).collect(Collectors.toList());
+        List<Challenge> futureChallenges = userChallengeList.stream()
+                .filter(userChallenge -> hasUserChallengeValidChallenge(userChallenge) && isAfterToday(userChallenge.getChallenge().getStartDate()))
+                .map(userChallenge -> userChallenge.getChallenge())
+                .collect(Collectors.toList());
 
-        if(userChallengeListWithValidChallenge ==  null || userChallengeListWithValidChallenge.isEmpty()){
-
-            throw new NotFoundException().setMessage("List is empty");
-
-        }
-
-        List<Challenge> challengeList = userChallengeListWithValidChallenge.stream().map(userChallenge -> userChallenge.getChallenge()).collect(Collectors.toList());
-
-        List<Challenge> futureChallengeList = challengeList.stream().filter(challenge -> isAfterToday(challenge.getStartDate())).collect(Collectors.toList());
-
-        if(futureChallengeList == null || futureChallengeList.isEmpty()){
+        if(futureChallenges ==  null || futureChallenges.isEmpty()){
 
             throw new NotFoundException().setMessage("List is empty");
 
         }
 
-        return futureChallengeList.stream().map(challenge -> ChallengeMapper.convertChallengeToChallengeDTO(challenge)).collect(Collectors.toList());
-
+        return futureChallenges.stream()
+                .map(challenge -> ChallengeMapper.convertChallengeToChallengeDTO(challenge))
+                .collect(Collectors.toList());
     }
 
     private boolean isAfterToday(Date date){
@@ -164,13 +158,19 @@ public class UserChallengeServiceImpl implements UserChallengeService {
                 .isAfter(LocalDate.now());
     }
 
+    private boolean isUserChallengeInvitationValid(UserChallenge userChallenge){
+
+        return userChallenge.getInvitation() != null &&
+                !userChallenge.getInvitation().getStatus().equalsIgnoreCase(InvitationStatus.CANCELED.toString()) &&
+                !userChallenge.getInvitation().getStatus().equalsIgnoreCase(InvitationStatus.REJECTED.toString());
+    }
+
     private boolean hasUserChallengeValidChallenge(UserChallenge userChallenge){
 
-        return (userChallenge.getChallenge().getStatus().equalsIgnoreCase(ChallengeStatus.PUBLIC.toString())) ||
+        return  userChallenge.getChallenge() != null &&
+                (userChallenge.getChallenge().getStatus().equalsIgnoreCase(ChallengeStatus.PUBLIC.toString()) ||
                 (userChallenge.getChallenge().getStatus().equalsIgnoreCase(ChallengeStatus.PRIVATE.toString()) &&
-                userChallenge.getInvitation() != null &&
-                !userChallenge.getInvitation().getStatus().equalsIgnoreCase(InvitationStatus.CANCELED.toString()) &&
-                !userChallenge.getInvitation().getStatus().equalsIgnoreCase(InvitationStatus.REJECTED.toString()));
+                        isUserChallengeInvitationValid(userChallenge)));
 
     }
 }
