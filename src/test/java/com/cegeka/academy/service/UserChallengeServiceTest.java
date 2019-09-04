@@ -335,8 +335,22 @@ public class UserChallengeServiceTest  {
     }
 
     @Test
-    public void testGetNextChallengesIsWorking() throws NotFoundException {
+    public void testGetNextChallengesIsWorkingWithPrivateChallenge() throws NotFoundException {
 
+
+        List<ChallengeDTO> challengeDTOList = userChallengeService.getNextChallengesForAnUser(usedUser.getId());
+
+        assertThat(challengeDTOList.size()).isEqualTo(1);
+        assertThat(challengeDTOList.get(0).getId()).isEqualTo(userChallengeRepository.findAllByUserId(usedUser.getId()).get(0).getChallenge().getId());
+
+    }
+
+    @Test
+    public void testGetNextChallengesIsWorkingWithPublicChallenge() throws NotFoundException {
+
+        userChallenge.getChallenge().setStatus(ChallengeStatus.PUBLIC.toString());
+        userChallenge.setInvitation(null);
+        userChallengeRepository.save(userChallenge);
 
         List<ChallengeDTO> challengeDTOList = userChallengeService.getNextChallengesForAnUser(usedUser.getId());
 

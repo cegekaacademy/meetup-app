@@ -134,7 +134,7 @@ public class UserChallengeServiceImpl implements UserChallengeService {
 
         }
 
-        List<UserChallenge> userChallengeListWithValidInvitation = userChallengeList.stream().filter(userChallenge -> hasUserChallengeValidInvitation(userChallenge)).collect(Collectors.toList());
+        List<UserChallenge> userChallengeListWithValidInvitation = userChallengeList.stream().filter(userChallenge -> hasUserChallengeValidChallenge(userChallenge)).collect(Collectors.toList());
 
         if(userChallengeListWithValidInvitation ==  null || userChallengeListWithValidInvitation.isEmpty()){
 
@@ -164,7 +164,7 @@ public class UserChallengeServiceImpl implements UserChallengeService {
                 .isAfter(LocalDate.now());
     }
 
-    private boolean hasUserChallengeValidInvitation(UserChallenge userChallenge){
+    private boolean hasUserChallengeValidChallenge(UserChallenge userChallenge){
 
         return (userChallenge.getChallenge().getStatus().equalsIgnoreCase(ChallengeStatus.PUBLIC.toString())) ||
                 (userChallenge.getChallenge().getStatus().equalsIgnoreCase(ChallengeStatus.PRIVATE.toString()) &&
