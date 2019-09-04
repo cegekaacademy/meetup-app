@@ -4,6 +4,7 @@ import com.cegeka.academy.domain.Challenge;
 import com.cegeka.academy.domain.Invitation;
 import com.cegeka.academy.domain.User;
 import com.cegeka.academy.domain.UserChallenge;
+import com.cegeka.academy.domain.enums.ChallengeStatus;
 import com.cegeka.academy.domain.enums.InvitationStatus;
 import com.cegeka.academy.domain.enums.UserChallengeStatus;
 import com.cegeka.academy.repository.ChallengeRepository;
@@ -165,7 +166,11 @@ public class UserChallengeServiceImpl implements UserChallengeService {
 
     private boolean hasUserChallengeValidInvitation(UserChallenge userChallenge){
 
-        return userChallenge.getInvitation() != null && (!userChallenge.getInvitation().getStatus().equalsIgnoreCase(InvitationStatus.CANCELED.toString()) && !userChallenge.getInvitation().getStatus().equalsIgnoreCase(InvitationStatus.REJECTED.toString()));
+        return (userChallenge.getChallenge().getStatus().equalsIgnoreCase(ChallengeStatus.PUBLIC.toString())) ||
+                (userChallenge.getChallenge().getStatus().equalsIgnoreCase(ChallengeStatus.PRIVATE.toString()) &&
+                userChallenge.getInvitation() != null &&
+                !userChallenge.getInvitation().getStatus().equalsIgnoreCase(InvitationStatus.CANCELED.toString()) &&
+                !userChallenge.getInvitation().getStatus().equalsIgnoreCase(InvitationStatus.REJECTED.toString()));
 
     }
 }
