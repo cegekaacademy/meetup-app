@@ -57,6 +57,13 @@ public class ChallengeController {
 
     }
 
+    @GetMapping("/next")
+    public List<ChallengeDTO> getNextChallenges() throws NotFoundException {
+
+        return challengeService.getNextChallenges();
+
+    }
+
     @GetMapping("/public")
     public List<ChallengeDTO> getPublicChallenges() throws NotFoundException {
 

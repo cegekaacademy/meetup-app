@@ -93,11 +93,11 @@ public class ChallengeServiceTest {
         challenge = new Challenge();
 
         challenge.setCreator(user);
-        challenge.setStartDate(new Date(System.currentTimeMillis()));
 
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
         try {
-            challenge.setEndDate(sdf.parse("22/09/2019"));
+            challenge.setStartDate(sdf.parse("12/09/2020"));
+            challenge.setEndDate(sdf.parse("22/09/2020"));
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -342,6 +342,29 @@ public class ChallengeServiceTest {
 
         Assertions.assertThrows(NotFoundException.class, () -> {
             challengeService.getPublicChallenges();
+        });
+
+    }
+
+    @Test
+    public void testGetNextChallenges() throws NotFoundException {
+
+        Challenge savedChallenge = challengeRepository.save(challenge);
+        ChallengeDTO savedChallengeDTO = ChallengeMapper.convertChallengeToChallengeDTO(savedChallenge);
+        System.out.println(savedChallengeDTO.getStartDate());
+
+        List<ChallengeDTO> challengeDTOList = challengeService.getNextChallenges();
+
+        assertThat(challengeDTOList.size()).isEqualTo(1);
+        assertThat(challengeDTOList.get(0)).isEqualTo(savedChallengeDTO);
+
+    }
+
+    @Test
+    public void testGetNextChallengesEmptyList() {
+
+        Assertions.assertThrows(NotFoundException.class, () -> {
+            challengeService.getNextChallenges();
         });
 
     }

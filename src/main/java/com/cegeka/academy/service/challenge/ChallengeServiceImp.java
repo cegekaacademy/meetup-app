@@ -19,6 +19,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.ZoneId;
 import java.util.*;
 
 import java.util.LinkedHashSet;
@@ -137,6 +140,23 @@ public class ChallengeServiceImp implements ChallengeService {
     }
 
     @Override
+    public List<ChallengeDTO> getNextChallenges() throws NotFoundException {
+
+        List<Challenge> challengeList = challengeRepository.findAll();
+
+        List<Challenge> validChallengeList = challengeList.stream().filter(challenge -> isNextDay(challenge.getStartDate())).collect(Collectors.toList());
+
+        if(validChallengeList == null || validChallengeList.isEmpty()){
+
+            throw new NotFoundException().setMessage("List is empty");
+
+        }
+
+        return validChallengeList.stream().map(challenge -> ChallengeMapper.convertChallengeToChallengeDTO(challenge)).collect(Collectors.toList());
+
+    }
+
+    @Override
     public ChallengeDTO getChallengeById(long id) throws NotFoundException {
 
         Optional<Challenge> challengeOptional = challengeRepository.findById(id);
@@ -160,6 +180,14 @@ public class ChallengeServiceImp implements ChallengeService {
 
         return DateUtils.isSameDay(challenge.getEndDate(), new Date()) || challenge.getEndDate().after(new Date());
 
+    }
+
+    private boolean isNextDay(Date date){
+
+        return date.toInstant()
+                .atZone(ZoneId.systemDefault())
+                .toLocalDate()
+                .isAfter(LocalDate.now());
     }
 
     private boolean  doesChallengeCategoryExist(long challengeCategoryId)
