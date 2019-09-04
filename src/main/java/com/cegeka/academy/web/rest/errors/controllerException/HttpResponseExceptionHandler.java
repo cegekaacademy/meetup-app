@@ -15,7 +15,7 @@ public abstract class HttpResponseExceptionHandler {
             int errorCode,
             List<String> details,
             HttpStatus status) {
-        ErrorResponse errorResponse = new ErrorResponse(message, errorCode, status, details);
+        ErrorResponse errorResponse = new ErrorResponse(message, errorCode, details);
         MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
         headers.set("Content-type", MediaType.APPLICATION_JSON_VALUE);
         return new ResponseEntity<>(errorResponse, headers, status);
