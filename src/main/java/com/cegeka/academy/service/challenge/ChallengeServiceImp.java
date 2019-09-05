@@ -18,7 +18,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-
 import java.util.*;
 
 import java.util.LinkedHashSet;
@@ -136,6 +135,7 @@ public class ChallengeServiceImp implements ChallengeService {
 
     }
 
+
     @Override
     public ChallengeDTO getChallengeById(long id) throws NotFoundException {
 
@@ -161,6 +161,7 @@ public class ChallengeServiceImp implements ChallengeService {
         return DateUtils.isSameDay(challenge.getEndDate(), new Date()) || challenge.getEndDate().after(new Date());
 
     }
+
 
     private boolean  doesChallengeCategoryExist(long challengeCategoryId)
     {

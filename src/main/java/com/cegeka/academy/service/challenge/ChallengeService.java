@@ -21,4 +21,5 @@ public interface ChallengeService {
 
     List<ChallengeDTO> getPublicChallenges() throws NotFoundException;
 
+
 }

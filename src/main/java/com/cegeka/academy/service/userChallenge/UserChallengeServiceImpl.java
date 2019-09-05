@@ -4,13 +4,16 @@ import com.cegeka.academy.domain.Challenge;
 import com.cegeka.academy.domain.Invitation;
 import com.cegeka.academy.domain.User;
 import com.cegeka.academy.domain.UserChallenge;
+import com.cegeka.academy.domain.enums.ChallengeStatus;
 import com.cegeka.academy.domain.enums.InvitationStatus;
 import com.cegeka.academy.domain.enums.UserChallengeStatus;
 import com.cegeka.academy.repository.ChallengeRepository;
 import com.cegeka.academy.repository.InvitationRepository;
 import com.cegeka.academy.repository.UserChallengeRepository;
 import com.cegeka.academy.repository.UserRepository;
+import com.cegeka.academy.service.dto.ChallengeDTO;
 import com.cegeka.academy.service.dto.UserChallengeDTO;
+import com.cegeka.academy.service.mapper.ChallengeMapper;
 import com.cegeka.academy.service.mapper.UserChallengeMapper;
 import com.cegeka.academy.web.rest.errors.InvalidInvitationStatusException;
 import com.cegeka.academy.web.rest.errors.InvalidUserChallengeStatusException;
@@ -20,6 +23,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -116,5 +121,56 @@ public class UserChallengeServiceImpl implements UserChallengeService {
         userChallenge.setEndTime(new Date());
 
         return userChallengeRepository.save(userChallenge);
+    }
+
+    @Override
+    public List<ChallengeDTO> getNextChallengesForAnUser(Long userId) throws NotFoundException {
+
+        List<UserChallenge> userChallengeList = userChallengeRepository.findAllByUserId(userId);
+
+        if(userChallengeList ==  null || userChallengeList.isEmpty()){
+
+            throw new NotFoundException().setMessage("List is empty");
+
+        }
+
+        List<Challenge> futureChallenges = userChallengeList.stream()
+                .filter(userChallenge -> hasUserChallengeValidChallenge(userChallenge) && isAfterToday(userChallenge.getChallenge().getStartDate()))
+                .map(userChallenge -> userChallenge.getChallenge())
+                .collect(Collectors.toList());
+
+        if(futureChallenges ==  null || futureChallenges.isEmpty()){
+
+            throw new NotFoundException().setMessage("List is empty");
+
+        }
+
+        return futureChallenges.stream()
+                .map(challenge -> ChallengeMapper.convertChallengeToChallengeDTO(challenge))
+                .collect(Collectors.toList());
+    }
+
+    private boolean isAfterToday(Date date){
+
+        return date.toInstant()
+                .atZone(ZoneId.systemDefault())
+                .toLocalDate()
+                .isAfter(LocalDate.now());
+    }
+
+    private boolean isUserChallengeInvitationValid(UserChallenge userChallenge){
+
+        return userChallenge.getInvitation() != null &&
+                !userChallenge.getInvitation().getStatus().equalsIgnoreCase(InvitationStatus.CANCELED.toString()) &&
+                !userChallenge.getInvitation().getStatus().equalsIgnoreCase(InvitationStatus.REJECTED.toString());
+    }
+
+    private boolean hasUserChallengeValidChallenge(UserChallenge userChallenge){
+
+        return  userChallenge.getChallenge() != null &&
+                (userChallenge.getChallenge().getStatus().equalsIgnoreCase(ChallengeStatus.PUBLIC.toString()) ||
+                (userChallenge.getChallenge().getStatus().equalsIgnoreCase(ChallengeStatus.PRIVATE.toString()) &&
+                        isUserChallengeInvitationValid(userChallenge)));
+
     }
 }
