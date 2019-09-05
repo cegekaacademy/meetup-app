@@ -13,6 +13,7 @@ import com.cegeka.academy.service.mapper.ChallengeMapper;
 import com.cegeka.academy.service.mapper.UserChallengeMapper;
 import com.cegeka.academy.service.mapper.UserMapper;
 import com.cegeka.academy.web.rest.errors.InvalidFieldException;
+import com.cegeka.academy.web.rest.errors.InvalidSortingParamException;
 import com.cegeka.academy.web.rest.errors.NotFoundException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
@@ -406,7 +407,11 @@ public class ChallengeServiceTest {
 
     @Test
     void testGetChallengeRankException(){
+        challengeRepository.save(challenge);
+        invitationRepository.save(invitation);
+        userChallengeRepository.save(userChallenge);
         Assertions.assertThrows(NotFoundException.class, ()->challengeService.getChallengeRanking(0L, "points"));
+        Assertions.assertThrows(InvalidSortingParamException.class,()->challengeService.getChallengeRanking(challenge.getId(),""));
     }
 
 }
