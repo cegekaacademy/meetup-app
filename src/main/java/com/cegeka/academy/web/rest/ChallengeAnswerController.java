@@ -45,12 +45,11 @@ public class ChallengeAnswerController {
 
     }
 
-    @PostMapping(value = "/{userId}/{challengeId}")
-    public ResponseEntity<String> uploadAnswer(@PathVariable("userId") Long userId,
-                                               @PathVariable("challengeId") Long challengeId,
+    @PostMapping(value = "/{challengeAnswerId}")
+    public ResponseEntity<String> uploadAnswerPhoto(@PathVariable("challengeAnswerId") Long challengeAnswerId,
                                                @ModelAttribute ChallengeAnswerDTO challengeAnswerDTO) throws IOException, NotFoundException {
 
-        challengeAnswerService.uploadAnswer(userId, challengeId, challengeAnswerDTO);
+        challengeAnswerService.uploadAnswerPhoto(challengeAnswerId, challengeAnswerDTO);
 
         return ResponseEntity.ok("Answer has been uploaded.");
     }

@@ -106,20 +106,21 @@ public class ChallengeAnswerServiceTest {
         challenge.setChallengeCategory(challengeCategoryRepository.findAll().get(0));
         challengeRepository.save(challenge);
 
+        challengeAnswer = new ChallengeAnswer();
+        challengeAnswer.setVideoAt("videoAt");
+        challengeAnswer.setAnswer("answer");
+        challengeAnswerRepository.save(challengeAnswer);
+
         userChallenge = new UserChallenge();
         userChallenge.setUser(usedUser);
-        userChallenge.setInvitation(invitationRepository.findAll().get(0));
-        userChallenge.setChallenge(challengeRepository.findAll().get(0));
+        userChallenge.setInvitation(invitation);
+        userChallenge.setChallenge(challenge);
+        userChallenge.setChallengeAnswer(challengeAnswer);
         userChallenge.setStatus("status");
         userChallenge.setPoints(2.22);
         userChallenge.setStartTime(new Date());
         userChallenge.setEndTime(new Date());
         userChallengeRepository.save(userChallenge);
-
-        challengeAnswer = new ChallengeAnswer();
-        challengeAnswer.setImagePath("imagePath");
-        challengeAnswer.setVideoAt("videoAt");
-        challengeAnswer.setAnswer("answer");
 
         challengeAnswerDTO = initChallengeAnswerDTO();
     }
@@ -212,7 +213,7 @@ public class ChallengeAnswerServiceTest {
 
         challengeAnswerService.deleteChallengeAnswer(usedUser.getId(), challengeRepository.findAll().get(0).getId());
 
-        assertThat(challengeAnswerRepository.findAll().size()).isEqualTo(0);
+        assertThat(challengeAnswerRepository.findAll().size()).isEqualTo(1);
     }
 
     @Test
@@ -226,35 +227,16 @@ public class ChallengeAnswerServiceTest {
     @Test
     public void testUploadAnswerIsWorking() throws IOException, NotFoundException {
 
-        challengeAnswerService.uploadAnswer(user.getId(), challenge.getId(), challengeAnswerDTO);
+        challengeAnswerService.uploadAnswerPhoto(challengeAnswer.getId(), challengeAnswerDTO);
 
-        assertThat(challengeAnswerRepository.findAll().size()).isEqualTo(1);
+        assertThat(challengeAnswer.getImagePath()).isNotEqualTo(null);
     }
 
-
     @Test
-    public void testUploadAnswerThrowsNotFoundExceptionForMissingChallenge() {
+    public void testUploadAnswerThrowsNotFoundExceptionForMissingUserChallenge() {
 
         Assertions.assertThrows(NotFoundException.class, () -> {
-            challengeAnswerService.uploadAnswer((long)200, challenge.getId(), challengeAnswerDTO);
-        });
-    }
-
-    @Test
-    public void testUploadAnswerThrowsNotFoundExceptionForMissingUser() {
-        Assertions.assertThrows(NotFoundException.class, () -> {
-            challengeAnswerService.uploadAnswer((long)200, challenge.getId(), challengeAnswerDTO);
-        });
-    }
-
-    @Test
-    public void testUploadAnswerThrowsIllegalArgumentExceptionForExistingUserChallenge() {
-
-        userChallenge.setChallengeAnswer(challengeAnswerRepository
-                .save(ChallengeAnswerMapper.convertChallengeAnswerDTOToChallengeAnswer(challengeAnswerDTO)));
-
-        Assertions.assertThrows(IllegalArgumentException.class, () -> {
-            challengeAnswerService.uploadAnswer(user.getId(), challenge.getId(), challengeAnswerDTO);
+            challengeAnswerService.uploadAnswerPhoto(200L, challengeAnswerDTO);
         });
     }
 }

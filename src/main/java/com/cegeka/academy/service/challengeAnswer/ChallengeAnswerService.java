@@ -13,5 +13,5 @@ public interface ChallengeAnswerService {
 
     void deleteChallengeAnswer(Long userId, Long challengeId) throws NotFoundException;
 
-    void uploadAnswer(Long userId, Long challengeId, ChallengeAnswerDTO challengeAnswerDTO) throws IOException, NotFoundException;
+    void uploadAnswerPhoto(Long challengeAnswerId, ChallengeAnswerDTO challengeAnswerDTO) throws IOException, NotFoundException;
 }

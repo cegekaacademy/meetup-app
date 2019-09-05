@@ -71,7 +71,7 @@ public class ChallengeAnswerServiceImp implements ChallengeAnswerService {
 
         UserChallenge userChallenge = getUserChallengeByUserIdAndChallengeId(userId, challengeId);
 
-        if(userChallenge.getChallengeAnswer() == null) {
+        if (userChallenge.getChallengeAnswer() == null) {
             throw new NotFoundException().setMessage("Answer doesn't exist");
         }
 
@@ -89,22 +89,19 @@ public class ChallengeAnswerServiceImp implements ChallengeAnswerService {
     }
 
     @Override
-    public void uploadAnswer(Long userId, Long challengeId, ChallengeAnswerDTO challengeAnswerDTO) throws NotFoundException, IOException {
+    public void uploadAnswerPhoto(Long challengeAnswerId, ChallengeAnswerDTO challengeAnswerDTO) throws NotFoundException, IOException {
 
-        UserChallenge userChallenge = getUserChallengeByUserIdAndChallengeId(userId, challengeId);
+        UserChallenge userChallenge = userChallengeRepository.findByChallengeAnswerId(challengeAnswerId).orElseThrow(
+                () -> new NotFoundException().setMessage("User challenge not found"));
 
-        if (userChallenge.getChallengeAnswer() == null) {
+        Long userId = userChallenge.getUser().getId();
+        Long challengeId = userChallenge.getChallenge().getId();
 
-            String imagePath = saveImage(challengeAnswerDTO, userId, challengeId);
+        String imagePath = saveImage(challengeAnswerDTO, userId, challengeId);
 
-            ChallengeAnswer challengeAnswer = ChallengeAnswerMapper.convertChallengeAnswerDTOToChallengeAnswer(challengeAnswerDTO);
-            challengeAnswer.setImagePath(imagePath);
-            challengeAnswerRepository.save(challengeAnswer);
-
-            userChallengeService.addUserChallengeAnswer(userChallenge, challengeAnswer);
-        } else {
-            throw new IllegalArgumentException("An answer has been given for this challenge");
-        }
+        ChallengeAnswer challengeAnswer = userChallenge.getChallengeAnswer();
+        challengeAnswer.setImagePath(imagePath);
+        challengeAnswerRepository.save(challengeAnswer);
     }
 
     public String saveImage(ChallengeAnswerDTO challengeAnswerDTO, Long userId, Long challengeId) throws IOException {
