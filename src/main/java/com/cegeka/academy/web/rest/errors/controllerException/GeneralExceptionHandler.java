@@ -1,10 +1,7 @@
 package com.cegeka.academy.web.rest.errors.controllerException;
 
 import com.cegeka.academy.service.invitation.InvitationServiceImpl;
-import com.cegeka.academy.web.rest.errors.ExpiredObjectException;
-import com.cegeka.academy.web.rest.errors.InvalidArgumentsException;
-import com.cegeka.academy.web.rest.errors.NotFoundException;
-import com.cegeka.academy.web.rest.errors.UnauthorizedUserException;
+import com.cegeka.academy.web.rest.errors.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.Ordered;
@@ -102,4 +99,45 @@ public class GeneralExceptionHandler extends HttpResponseExceptionHandler {
                 HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(value = InvalidFieldException.class)
+    public ResponseEntity<ErrorResponse> handleInvalidFieldException(InvalidFieldException e) {
+        List<String> detailsList = new ArrayList<>();
+        detailsList.add("ErrorMessage: " + e.getMessage());
+
+        logger.info(e + "");
+
+        return getErrorResponseEntity(
+                ErrorCode.INVALID_ARGUMENT.getMessage(),
+                ErrorCode.INVALID_ARGUMENT.getCode(),
+                detailsList,
+                HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(value = InvalidInvitationStatusException.class)
+    public ResponseEntity<ErrorResponse> handleInvalidInvitationStatusException(InvalidInvitationStatusException e) {
+        List<String> detailsList = new ArrayList<>();
+        detailsList.add("ErrorMessage: " + e.getMessage());
+
+        logger.info(e + "");
+
+        return getErrorResponseEntity(
+                ErrorCode.INVALID_STATUS.getMessage(),
+                ErrorCode.INVALID_STATUS.getCode(),
+                detailsList,
+                HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(value = InvalidUserChallengeStatusException.class)
+    public ResponseEntity<ErrorResponse> handleInvalidUserChallengeStatusException(InvalidUserChallengeStatusException e) {
+        List<String> detailsList = new ArrayList<>();
+        detailsList.add("ErrorMessage: " + e.getMessage());
+
+        logger.info(e + "");
+
+        return getErrorResponseEntity(
+                ErrorCode.INVALID_STATUS.getMessage(),
+                ErrorCode.INVALID_STATUS.getCode(),
+                detailsList,
+                HttpStatus.BAD_REQUEST);
+    }
 }
