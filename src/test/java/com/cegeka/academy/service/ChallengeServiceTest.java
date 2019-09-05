@@ -97,11 +97,11 @@ public class ChallengeServiceTest {
         challenge = new Challenge();
 
         challenge.setCreator(user);
-        challenge.setStartDate(new Date(System.currentTimeMillis()));
 
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
         try {
-            challenge.setEndDate(sdf.parse("22/09/2019"));
+            challenge.setStartDate(sdf.parse("12/09/2020"));
+            challenge.setEndDate(sdf.parse("22/09/2020"));
         } catch (ParseException e) {
             e.printStackTrace();
         }

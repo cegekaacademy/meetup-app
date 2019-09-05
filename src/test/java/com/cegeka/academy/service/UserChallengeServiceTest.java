@@ -2,10 +2,13 @@ package com.cegeka.academy.service;
 
 import com.cegeka.academy.AcademyProjectApp;
 import com.cegeka.academy.domain.*;
+import com.cegeka.academy.domain.enums.ChallengeStatus;
 import com.cegeka.academy.domain.enums.InvitationStatus;
 import com.cegeka.academy.domain.enums.UserChallengeStatus;
 import com.cegeka.academy.repository.*;
+import com.cegeka.academy.service.dto.ChallengeDTO;
 import com.cegeka.academy.service.dto.UserChallengeDTO;
+import com.cegeka.academy.service.mapper.ChallengeMapper;
 import com.cegeka.academy.service.mapper.UserChallengeMapper;
 import com.cegeka.academy.service.userChallenge.UserChallengeService;
 import com.cegeka.academy.web.rest.errors.InvalidInvitationStatusException;
@@ -21,6 +24,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -59,6 +64,8 @@ public class UserChallengeServiceTest  {
     private UserChallengeDTO userChallengeDTO;
     private UserChallenge userChallenge;
     private User usedUser;
+    private SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+
 
     @BeforeEach
     public void init() {
@@ -80,8 +87,12 @@ public class UserChallengeServiceTest  {
         invitation.setUser(usedUser);
         invitation.setEvent(null);
         invitationRepository.save(invitation);
-
-        Date startDate = new Date();
+        Date startDate = null;
+        try {
+            startDate = sdf.parse("22/09/2020");
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
         Date endDate = new Date();
 
         challengeCategory = new ChallengeCategory();
@@ -94,7 +105,7 @@ public class UserChallengeServiceTest  {
         challenge.setPoints(5.22);
         challenge.setStartDate(startDate);
         challenge.setEndDate(endDate);
-        challenge.setStatus("new");
+        challenge.setStatus(ChallengeStatus.PRIVATE.toString());
         challenge.setDescription("description");
         challenge.setChallengeCategory(challengeCategoryRepository.findAll().get(0));
         challengeRepository.save(challenge);
@@ -321,5 +332,66 @@ public class UserChallengeServiceTest  {
 
         Assertions.assertThrows(NotFoundException.class,
                 () -> userChallengeService.initUserChallenge(challenge2, temporaryInvitation));
+    }
+
+    @Test
+    public void testGetNextChallengesIsWorkingWithPrivateChallenge() throws NotFoundException {
+
+
+        List<ChallengeDTO> challengeDTOList = userChallengeService.getNextChallengesForAnUser(usedUser.getId());
+
+        assertThat(challengeDTOList.size()).isEqualTo(1);
+        assertThat(challengeDTOList.get(0).getId()).isEqualTo(userChallengeRepository.findAllByUserId(usedUser.getId()).get(0).getChallenge().getId());
+
+    }
+
+    @Test
+    public void testGetNextChallengesIsWorkingWithPublicChallenge() throws NotFoundException {
+
+        userChallenge.getChallenge().setStatus(ChallengeStatus.PUBLIC.toString());
+        userChallenge.setInvitation(null);
+        userChallengeRepository.save(userChallenge);
+
+        List<ChallengeDTO> challengeDTOList = userChallengeService.getNextChallengesForAnUser(usedUser.getId());
+
+        assertThat(challengeDTOList.size()).isEqualTo(1);
+        assertThat(challengeDTOList.get(0).getId()).isEqualTo(userChallengeRepository.findAllByUserId(usedUser.getId()).get(0).getChallenge().getId());
+
+    }
+
+    @Test
+    public void testGetNextChallengesWithNoUserChallengesForAnUser() {
+
+        Assertions.assertThrows(NotFoundException.class, () -> {
+            userChallengeService.getNextChallengesForAnUser(444L);
+        });
+    }
+
+    @Test
+    public void testGetNextChallengesWithNoChallengesWithValidInvitation() {
+
+        userChallenge.getInvitation().setStatus(InvitationStatus.CANCELED.toString());
+        userChallengeRepository.save(userChallenge);
+
+        Assertions.assertThrows(NotFoundException.class, () -> {
+            userChallengeService.getNextChallengesForAnUser(usedUser.getId());
+        });
+    }
+
+    @Test
+    public void testGetNextChallengesWithNoChallengeWithValidDate() {
+
+        Date startDate = null;
+        try {
+            startDate = sdf.parse("12/03/2019");
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        userChallenge.getChallenge().setStartDate(startDate);
+        userChallengeRepository.save(userChallenge);
+
+        Assertions.assertThrows(NotFoundException.class, () -> {
+            userChallengeService.getNextChallengesForAnUser(usedUser.getId());
+        });
     }
 }

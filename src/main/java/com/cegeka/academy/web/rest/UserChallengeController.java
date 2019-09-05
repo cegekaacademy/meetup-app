@@ -1,6 +1,7 @@
 package com.cegeka.academy.web.rest;
 
 import com.cegeka.academy.domain.UserChallenge;
+import com.cegeka.academy.service.dto.ChallengeDTO;
 import com.cegeka.academy.service.dto.UserChallengeDTO;
 import com.cegeka.academy.service.userChallenge.UserChallengeService;
 import com.cegeka.academy.web.rest.errors.InvalidInvitationStatusException;
@@ -51,6 +52,13 @@ public class UserChallengeController {
                                   @PathVariable("ownerId") Long ownerId) throws WrongOwnerException {
 
         return userChallengeService.rateUser(userChallengeDTO, ownerId);
+    }
+
+    @GetMapping("/next/{userId}")
+    public List<ChallengeDTO> getNextChallenges(@PathVariable(value = "userId") Long userId) throws NotFoundException {
+
+        return userChallengeService.getNextChallengesForAnUser(userId);
+
     }
 
 }
