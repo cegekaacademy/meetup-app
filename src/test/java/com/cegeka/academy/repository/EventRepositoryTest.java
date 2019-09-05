@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -34,7 +35,7 @@ public class EventRepositoryTest {
     private Address address;
     private Set<Category> categories;
     private Set<Category> categoriesHelper;
-    private Category category1;
+    private Category category1, category2;
 
     @BeforeEach
     public void init() {
@@ -44,7 +45,7 @@ public class EventRepositoryTest {
         addressRepository.saveAndFlush(address);
         category1 = TestsRepositoryUtil.createCategory("Sport", "Liber pentru toate varstele!");
         Category category3 = TestsRepositoryUtil.createCategory("Arta", "Expozitii de arta");
-        Category category2 = TestsRepositoryUtil.createCategory("Social", "Actiuni caritabile");
+        category2 = TestsRepositoryUtil.createCategory("Social", "Actiuni caritabile");
         categoryRepository.save(category1);
         categoryRepository.save(category3);
         categoryRepository.save(category2);
@@ -126,6 +127,36 @@ public class EventRepositoryTest {
 
         List<User> users = userRepository.findAllByEvents_id(event.getId());
         assertThat(users.size()).isEqualTo(2);
+
+    }
+
+    @Test
+    public void testfindAllByIsPublicIsTrueAndCategoriesIn() {
+
+        Event event = TestsRepositoryUtil.createEvent("Ana are mere!", "KFC Krushers Party", true, address, user, categories, "https://scontent.fotp3-2.fna.fbcdn.net/v/t1.0-9/67786277_2592710307438854_5055220041180512256");
+        eventRepository.save(event);
+
+        Event event1 = TestsRepositoryUtil.createEvent("Ana are mere!", "KFC Krushers Party", true, address, user, categoriesHelper, "https://scontent.fotp3-2.fna.fbcdn.net/v/t1.0-9/67786277_2592710307438854_5055220041180512256");
+        eventRepository.save(event1);
+
+        List<Category> categ = new ArrayList<>();
+        categ.add(category2);
+        categ.add(category1);
+        List<Event> events = eventRepository.findDistinctByIsPublicIsTrueAndCategoriesIn(categ);
+        assertThat(events.size()).isEqualTo(2);
+
+    }
+
+    @Test
+    public void testfindAllByIsPublicIsTrueAndCategoriesInIsWorkingWithPrivateEvent() {
+
+        Event event = TestsRepositoryUtil.createEvent("Ana are mere!", "KFC Krushers Party", false, address, user, categories, "https://scontent.fotp3-2.fna.fbcdn.net/v/t1.0-9/67786277_2592710307438854_5055220041180512256");
+        eventRepository.save(event);
+        List<Category> categ = new ArrayList<>();
+        categ.add(category2);
+        categ.add(category1);
+        List<Event> events = eventRepository.findDistinctByIsPublicIsTrueAndCategoriesIn(categ);
+        assertThat(events.size()).isEqualTo(0);
 
     }
 

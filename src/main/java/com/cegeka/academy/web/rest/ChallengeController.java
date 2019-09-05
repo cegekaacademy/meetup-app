@@ -57,6 +57,7 @@ public class ChallengeController {
 
     }
 
+
     @GetMapping("/public")
     public List<ChallengeDTO> getPublicChallenges() throws NotFoundException {
 

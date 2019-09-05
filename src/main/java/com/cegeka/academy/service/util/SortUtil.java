@@ -1,5 +1,6 @@
 package com.cegeka.academy.service.util;
 
+import com.cegeka.academy.service.dto.EventDTO;
 import com.cegeka.academy.service.dto.UserDTO;
 import com.cegeka.academy.service.invitation.InvitationServiceImpl;
 import org.slf4j.Logger;
@@ -81,4 +82,31 @@ public class SortUtil {
 
         }).collect(Collectors.toList());
     }
+
+
+    public static List<EventDTO> sortEventsByStartDate(List<EventDTO> events) {
+
+        return events.stream().sorted((o1, o2) -> {
+
+            if (o1.getStartDate() == null && o2.getStartDate() == null) {
+
+                logger.info("Both data are null");
+                return 0;
+
+            } else if (o1.getStartDate() == null) {
+
+                logger.info("First date is null");
+                return 1;
+
+            } else if (o2.getStartDate() == null) {
+
+                logger.info("Second date is null");
+                return -1;
+            }
+
+            return o2.getStartDate().compareTo(o1.getStartDate());
+
+        }).collect(Collectors.toList());
+    }
+
 }

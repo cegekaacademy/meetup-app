@@ -25,4 +25,6 @@ public interface EventService {
     void addUserToPublicEvent(Long eventId, Long userId) throws NotFoundException;
 
     List<EventDTO> getEventsByUser(Long userId) throws NotFoundException;
+
+    List<EventDTO> getEventsByUserInterestedCategories(Long userId) throws NotFoundException;
 }
