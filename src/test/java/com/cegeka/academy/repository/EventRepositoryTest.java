@@ -72,11 +72,7 @@ public class EventRepositoryTest {
     public void testFindAllByIsPublicIsTrue() {
         for (int i = 0; i < 5; i++) {
             Event event = TestsRepositoryUtil.createEvent("Ana are mere!", "KFC Krushers Party", true, address, user, categories, "https://scontent.fotp3-2.fna.fbcdn.net/v/t1.0-9/67786277_2592710307438854_5055220041180512256");
-            if (i % 2 == 0) {
-                event.setPublicEvent(true);
-            } else {
-                event.setPublicEvent(false);
-            }
+            event.setPublicEvent(i % 2 == 0);
             eventRepository.save(event);
         }
 
