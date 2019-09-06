@@ -38,7 +38,7 @@ public class Event {
     private String notes;
 
     @Column(name = "is_public")
-    private Boolean isPublic;
+    private boolean isPublic;
 
     @Size(max = 250, message = "Image path must have 250 letters")
     @Column(name = "cover_photo")
@@ -60,7 +60,7 @@ public class Event {
 
     @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_event",referencedColumnName = "id")
-    Set<Invitation>pendingInvitations=new HashSet<>();
+    private Set<Invitation> pendingInvitations = new HashSet<>();
 
 
     public Long getId() {
@@ -119,11 +119,11 @@ public class Event {
         this.notes = notes;
     }
 
-    public Boolean isPublic() {
+    public boolean isPublic() {
         return isPublic;
     }
 
-    public void setPublic(Boolean aPublic) {
+    public void setPublic(boolean aPublic) {
         isPublic = aPublic;
     }
 
