@@ -27,16 +27,16 @@ public class EventServiceImpl implements EventService {
     private final EventRepository eventRepository;
     private final UserService userService;
     private final UserRepository userRepository;
-    private final SearchHelperService searchHelperService;
+    private final SearchHelperService searchService;
 
     private Logger logger = LoggerFactory.getLogger(EventServiceImpl.class);
 
     @Autowired
-    public EventServiceImpl(EventRepository eventRepository, UserService userService, UserRepository userRepository, SearchHelperService searchHelperService) {
+    public EventServiceImpl(EventRepository eventRepository, UserService userService, UserRepository userRepository, SearchHelperService searchService) {
         this.eventRepository = eventRepository;
         this.userService = userService;
         this.userRepository = userRepository;
-        this.searchHelperService = searchHelperService;
+        this.searchService = searchService;
     }
 
 
@@ -123,7 +123,7 @@ public class EventServiceImpl implements EventService {
 
         User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException().setMessage("User not found"));
         List<EventDTO> interestedEvents = new ArrayList<>();
-        List<Event> events = eventRepository.findDistinctByIsPublicIsTrueAndCategoriesIn(searchHelperService.searchUserInterestCategories(userId));
+        List<Event> events = eventRepository.findDistinctByIsPublicIsTrueAndCategoriesIn(searchService.searchUserInterestCategories(userId));
         if (events == null || events.isEmpty()) {
             throw new NotFoundException().setMessage("No events found");
         }
