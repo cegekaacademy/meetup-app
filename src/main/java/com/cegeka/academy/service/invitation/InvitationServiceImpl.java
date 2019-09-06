@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -143,10 +142,12 @@ public class InvitationServiceImpl implements InvitationService {
             for (GroupUserRole userGroup : listIdUsers) {
 
                 Optional<User> user = userRepository.findById(userGroup.getUser().getId());
+                Optional<Event> event = eventRepository.findById(invitation.getEvent().getId());
 
-                user.orElseThrow(NotFoundException::new);
+                user.orElseThrow(() -> new NotFoundException().setMessage("User not found"));
+                event.orElseThrow(() -> new NotFoundException().setMessage("Event not found"));
 
-                if (checkUniqueService.checkUniqueInvitation(user.get(), invitation.getEvent())) {
+                if (checkUniqueService.checkUniqueInvitation(user.get(), event.get())) {
 
                     Invitation invitationSendToGroup = InvitationMapper.createInvitation(invitation.getDescription(), invitation.getStatus(), user.get(), invitation.getEvent());
                     invitationRepository.save(invitationSendToGroup);
