@@ -24,7 +24,7 @@ public class UserChallengeController {
 
     @RequestMapping(value = "/{userId}", method = RequestMethod.GET)
     @ResponseBody
-    public List<UserChallengeDTO> getChallengesByUserId(@PathVariable("userId") Long userId){
+    public List<UserChallengeDTO> getChallengesByUserId(@PathVariable("userId") Long userId) throws NotFoundException {
 
         return userChallengeService.getUserChallengesByUserId(userId);
     }

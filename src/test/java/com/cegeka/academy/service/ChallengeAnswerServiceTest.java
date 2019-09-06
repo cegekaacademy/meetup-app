@@ -5,6 +5,7 @@ import com.cegeka.academy.domain.*;
 import com.cegeka.academy.repository.*;
 import com.cegeka.academy.service.challengeAnswer.ChallengeAnswerService;
 import com.cegeka.academy.service.mapper.ChallengeAnswerMapper;
+import com.cegeka.academy.web.rest.errors.ExistingItemException;
 import com.cegeka.academy.web.rest.errors.NotFoundException;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.AfterEach;
@@ -106,6 +107,7 @@ public class ChallengeAnswerServiceTest {
         userChallenge.setPoints(2.22);
         userChallenge.setStartTime(new Date());
         userChallenge.setEndTime(new Date());
+        userChallengeRepository.save(userChallenge);
 
 
         challengeAnswer = new ChallengeAnswer();
@@ -144,19 +146,44 @@ public class ChallengeAnswerServiceTest {
 
 
     @Test
-    public void testSaveChallengeAnswer(){
+    public void testSaveChallengeAnswerIsWorking() throws NotFoundException, ExistingItemException {
 
-        challengeAnswerService.saveChallengeAnswer(ChallengeAnswerMapper.convertChallengeAnswerToChallengeAnswerDTO(challengeAnswer));
+        challengeAnswerService.saveChallengeAnswer(userChallenge.getId(), ChallengeAnswerMapper.convertChallengeAnswerToChallengeAnswerDTO(challengeAnswer));
         assertThat(challengeAnswerRepository.findAll().get(0).getAnswer()).isEqualTo(challengeAnswer.getAnswer());
         assertThat(challengeAnswerRepository.findAll().get(0).getImagePath()).isEqualTo(challengeAnswer.getImagePath());
         assertThat(challengeAnswerRepository.findAll().get(0).getVideoAt()).isEqualTo(challengeAnswer.getVideoAt());
+        assertThat(userChallengeRepository.findAll().get(0).getChallengeAnswer().getId()).isEqualTo(challengeAnswerRepository.findAll().get(0).getId());
 
     }
 
     @Test
-    public void testUpdateChallengeAnswer() throws NotFoundException {
+    public void testSaveChallengeAnswerWithInvalidUserChallengeId(){
 
-        challengeAnswerService.saveChallengeAnswer(ChallengeAnswerMapper.convertChallengeAnswerToChallengeAnswerDTO(challengeAnswer));
+        Assertions.assertThrows(NotFoundException.class, () -> {
+
+            challengeAnswerService.saveChallengeAnswer(400L, ChallengeAnswerMapper.convertChallengeAnswerToChallengeAnswerDTO(challengeAnswer));
+
+        });
+
+    }
+
+    @Test
+    public void testSaveChallengeAnswerWithExistingAnswer() throws NotFoundException, ExistingItemException {
+
+        challengeAnswerService.saveChallengeAnswer(userChallenge.getId(), ChallengeAnswerMapper.convertChallengeAnswerToChallengeAnswerDTO(challengeAnswer));
+
+        Assertions.assertThrows(ExistingItemException.class, () -> {
+
+            challengeAnswerService.saveChallengeAnswer(userChallenge.getId(), ChallengeAnswerMapper.convertChallengeAnswerToChallengeAnswerDTO(challengeAnswer));
+
+        });
+
+    }
+
+    @Test
+    public void testUpdateChallengeAnswer() throws NotFoundException, ExistingItemException {
+
+        challengeAnswerService.saveChallengeAnswer(userChallenge.getId(),ChallengeAnswerMapper.convertChallengeAnswerToChallengeAnswerDTO(challengeAnswer));
 
         ChallengeAnswer existingChallenge = challengeAnswerRepository.findAll().get(0);
         existingChallenge.setAnswer("answer2");
@@ -180,9 +207,9 @@ public class ChallengeAnswerServiceTest {
     }
 
     @Test
-    public void testDeleteChallengeAnswerByUserIdAndChallengeId() throws NotFoundException {
+    public void testDeleteChallengeAnswerByUserIdAndChallengeId() throws NotFoundException, ExistingItemException {
 
-        challengeAnswerService.saveChallengeAnswer(ChallengeAnswerMapper.convertChallengeAnswerToChallengeAnswerDTO(challengeAnswer));
+        challengeAnswerService.saveChallengeAnswer(userChallenge.getId(), ChallengeAnswerMapper.convertChallengeAnswerToChallengeAnswerDTO(challengeAnswer));
         userChallenge.setChallengeAnswer(challengeAnswerRepository.findAll().get(0));
         userChallengeRepository.save(userChallenge);
 

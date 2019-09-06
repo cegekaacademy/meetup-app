@@ -75,6 +75,12 @@ public class UserChallengeMapper {
 
     public static ChallengeDTO convertChallengeToChallengeDTO(Challenge challenge){
 
+        if(challenge == null){
+
+            return null;
+
+        }
+
         ChallengeDTO challengeDTO = new ChallengeDTO();
         challengeDTO.setId(challenge.getId());
         challengeDTO.setCreator(new UserMapper().userToUserDTO(challenge.getCreator()));
@@ -89,6 +95,12 @@ public class UserChallengeMapper {
     }
 
     public static Challenge convertChallengeDTOToChallenge(ChallengeDTO challengeDTO){
+
+        if(challengeDTO == null){
+
+            return null;
+
+        }
 
         Challenge challenge = new Challenge();
 
@@ -116,6 +128,11 @@ public class UserChallengeMapper {
 
     public static InvitationChallengeDTO convertInvitationToInvitationChallengeDTO(Invitation invitation){
 
+        if(invitation == null){
+
+            return null;
+        }
+
         InvitationChallengeDTO invitationChallengeDTO = new InvitationChallengeDTO();
         invitationChallengeDTO.setUser(new UserMapper().userToUserDTO(invitation.getUser()));
         invitationChallengeDTO.setId(invitation.getId());
@@ -125,6 +142,11 @@ public class UserChallengeMapper {
     }
 
     public static Invitation convertInvitationChallengeDTOTOInvitation(InvitationChallengeDTO invitationChallengeDTO){
+
+        if(invitationChallengeDTO == null){
+
+            return null;
+        }
 
         Invitation invitation = new Invitation();
         invitation.setUser(new UserMapper().userDTOToUser(invitationChallengeDTO.getUser()));

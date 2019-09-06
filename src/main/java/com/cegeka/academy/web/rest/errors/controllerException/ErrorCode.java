@@ -6,7 +6,8 @@ public enum ErrorCode {
     UNAUTHORIZED_ACCESS(401, "You have no right to change the object"),
     NOT_FOUND(404, "The searched object does not exist"),
     INVALID_ARGUMENT(400, "Invalid parameter value in the request"),
-    INVALID_STATUS(400, "Invalid status value in the request");
+    INVALID_STATUS(400, "Invalid status value in the request"),
+    EXISTING_ITEM(409,"Object already exists");
 
     private int code;
     private String message;

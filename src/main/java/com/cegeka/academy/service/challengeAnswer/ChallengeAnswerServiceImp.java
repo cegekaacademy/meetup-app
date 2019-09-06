@@ -6,6 +6,7 @@ import com.cegeka.academy.repository.ChallengeAnswerRepository;
 import com.cegeka.academy.repository.UserChallengeRepository;
 import com.cegeka.academy.service.dto.ChallengeAnswerDTO;
 import com.cegeka.academy.service.mapper.ChallengeAnswerMapper;
+import com.cegeka.academy.web.rest.errors.ExistingItemException;
 import com.cegeka.academy.web.rest.errors.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,11 +27,23 @@ public class ChallengeAnswerServiceImp implements ChallengeAnswerService {
     private Logger logger =  LoggerFactory.getLogger(ChallengeAnswerServiceImp.class);
 
     @Override
-    public void saveChallengeAnswer(ChallengeAnswerDTO challengeAnswerDTO) {
+    public void saveChallengeAnswer(Long userChallengeId, ChallengeAnswerDTO challengeAnswerDTO) throws NotFoundException, ExistingItemException {
+
+        UserChallenge userChallenge = userChallengeRepository.findById(userChallengeId)
+                .orElseThrow(()-> new NotFoundException().setMessage("User challenge does not exists"));
+
+        if(userChallenge.getChallengeAnswer() != null){
+
+            throw new ExistingItemException().setMessage("Challenge answer already exists");
+        }
 
         ChallengeAnswer saveChallengeAnswer = ChallengeAnswerMapper.convertChallengeAnswerDTOToChallengeAnswer(challengeAnswerDTO);
 
         ChallengeAnswer result = challengeAnswerRepository.save(saveChallengeAnswer);
+
+        userChallenge.setChallengeAnswer(result);
+
+        userChallengeRepository.save(userChallenge);
 
         logger.info("Challenge answer with id: " + result.getId() + " has been saved.");
     }
