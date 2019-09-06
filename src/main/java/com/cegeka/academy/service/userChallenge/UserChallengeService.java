@@ -15,7 +15,7 @@ import java.util.NoSuchElementException;
 
 public interface UserChallengeService {
 
-    List<UserChallengeDTO> getUserChallengesByUserId(Long userId);
+    List<UserChallengeDTO> getUserChallengesByUserId(Long userId) throws NotFoundException;
 
     void updateUserChallengeStatus(Long userChallengeId, String status) throws NotFoundException, InvalidUserChallengeStatusException;
 

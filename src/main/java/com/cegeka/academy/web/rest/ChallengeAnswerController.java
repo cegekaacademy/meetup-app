@@ -3,6 +3,7 @@ package com.cegeka.academy.web.rest;
 
 import com.cegeka.academy.service.challengeAnswer.ChallengeAnswerService;
 import com.cegeka.academy.service.dto.ChallengeAnswerDTO;
+import com.cegeka.academy.web.rest.errors.ExistingItemException;
 import com.cegeka.academy.web.rest.errors.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -18,10 +19,10 @@ public class ChallengeAnswerController {
     @Autowired
     private ChallengeAnswerService challengeAnswerService;
 
-    @PostMapping
-    public ResponseEntity<String> saveChallengeAnswer(@Valid @RequestBody ChallengeAnswerDTO challengeAnswerDTO){
+    @PostMapping("/{userChallengeId}")
+    public ResponseEntity<String> saveChallengeAnswer(@PathVariable(value = "userChallengeId") Long userChallengeId, @Valid @RequestBody ChallengeAnswerDTO challengeAnswerDTO) throws NotFoundException, ExistingItemException {
 
-        challengeAnswerService.saveChallengeAnswer(challengeAnswerDTO);
+        challengeAnswerService.saveChallengeAnswer(userChallengeId, challengeAnswerDTO);
 
         return ResponseEntity.ok("Challenge answer has been saved.");
     }
