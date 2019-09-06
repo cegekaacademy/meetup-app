@@ -19,6 +19,7 @@ import com.cegeka.academy.web.rest.errors.InvalidInvitationStatusException;
 import com.cegeka.academy.web.rest.errors.InvalidUserChallengeStatusException;
 import com.cegeka.academy.web.rest.errors.NotFoundException;
 import com.cegeka.academy.web.rest.errors.WrongOwnerException;
+import io.jsonwebtoken.lang.Collections;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -47,9 +48,15 @@ public class UserChallengeServiceImpl implements UserChallengeService {
     private UserRepository userRepository;
 
     @Override
-    public List<UserChallengeDTO> getUserChallengesByUserId(Long userId) {
+    public List<UserChallengeDTO> getUserChallengesByUserId(Long userId) throws NotFoundException {
 
         List<UserChallenge> userChallengeList = userChallengeRepository.findAllByUserId(userId);
+
+        if(Collections.isEmpty(userChallengeList)){
+
+            throw new NotFoundException().setMessage("List is empty");
+
+        }
 
         return userChallengeList.stream().map(userChallenge -> UserChallengeMapper.convertUserChallengeToUserChallengeDTO(userChallenge)).collect(Collectors.toList());
 
@@ -72,6 +79,12 @@ public class UserChallengeServiceImpl implements UserChallengeService {
 
         UserChallenge userChallenge = userChallengeRepository.findById(userChallengeId)
                 .orElseThrow(() -> new NotFoundException().setMessage("User challenge does not exists."));
+
+        if(userChallenge.getInvitation() == null){
+
+            throw new NotFoundException().setMessage("Invitation does not exists");
+
+        }
 
         userChallenge.getInvitation().setStatus(InvitationStatus.getInvitationStatus(status).toString());
 

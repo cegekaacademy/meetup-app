@@ -145,7 +145,7 @@ public class UserChallengeServiceTest  {
     }
 
     @Test
-    public void testGetChallengesByUserId(){
+    public void testGetChallengesByUserIdIsWorking() throws NotFoundException {
 
        List<UserChallengeDTO> results = userChallengeService.getUserChallengesByUserId(usedUser.getId());
         assertThat(results.get(0).getChallenge().getId()).isEqualTo(userChallenge.getChallenge().getId());
@@ -162,8 +162,11 @@ public class UserChallengeServiceTest  {
     @Test
     public void testGetChallengesByUserIdWithNoResult(){
 
-        List<UserChallengeDTO> results = userChallengeService.getUserChallengesByUserId(20l);
-        assertThat(results.size()).isEqualTo(0);
+        Assertions.assertThrows(NotFoundException.class, () -> {
+
+            userChallengeService.getUserChallengesByUserId(200L);
+
+        });
 
     }
 
@@ -233,6 +236,7 @@ public class UserChallengeServiceTest  {
         });
 
     }
+
     @Test
     public void testRateUserByOwner() throws WrongOwnerException {
         userChallengeDTO.setPoints(49);
