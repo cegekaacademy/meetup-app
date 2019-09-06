@@ -9,7 +9,7 @@ import com.cegeka.academy.security.AuthoritiesConstants;
 import com.cegeka.academy.security.SecurityUtils;
 import com.cegeka.academy.service.dto.UserDTO;
 import com.cegeka.academy.service.mapper.UserMapper;
-import com.cegeka.academy.service.serviceValidation.SearchService;
+import com.cegeka.academy.service.serviceValidation.SearchHelperService;
 import com.cegeka.academy.service.util.RandomUtil;
 import com.cegeka.academy.service.util.SortUtil;
 import com.cegeka.academy.web.rest.errors.*;
@@ -45,15 +45,15 @@ public class UserService {
 
     private final CacheManager cacheManager;
 
-    private final SearchService searchService;
+    private final SearchHelperService searchHelperService;
 
     public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, AuthorityRepository authorityRepository,
-                       CacheManager cacheManager, SearchService searchService) {
+                       CacheManager cacheManager, SearchHelperService searchHelperService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.authorityRepository = authorityRepository;
         this.cacheManager = cacheManager;
-        this.searchService = searchService;
+        this.searchHelperService = searchHelperService;
     }
 
     public Optional<User> activateRegistration(String key) {
@@ -303,7 +303,7 @@ public class UserService {
     @Transactional
     public List<UserDTO> findByInterestedCategoryName(String categoryName) throws NotFoundException {
 
-        return SortUtil.sortUsersByName(new UserMapper().usersToUserDTOs(searchService.searchUserByInterestedEvents(searchService.searchEventsByCategoryName(categoryName))));
+        return SortUtil.sortUsersByName(new UserMapper().usersToUserDTOs(searchHelperService.searchUserByInterestedEvents(searchHelperService.searchEventsByCategoryName(categoryName))));
     }
 
     @Transactional

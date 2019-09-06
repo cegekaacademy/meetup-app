@@ -7,7 +7,7 @@ import com.cegeka.academy.repository.UserRepository;
 import com.cegeka.academy.service.UserService;
 import com.cegeka.academy.service.dto.EventDTO;
 import com.cegeka.academy.service.mapper.EventMapper;
-import com.cegeka.academy.service.serviceValidation.SearchService;
+import com.cegeka.academy.service.serviceValidation.SearchHelperService;
 import com.cegeka.academy.service.util.SortUtil;
 import com.cegeka.academy.web.rest.errors.NotFoundException;
 import org.slf4j.Logger;
@@ -27,16 +27,16 @@ public class EventServiceImpl implements EventService {
     private final EventRepository eventRepository;
     private final UserService userService;
     private final UserRepository userRepository;
-    private final SearchService searchService;
+    private final SearchHelperService searchHelperService;
 
     private Logger logger = LoggerFactory.getLogger(EventServiceImpl.class);
 
     @Autowired
-    public EventServiceImpl(EventRepository eventRepository, UserService userService, UserRepository userRepository, SearchService searchService) {
+    public EventServiceImpl(EventRepository eventRepository, UserService userService, UserRepository userRepository, SearchHelperService searchHelperService) {
         this.eventRepository = eventRepository;
         this.userService = userService;
         this.userRepository = userRepository;
-        this.searchService = searchService;
+        this.searchHelperService = searchHelperService;
     }
 
 
@@ -123,7 +123,7 @@ public class EventServiceImpl implements EventService {
 
         User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException().setMessage("User not found"));
         List<EventDTO> interestedEvents = new ArrayList<>();
-        List<Event> events = eventRepository.findDistinctByIsPublicIsTrueAndCategoriesIn(searchService.searchUserInterestCategories(userId));
+        List<Event> events = eventRepository.findDistinctByIsPublicIsTrueAndCategoriesIn(searchHelperService.searchUserInterestCategories(userId));
         if (events == null || events.isEmpty()) {
             throw new NotFoundException().setMessage("No events found");
         }
