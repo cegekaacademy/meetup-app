@@ -63,8 +63,8 @@ public class EventRepositoryTest {
     public void testAddEvent() {
         event = TestsRepositoryUtil.createEvent("Ana are mere!", "KFC Krushers Party", true, address, user, categories, "https://scontent.fotp3-2.fna.fbcdn.net/v/t1.0-9/67786277_2592710307438854_5055220041180512256");
         eventRepository.save(event);
-        Event eventTest = eventRepository.findAllByIsPublicIsTrue().get(0);
-        assertThat(eventTest.isPublic()).isEqualTo(true);
+        Event eventTest = eventRepository.findAllByPublicEventIsTrue().get(0);
+        assertThat(eventTest.isPublicEvent()).isEqualTo(true);
         assertThat(eventTest.getName()).isEqualTo(event.getName());
     }
 
@@ -73,14 +73,14 @@ public class EventRepositoryTest {
         for (int i = 0; i < 5; i++) {
             Event event = TestsRepositoryUtil.createEvent("Ana are mere!", "KFC Krushers Party", true, address, user, categories, "https://scontent.fotp3-2.fna.fbcdn.net/v/t1.0-9/67786277_2592710307438854_5055220041180512256");
             if (i % 2 == 0) {
-                event.setPublic(true);
+                event.setPublicEvent(true);
             } else {
-                event.setPublic(false);
+                event.setPublicEvent(false);
             }
             eventRepository.save(event);
         }
 
-        List<Event> publicEvents = eventRepository.findAllByIsPublicIsTrue();
+        List<Event> publicEvents = eventRepository.findAllByPublicEventIsTrue();
         assertThat(publicEvents.size()).isEqualTo(3);
     }
 
@@ -142,7 +142,7 @@ public class EventRepositoryTest {
         List<Category> categ = new ArrayList<>();
         categ.add(category2);
         categ.add(category1);
-        List<Event> events = eventRepository.findDistinctByIsPublicIsTrueAndCategoriesIn(categ);
+        List<Event> events = eventRepository.findDistinctByPublicEventIsTrueAndCategoriesIn(categ);
         assertThat(events.size()).isEqualTo(2);
 
     }
@@ -155,7 +155,7 @@ public class EventRepositoryTest {
         List<Category> categ = new ArrayList<>();
         categ.add(category2);
         categ.add(category1);
-        List<Event> events = eventRepository.findDistinctByIsPublicIsTrueAndCategoriesIn(categ);
+        List<Event> events = eventRepository.findDistinctByPublicEventIsTrueAndCategoriesIn(categ);
         assertThat(events.size()).isEqualTo(0);
 
     }

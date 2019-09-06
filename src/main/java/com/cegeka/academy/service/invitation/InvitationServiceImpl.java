@@ -135,7 +135,7 @@ public class InvitationServiceImpl implements InvitationService {
             throw new NotFoundException().setMessage("Event not found");
 
         }
-        if (!invitation.getEvent().isPublic()) {
+        if (!invitation.getEvent().isPublicEvent()) {
 
             List<GroupUserRole> listIdUsers = groupUserRoleRepository.findAllByGroupId(idGroup);
 

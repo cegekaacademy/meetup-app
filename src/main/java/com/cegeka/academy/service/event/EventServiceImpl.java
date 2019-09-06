@@ -41,7 +41,7 @@ public class EventServiceImpl implements EventService {
 
 
     public List<Event> getAllPubicEvents() {
-        return eventRepository.findAllByIsPublicIsTrue();
+        return eventRepository.findAllByPublicEventIsTrue();
     }
 
     public List<EventDTO> getAllByOwner(User owner) throws NotFoundException {
@@ -92,7 +92,7 @@ public class EventServiceImpl implements EventService {
     public void addUserToPublicEvent(Long eventId, Long userId) throws NotFoundException {
         Event event = eventRepository.findById(eventId).
                 orElseThrow(() -> new NotFoundException().setMessage("Event not found"));
-        if (event.isPublic()) {
+        if (event.isPublicEvent()) {
             User user = userRepository.findById(userId).
                     orElseThrow(() -> new NotFoundException().setMessage("User not found"));
             user.getEvents().add(event);
@@ -123,7 +123,7 @@ public class EventServiceImpl implements EventService {
 
         User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException().setMessage("User not found"));
         List<EventDTO> interestedEvents = new ArrayList<>();
-        List<Event> events = eventRepository.findDistinctByIsPublicIsTrueAndCategoriesIn(searchService.searchUserInterestCategories(userId));
+        List<Event> events = eventRepository.findDistinctByPublicEventIsTrueAndCategoriesIn(searchService.searchUserInterestCategories(userId));
         if (events == null || events.isEmpty()) {
             throw new NotFoundException().setMessage("No events found");
         }
