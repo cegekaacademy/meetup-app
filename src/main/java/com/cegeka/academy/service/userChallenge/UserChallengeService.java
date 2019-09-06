@@ -28,4 +28,6 @@ public interface UserChallengeService {
     UserChallenge initUserChallenge (Challenge challenge, Invitation invitation) throws NotFoundException;
 
     List<ChallengeDTO> getNextChallengesForAnUser(Long userId) throws NotFoundException;
+
+    List<ChallengeDTO> getChallengesWithPendingStatusForInvitation(Long userId) throws NotFoundException;
 }

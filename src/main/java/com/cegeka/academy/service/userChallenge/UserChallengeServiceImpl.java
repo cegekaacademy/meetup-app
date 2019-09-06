@@ -23,6 +23,7 @@ import io.jsonwebtoken.lang.Collections;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -161,6 +162,40 @@ public class UserChallengeServiceImpl implements UserChallengeService {
         return futureChallenges.stream()
                 .map(challenge -> ChallengeMapper.convertChallengeToChallengeDTO(challenge))
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ChallengeDTO> getChallengesWithPendingStatusForInvitation(Long userId) throws NotFoundException {
+
+        List<UserChallenge> userChallengeList = userChallengeRepository.findAllByUserId(userId);
+
+        if(CollectionUtils.isEmpty(userChallengeList)){
+
+            throw new NotFoundException().setMessage("List is empty");
+
+        }
+
+        List<Challenge> challengeList = userChallengeList.stream()
+                .filter(userChallenge -> hasInvitationPendingStatus(userChallenge.getInvitation()))
+                .map(userChallenge -> userChallenge.getChallenge())
+                .collect(Collectors.toList());
+
+        if(CollectionUtils.isEmpty(challengeList)){
+
+            throw new NotFoundException().setMessage("List is empty");
+
+        }
+
+        return challengeList.stream()
+                .map(ChallengeMapper::convertChallengeToChallengeDTO)
+                .collect(Collectors.toList());
+
+    }
+
+    private boolean hasInvitationPendingStatus(Invitation invitation){
+
+        return invitation != null && invitation.getStatus().equalsIgnoreCase(InvitationStatus.PENDING.toString());
+
     }
 
     private boolean isAfterToday(Date date){

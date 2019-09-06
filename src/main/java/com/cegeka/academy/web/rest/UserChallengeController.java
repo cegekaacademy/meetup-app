@@ -61,4 +61,11 @@ public class UserChallengeController {
 
     }
 
+    @GetMapping("/pending/{userId}")
+    public List<ChallengeDTO> getChallengesWithPendingInvitation(@PathVariable(value = "userId") Long userId) throws NotFoundException {
+
+        return userChallengeService.getChallengesWithPendingStatusForInvitation(userId);
+
+    }
+
 }
