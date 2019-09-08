@@ -129,7 +129,7 @@ public class ChallengeServiceTest {
         invitation2 = new Invitation();
         invitation2.setDescription("invitationDescription");
         invitation2.setStatus("invitationStat");
-        invitation2.setUser(userRepository.findById(2L).get());
+        invitation2.setUser(user);
         invitation2.setEvent(null);
 
 
@@ -153,7 +153,7 @@ public class ChallengeServiceTest {
         userChallenge2.setEndTime(new Date());
 
         userChallenge3 = new UserChallenge();
-        userChallenge3.setUser(userRepository.findById(2L).get());
+        userChallenge3.setUser(user);
         userChallenge3.setInvitation(invitation2);
         userChallenge3.setChallenge(challenge);
         userChallenge3.setStatus("status");
