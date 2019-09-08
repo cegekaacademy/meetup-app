@@ -167,16 +167,8 @@ public class UserChallengeServiceImpl implements UserChallengeService {
     @Override
     public List<ChallengeDTO> getChallengesWithPendingStatusForInvitation(Long userId) throws NotFoundException {
 
-        List<UserChallenge> userChallengeList = userChallengeRepository.findAllByUserId(userId);
-
-        if(CollectionUtils.isEmpty(userChallengeList)){
-
-            throw new NotFoundException().setMessage("List is empty");
-
-        }
-
-        List<Challenge> challengeList = userChallengeList.stream()
-                .filter(userChallenge -> hasInvitationPendingStatus(userChallenge.getInvitation()))
+        List<Challenge> challengeList = userChallengeRepository.findAllByUserIdAndInvitationStatus(userId, InvitationStatus.PENDING.toString())
+                .stream()
                 .map(userChallenge -> userChallenge.getChallenge())
                 .collect(Collectors.toList());
 
@@ -189,12 +181,6 @@ public class UserChallengeServiceImpl implements UserChallengeService {
         return challengeList.stream()
                 .map(ChallengeMapper::convertChallengeToChallengeDTO)
                 .collect(Collectors.toList());
-
-    }
-
-    private boolean hasInvitationPendingStatus(Invitation invitation){
-
-        return invitation != null && invitation.getStatus().equalsIgnoreCase(InvitationStatus.PENDING.toString());
 
     }
 
