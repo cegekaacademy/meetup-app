@@ -11,10 +11,15 @@ import com.cegeka.academy.web.rest.errors.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.swing.filechooser.FileSystemView;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -25,19 +30,22 @@ import java.util.Date;
 
 @Service
 @Transactional
+@Configuration
 public class ChallengeAnswerServiceImp implements ChallengeAnswerService {
 
     @Autowired
     private ChallengeAnswerRepository challengeAnswerRepository;
     @Autowired
     private UserChallengeRepository userChallengeRepository;
-    @Autowired
-    private UserChallengeService userChallengeService;
+
+
+    private String rootDirectory = System.getProperty("user.home") + "\\";
+    @Value("${UPLOAD_CHALLENGE_DIRECTORY}")
+    private String challengeDirectory;
+    @Value("${JPG_EXTENSION}")
+    private String jpgExtension;
 
     private Logger logger = LoggerFactory.getLogger(ChallengeAnswerServiceImp.class);
-    private static String UPLOAD_ROOT_DIRECTORY = "C:\\photos\\";
-    private static String UPLOAD_CHALLENGE_DIRECTORY = "challenge\\";
-    private static String JPG_EXTENSION = ".jpg";
 
     @Override
     public void saveChallengeAnswer(ChallengeAnswerDTO challengeAnswerDTO) {
@@ -104,7 +112,8 @@ public class ChallengeAnswerServiceImp implements ChallengeAnswerService {
     }
 
     public String saveImage(MultipartFile image, Long userId, Long challengeId) throws IOException {
-        String imagePath = UPLOAD_ROOT_DIRECTORY + UPLOAD_CHALLENGE_DIRECTORY + userId + "\\" + challengeId + "\\";
+
+        String imagePath = rootDirectory + challengeDirectory + userId + "\\" + challengeId + "\\";
         File file = new File(imagePath);
         if (!file.exists()) {
             file.mkdirs();
@@ -113,7 +122,7 @@ public class ChallengeAnswerServiceImp implements ChallengeAnswerService {
         byte[] bytes = image.getBytes();
         String imageName = "answer_" + userId + "_" + challengeId + "_" + new Date().getTime();
 
-        Path path = Paths.get(imagePath + imageName + JPG_EXTENSION);
+        Path path = Paths.get(imagePath + imageName + jpgExtension);
         Files.write(path, bytes);
 
         return path.toString();
