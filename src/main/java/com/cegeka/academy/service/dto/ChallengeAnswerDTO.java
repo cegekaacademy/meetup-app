@@ -2,6 +2,7 @@ package com.cegeka.academy.service.dto;
 
 
 import javax.validation.constraints.NotNull;
+import java.util.Objects;
 
 public class ChallengeAnswerDTO {
 
@@ -51,5 +52,21 @@ public class ChallengeAnswerDTO {
                 ", imagePath='" + imagePath + '\'' +
                 ", answer='" + answer + '\'' +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ChallengeAnswerDTO)) return false;
+        ChallengeAnswerDTO that = (ChallengeAnswerDTO) o;
+        return Objects.equals(getId(), that.getId()) &&
+                Objects.equals(getVideoAt(), that.getVideoAt()) &&
+                Objects.equals(getImagePath(), that.getImagePath()) &&
+                Objects.equals(getAnswer(), that.getAnswer());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId(), getVideoAt(), getImagePath(), getAnswer());
     }
 }

@@ -1,6 +1,7 @@
 package com.cegeka.academy.service.dto;
 
 import java.util.Date;
+import java.util.Objects;
 
 public class UserChallengeDTO {
 
@@ -102,5 +103,27 @@ public class UserChallengeDTO {
                 ", endTime=" + endTime +
                 ", challengeAnswer=" + challengeAnswer +
                 '}';
+    }
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof UserChallengeDTO)) return false;
+        UserChallengeDTO that = (UserChallengeDTO) o;
+        return Double.compare(that.getPoints(), getPoints()) == 0 &&
+                Objects.equals(getId(), that.getId()) &&
+                Objects.equals(getUser(), that.getUser()) &&
+                Objects.equals(getInvitation(), that.getInvitation()) &&
+                Objects.equals(getChallenge(), that.getChallenge()) &&
+                Objects.equals(getStatus(), that.getStatus()) &&
+                Objects.equals(getStartTime(), that.getStartTime()) &&
+                Objects.equals(getEndTime(), that.getEndTime()) &&
+                Objects.equals(getChallengeAnswer(), that.getChallengeAnswer());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId(), getUser(), getInvitation(), getChallenge(), getStatus(), getPoints(), getStartTime(), getEndTime(), getChallengeAnswer());
     }
 }
