@@ -1,6 +1,7 @@
 package com.cegeka.academy.web.rest;
 
 import com.cegeka.academy.domain.UserChallenge;
+import com.cegeka.academy.domain.enums.InvitationStatus;
 import com.cegeka.academy.service.dto.ChallengeDTO;
 import com.cegeka.academy.service.dto.UserChallengeDTO;
 import com.cegeka.academy.service.userChallenge.UserChallengeService;
@@ -64,7 +65,7 @@ public class UserChallengeController {
     @GetMapping("/pending/{userId}")
     public List<ChallengeDTO> getChallengesWithPendingInvitation(@PathVariable(value = "userId") Long userId) throws NotFoundException {
 
-        return userChallengeService.getChallengesWithPendingStatusForInvitation(userId);
+        return userChallengeService.getChallengesByInvitationStatus(userId, InvitationStatus.PENDING);
 
     }
 

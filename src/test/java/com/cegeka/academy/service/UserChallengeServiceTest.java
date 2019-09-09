@@ -402,7 +402,7 @@ public class UserChallengeServiceTest  {
     @Test
     public void getChallengesForAnUserWithPendingInvitation() throws NotFoundException {
 
-        List<ChallengeDTO> result = userChallengeService.getChallengesWithPendingStatusForInvitation(usedUser.getId());
+        List<ChallengeDTO> result = userChallengeService.getChallengesByInvitationStatus(usedUser.getId(), InvitationStatus.PENDING);
 
         assertThat(result.size()).isEqualTo(1);
         assertThat(result.get(0).getId()).isEqualTo(userChallenge.getChallenge().getId());
@@ -417,7 +417,7 @@ public class UserChallengeServiceTest  {
 
         Assertions.assertThrows(NotFoundException.class, () -> {
 
-            userChallengeService.getChallengesWithPendingStatusForInvitation(usedUser.getId());
+            userChallengeService.getChallengesByInvitationStatus(usedUser.getId(), InvitationStatus.PENDING);
 
         });
 
@@ -428,7 +428,7 @@ public class UserChallengeServiceTest  {
 
         Assertions.assertThrows(NotFoundException.class, () -> {
 
-            userChallengeService.getChallengesWithPendingStatusForInvitation(200L);
+            userChallengeService.getChallengesByInvitationStatus(200L, InvitationStatus.PENDING);
 
         });
 

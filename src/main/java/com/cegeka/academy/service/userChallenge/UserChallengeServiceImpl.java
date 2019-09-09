@@ -165,9 +165,9 @@ public class UserChallengeServiceImpl implements UserChallengeService {
     }
 
     @Override
-    public List<ChallengeDTO> getChallengesWithPendingStatusForInvitation(Long userId) throws NotFoundException {
+    public List<ChallengeDTO> getChallengesByInvitationStatus(Long userId, InvitationStatus invitationStatus) throws NotFoundException {
 
-        List<Challenge> challengeList = userChallengeRepository.findAllByUserIdAndInvitationStatus(userId, InvitationStatus.PENDING.toString())
+        List<Challenge> challengeList = userChallengeRepository.findAllByUserIdAndInvitationStatus(userId, invitationStatus.toString())
                 .stream()
                 .map(userChallenge -> userChallenge.getChallenge())
                 .collect(Collectors.toList());

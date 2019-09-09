@@ -3,6 +3,7 @@ package com.cegeka.academy.service.userChallenge;
 import com.cegeka.academy.domain.Challenge;
 import com.cegeka.academy.domain.Invitation;
 import com.cegeka.academy.domain.UserChallenge;
+import com.cegeka.academy.domain.enums.InvitationStatus;
 import com.cegeka.academy.service.dto.ChallengeDTO;
 import com.cegeka.academy.service.dto.UserChallengeDTO;
 import com.cegeka.academy.web.rest.errors.InvalidInvitationStatusException;
@@ -29,5 +30,5 @@ public interface UserChallengeService {
 
     List<ChallengeDTO> getNextChallengesForAnUser(Long userId) throws NotFoundException;
 
-    List<ChallengeDTO> getChallengesWithPendingStatusForInvitation(Long userId) throws NotFoundException;
+    List<ChallengeDTO> getChallengesByInvitationStatus(Long userId, InvitationStatus invitationStatus) throws NotFoundException;
 }
