@@ -23,6 +23,7 @@ import io.jsonwebtoken.lang.Collections;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -161,6 +162,26 @@ public class UserChallengeServiceImpl implements UserChallengeService {
         return futureChallenges.stream()
                 .map(challenge -> ChallengeMapper.convertChallengeToChallengeDTO(challenge))
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ChallengeDTO> getChallengesByInvitationStatus(Long userId, InvitationStatus invitationStatus) throws NotFoundException {
+
+        List<Challenge> challengeList = userChallengeRepository.findAllByUserIdAndInvitationStatus(userId, invitationStatus.toString())
+                .stream()
+                .map(userChallenge -> userChallenge.getChallenge())
+                .collect(Collectors.toList());
+
+        if(CollectionUtils.isEmpty(challengeList)){
+
+            throw new NotFoundException().setMessage("List is empty");
+
+        }
+
+        return challengeList.stream()
+                .map(ChallengeMapper::convertChallengeToChallengeDTO)
+                .collect(Collectors.toList());
+
     }
 
     private boolean isAfterToday(Date date){
