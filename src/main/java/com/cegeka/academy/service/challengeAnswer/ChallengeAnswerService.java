@@ -2,6 +2,7 @@ package com.cegeka.academy.service.challengeAnswer;
 
 import com.cegeka.academy.service.dto.ChallengeAnswerDTO;
 import com.cegeka.academy.web.rest.errors.NotFoundException;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 
@@ -13,5 +14,5 @@ public interface ChallengeAnswerService {
 
     void deleteChallengeAnswer(Long userId, Long challengeId) throws NotFoundException;
 
-    void uploadAnswerPhoto(Long challengeAnswerId, ChallengeAnswerDTO challengeAnswerDTO) throws IOException, NotFoundException;
+    void uploadAnswerPhoto(Long challengeAnswerId, MultipartFile image) throws IOException, NotFoundException;
 }

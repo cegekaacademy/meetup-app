@@ -8,12 +8,12 @@ import com.cegeka.academy.service.dto.ChallengeAnswerDTO;
 import com.cegeka.academy.service.mapper.ChallengeAnswerMapper;
 import com.cegeka.academy.service.userChallenge.UserChallengeService;
 import com.cegeka.academy.web.rest.errors.NotFoundException;
-import org.omg.CosNaming.NamingContextPackage.NotFound;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
@@ -21,7 +21,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Date;
-import java.util.Optional;
 
 
 @Service
@@ -89,7 +88,7 @@ public class ChallengeAnswerServiceImp implements ChallengeAnswerService {
     }
 
     @Override
-    public void uploadAnswerPhoto(Long challengeAnswerId, ChallengeAnswerDTO challengeAnswerDTO) throws NotFoundException, IOException {
+    public void uploadAnswerPhoto(Long challengeAnswerId, MultipartFile image) throws NotFoundException, IOException {
 
         UserChallenge userChallenge = userChallengeRepository.findByChallengeAnswerId(challengeAnswerId).orElseThrow(
                 () -> new NotFoundException().setMessage("User challenge not found"));
@@ -97,21 +96,21 @@ public class ChallengeAnswerServiceImp implements ChallengeAnswerService {
         Long userId = userChallenge.getUser().getId();
         Long challengeId = userChallenge.getChallenge().getId();
 
-        String imagePath = saveImage(challengeAnswerDTO, userId, challengeId);
+        String imagePath = saveImage(image, userId, challengeId);
 
         ChallengeAnswer challengeAnswer = userChallenge.getChallengeAnswer();
         challengeAnswer.setImagePath(imagePath);
         challengeAnswerRepository.save(challengeAnswer);
     }
 
-    public String saveImage(ChallengeAnswerDTO challengeAnswerDTO, Long userId, Long challengeId) throws IOException {
+    public String saveImage(MultipartFile image, Long userId, Long challengeId) throws IOException {
         String imagePath = UPLOAD_ROOT_DIRECTORY + UPLOAD_CHALLENGE_DIRECTORY + userId + "\\" + challengeId + "\\";
         File file = new File(imagePath);
         if (!file.exists()) {
             file.mkdirs();
         }
 
-        byte[] bytes = challengeAnswerDTO.getImage().getBytes();
+        byte[] bytes = image.getBytes();
         String imageName = "answer_" + userId + "_" + challengeId + "_" + new Date().getTime();
 
         Path path = Paths.get(imagePath + imageName + JPG_EXTENSION);

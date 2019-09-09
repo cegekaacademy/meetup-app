@@ -125,18 +125,22 @@ public class ChallengeAnswerServiceTest {
         challengeAnswerDTO = initChallengeAnswerDTO();
     }
 
-    public ChallengeAnswerDTO initChallengeAnswerDTO() throws IOException {
+    public ChallengeAnswerDTO initChallengeAnswerDTO() {
+
+        ChallengeAnswerDTO challengeAnswerDTO = new ChallengeAnswerDTO();
+        challengeAnswerDTO.setAnswer("Answer");
+        challengeAnswerDTO.setVideoAt("https://youtube.com/");
+
+        return challengeAnswerDTO;
+    }
+
+    public MultipartFile initImage() throws IOException {
         File image = new File("src/test/resources/images/poza123.jpg");
         FileInputStream input = new FileInputStream(image);
 
         MultipartFile imageFile = new MockMultipartFile("image", IOUtils.toByteArray(input));
 
-        ChallengeAnswerDTO challengeAnswerDTO = new ChallengeAnswerDTO();
-        challengeAnswerDTO.setImage(imageFile);
-        challengeAnswerDTO.setAnswer("Answer");
-        challengeAnswerDTO.setVideoAt("https://youtube.com/");
-
-        return challengeAnswerDTO;
+        return imageFile;
     }
 
     @AfterEach
@@ -227,16 +231,20 @@ public class ChallengeAnswerServiceTest {
     @Test
     public void testUploadAnswerIsWorking() throws IOException, NotFoundException {
 
-        challengeAnswerService.uploadAnswerPhoto(challengeAnswer.getId(), challengeAnswerDTO);
+        MultipartFile image = initImage();
+
+        challengeAnswerService.uploadAnswerPhoto(challengeAnswer.getId(), image);
 
         assertThat(challengeAnswer.getImagePath()).isNotEqualTo(null);
     }
 
     @Test
-    public void testUploadAnswerThrowsNotFoundExceptionForMissingUserChallenge() {
+    public void testUploadAnswerThrowsNotFoundExceptionForMissingUserChallenge() throws IOException {
+
+        MultipartFile image = initImage();
 
         Assertions.assertThrows(NotFoundException.class, () -> {
-            challengeAnswerService.uploadAnswerPhoto(200L, challengeAnswerDTO);
+            challengeAnswerService.uploadAnswerPhoto(200L, image);
         });
     }
 }
