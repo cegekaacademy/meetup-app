@@ -217,7 +217,7 @@ public class InvitationServiceTest {
         assertThat(listAfterDelete.size()).isEqualTo(0);
     }
 
-    @Test()
+    @Test
     @Transactional
     public void assertThatDeleteInvitationIsWorkingWithInvalidId() {
 
@@ -235,7 +235,7 @@ public class InvitationServiceTest {
     @Test
     @Transactional
     public void assertThatAcceptInvitation_ThrowsExceptionWithWrongInvitationId() {
-        Assertions.assertThrows(NotFoundException.class, () -> invitationService.acceptInvitation(40l));
+        Assertions.assertThrows(NotFoundException.class, () -> invitationService.acceptInvitation(10000l));
     }
 
     @Test
