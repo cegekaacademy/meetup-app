@@ -11,6 +11,12 @@ public class ChallengeMapper {
 
     public static Challenge convertChallengeDTOToChallenge(ChallengeDTO challengeDTO){
 
+        if(challengeDTO == null){
+
+            return null;
+
+        }
+
         Challenge challenge = new Challenge();
         challenge.setEndDate(challengeDTO.getEndDate());
         challenge.setStartDate(challengeDTO.getStartDate());
@@ -94,8 +100,8 @@ public class ChallengeMapper {
 
     }
 
-    public static Challenge enrichChallenge(ChallengeDTO challengeDTO, Challenge challenge)
-    {
+    public static Challenge enrichChallenge(ChallengeDTO challengeDTO, Challenge challenge) {
+
         challenge.setStartDate(challengeDTO.getStartDate());
         challenge.setEndDate(challengeDTO.getEndDate());
         challenge.setPoints(challengeDTO.getPoints());
@@ -106,8 +112,8 @@ public class ChallengeMapper {
         return challenge;
     }
 
-    public static ChallengeCategory enrichChallengeCategory(ChallengeCategory challengeCategory, ChallengeCategoryDTO challengeCategoryDTO)
-    {
+    public static ChallengeCategory enrichChallengeCategory(ChallengeCategory challengeCategory, ChallengeCategoryDTO challengeCategoryDTO) {
+
         if(!challengeCategory.getId().equals(challengeCategoryDTO.getId())) {
 
             challengeCategory = new ChallengeCategory();

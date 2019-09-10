@@ -7,6 +7,8 @@ import com.cegeka.academy.repository.UserRepository;
 import com.cegeka.academy.service.UserService;
 import com.cegeka.academy.service.dto.EventDTO;
 import com.cegeka.academy.service.mapper.EventMapper;
+import com.cegeka.academy.service.serviceValidation.SearchHelperService;
+import com.cegeka.academy.service.util.SortUtil;
 import com.cegeka.academy.web.rest.errors.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,19 +27,21 @@ public class EventServiceImpl implements EventService {
     private final EventRepository eventRepository;
     private final UserService userService;
     private final UserRepository userRepository;
+    private final SearchHelperService searchService;
 
     private Logger logger = LoggerFactory.getLogger(EventServiceImpl.class);
 
     @Autowired
-    public EventServiceImpl(EventRepository eventRepository, UserService userService, UserRepository userRepository) {
+    public EventServiceImpl(EventRepository eventRepository, UserService userService, UserRepository userRepository, SearchHelperService searchService) {
         this.eventRepository = eventRepository;
         this.userService = userService;
         this.userRepository = userRepository;
+        this.searchService = searchService;
     }
 
 
     public List<Event> getAllPubicEvents() {
-        return eventRepository.findAllByIsPublicIsTrue();
+        return eventRepository.findAllByPublicEventIsTrue();
     }
 
     public List<EventDTO> getAllByOwner(User owner) throws NotFoundException {
@@ -88,7 +92,7 @@ public class EventServiceImpl implements EventService {
     public void addUserToPublicEvent(Long eventId, Long userId) throws NotFoundException {
         Event event = eventRepository.findById(eventId).
                 orElseThrow(() -> new NotFoundException().setMessage("Event not found"));
-        if (event.isPublic()) {
+        if (event.isPublicEvent()) {
             User user = userRepository.findById(userId).
                     orElseThrow(() -> new NotFoundException().setMessage("User not found"));
             user.getEvents().add(event);
@@ -114,4 +118,24 @@ public class EventServiceImpl implements EventService {
 
     }
 
+    @Override
+    public List<EventDTO> getEventsByUserInterestedCategories(Long userId) throws NotFoundException {
+
+        User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException().setMessage("User not found"));
+        List<EventDTO> interestedEvents = new ArrayList<>();
+        List<Event> events = eventRepository.findDistinctByPublicEventIsTrueAndCategoriesIn(searchService.searchUserInterestCategories(userId));
+        if (events == null || events.isEmpty()) {
+            throw new NotFoundException().setMessage("No events found");
+        }
+        for (Event event : events) {
+            if (!userRepository.findAllByEvents_id(event.getId()).contains(user)) {
+                EventDTO aux = EventMapper.convertEventtoEventDTO(event);
+                interestedEvents.add(aux);
+            }
+        }
+
+        return SortUtil.sortEventsByStartDate(interestedEvents);
+
+
+    }
 }

@@ -13,7 +13,7 @@ import java.util.Objects;
  * A group.
  */
 @Entity
-@Table(name = "Groups")
+@Table(name = "academyproject_groups")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class Group implements Serializable {
 
@@ -33,9 +33,12 @@ public class Group implements Serializable {
     @Column(name = "description", length = 45)
     private String description;
 
+
     public Long getId() {
         return id;
     }
+
+
 
     public void setId(Long id) {
         this.id = id;

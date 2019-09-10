@@ -33,6 +33,7 @@ public class CheckUniqueService {
         List<Invitation> allInvitations = invitationRepository.findAll();
 
         for (Invitation findInvitation : allInvitations) {
+
             Optional<User> findUser = Optional.ofNullable(findInvitation.getUser());
             Optional<Event> findEvent = Optional.ofNullable(findInvitation.getEvent());
 

@@ -4,6 +4,7 @@ import com.cegeka.academy.domain.Event;
 import com.cegeka.academy.domain.User;
 import com.cegeka.academy.repository.EventRepository;
 import com.cegeka.academy.repository.UserRepository;
+import com.cegeka.academy.service.UserService;
 import com.cegeka.academy.service.dto.EventDTO;
 import com.cegeka.academy.service.event.EventService;
 import com.cegeka.academy.service.serviceValidation.ExpirationCheckService;
@@ -27,16 +28,18 @@ public class EventController {
     private final ExpirationCheckService expirationCheckService;
     private final EventRepository eventRepository;
     private final UserRepository userRepository;
+    private final UserService userService;
 
     @Autowired
     public EventController(EventService eventService, ValidationAccessService validationAccessService,
                            ExpirationCheckService expirationCheckService, EventRepository eventRepository,
-                           UserRepository userRepository) {
+                           UserRepository userRepository, UserService userService) {
         this.eventService = eventService;
         this.validationAccessService = validationAccessService;
         this.expirationCheckService = expirationCheckService;
         this.eventRepository = eventRepository;
         this.userRepository = userRepository;
+        this.userService = userService;
     }
 
     @GetMapping("/all_public")
@@ -63,16 +66,16 @@ public class EventController {
 
             } else if (!validationAccessService.verifyUserAccessForEventEntity(event.getId())) {
 
-                throw new UnauthorizedUserException();
+                throw new UnauthorizedUserException().setMessage("You have no right to update this event");
 
             } else if (!expirationCheckService.availabilityCheck(event.getEndDate())) {
 
-                throw new ExpiredObjectException();
+                throw new ExpiredObjectException().setMessage("This event is expired");
 
             }
         } else {
 
-            throw new NotFoundException();
+            throw new NotFoundException().setMessage("Event not found");
         }
 
     }
@@ -90,12 +93,12 @@ public class EventController {
 
             } else {
 
-                throw new UnauthorizedUserException();
+                throw new UnauthorizedUserException().setMessage("You have no right to delete this event");
 
             }
         } else {
 
-            throw new NotFoundException();
+            throw new NotFoundException().setMessage("Event not found");
         }
 
     }
@@ -121,6 +124,13 @@ public class EventController {
         Optional<User> user = userRepository.findById(id);
         user.orElseThrow(() -> new NotFoundException().setMessage("User not found"));
         return eventService.getAllByOwner(user.get());
+    }
+
+    @GetMapping("/interest")
+    public List<EventDTO> getEventsByUserInterest() throws NotFoundException {
+
+        User currentUser = userService.getUserWithAuthorities().orElseThrow(() -> new NotFoundException().setMessage("User not found"));
+        return eventService.getEventsByUserInterestedCategories(currentUser.getId());
     }
 
 }
