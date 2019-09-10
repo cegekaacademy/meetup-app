@@ -3,6 +3,7 @@ package com.cegeka.academy.config;
 import com.cegeka.academy.security.*;
 import com.cegeka.academy.security.jwt.*;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.BeanInitializationException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.annotation.Bean;
@@ -97,5 +98,10 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     private JWTConfigurer securityConfigurerAdapter() {
         return new JWTConfigurer(tokenProvider);
+    }
+
+    @Bean
+    public ModelMapper modelMapper() {
+        return new ModelMapper();
     }
 }

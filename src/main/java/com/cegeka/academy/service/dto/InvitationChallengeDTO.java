@@ -1,5 +1,7 @@
 package com.cegeka.academy.service.dto;
 
+import java.util.Objects;
+
 public class InvitationChallengeDTO {
 
     private Long id;
@@ -40,5 +42,20 @@ public class InvitationChallengeDTO {
                 ", status='" + status + '\'' +
                 ", user=" + user +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof InvitationChallengeDTO)) return false;
+        InvitationChallengeDTO that = (InvitationChallengeDTO) o;
+        return Objects.equals(getId(), that.getId()) &&
+                Objects.equals(getStatus(), that.getStatus()) &&
+                Objects.equals(getUser(), that.getUser());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId(), getStatus(), getUser());
     }
 }

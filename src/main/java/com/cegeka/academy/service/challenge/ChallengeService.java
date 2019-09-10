@@ -1,6 +1,7 @@
 package com.cegeka.academy.service.challenge;
 
 import com.cegeka.academy.service.dto.ChallengeDTO;
+import com.cegeka.academy.service.dto.UserChallengeDTO;
 import com.cegeka.academy.web.rest.errors.NotFoundException;
 
 import java.util.List;
@@ -20,5 +21,7 @@ public interface ChallengeService {
     List<ChallengeDTO> getChallengesByCreatorId(Long creatorId) throws NotFoundException;
 
     List<ChallengeDTO> getPublicChallenges() throws NotFoundException;
+
+    List<UserChallengeDTO> getChallengeRanking(Long challengeId, String sortingParam) throws NotFoundException;
 
 }
