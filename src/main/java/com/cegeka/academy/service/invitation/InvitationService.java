@@ -1,6 +1,7 @@
 package com.cegeka.academy.service.invitation;
 
 import com.cegeka.academy.domain.Invitation;
+import com.cegeka.academy.domain.User;
 import com.cegeka.academy.service.dto.InvitationDTO;
 import com.cegeka.academy.web.rest.errors.ExistingItemException;
 import com.cegeka.academy.web.rest.errors.NotFoundException;
@@ -21,6 +22,8 @@ public interface InvitationService {
     void rejectInvitation(Long invitationId) throws NotFoundException;
 
     void sendGroupInvitationsToPrivateEvents(Long idGroup, Invitation invitation) throws NotFoundException;
+
+    void sendInvitationForPrivateEventsToUserList(List<User> userList, Invitation invitation) throws NotFoundException;
 
     Invitation createChallengeInvitationForOneUser (InvitationDTO invitationDTO, Long challengeId) throws ExistingItemException, NotFoundException;
 

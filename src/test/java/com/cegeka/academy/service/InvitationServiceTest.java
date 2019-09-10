@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.*;
 import java.util.HashSet;
 import java.util.Date;
 import java.util.List;
@@ -78,6 +79,7 @@ public class InvitationServiceTest {
     private Group group;
     private GroupUserRole groupUserRole1, groupUserRole2, groupUserRole3;
     private Role role;
+    List<User>userList=new ArrayList<>();
     private Challenge challenge;
     private ChallengeCategory challengeCategory;
     private UserChallenge userChallenge;
@@ -123,6 +125,8 @@ public class InvitationServiceTest {
         invitationSendToGroup = TestsRepositoryUtil.createInvitation(InvitationStatus.PENDING.name(), "aaaa", eventRepository.findAll().get(0), null);
         invitationWithNullEvent = TestsRepositoryUtil.createInvitation(InvitationStatus.PENDING.name(), "aaaa", null, null);
         invitationWithPublicEvent = TestsRepositoryUtil.createInvitation(InvitationStatus.PENDING.name(), "aaaa", eventRepository.findAll().get(1), null);
+        userList.add(user1);
+        userList.add(user2);
         challengeCategory = TestsRepositoryUtil.createChallengeCategory("Description", "Name");
         challengeCategoryRepository.save(challengeCategory);
         challenge = TestsRepositoryUtil.createChallenge(challengeCategory, "Description", user1,
@@ -340,6 +344,25 @@ public class InvitationServiceTest {
         List<Invitation> list = invitationRepository.findAll();
         assertThat(list.size()).isEqualTo(1);
     }
+
+    @Test
+    public void assertThatSendInvitationToUserListWorks() throws NotFoundException {
+      invitationService.sendInvitationForPrivateEventsToUserList(userList,invitation);
+      List<Invitation> invitationList = invitationRepository.findAll();
+        assertThat(invitationList.size()).isEqualTo(3);
+    }
+
+    @Test
+    void assertThatSendInvitationToUserListThrowsError() {
+        Assertions.assertThrows(NotFoundException.class, () -> invitationService.sendInvitationForPrivateEventsToUserList(userList, invitationWithNullEvent));
+    }
+    @Test
+    public void assertThatSendInvitationToUserListWithPublicEvent() throws NotFoundException {
+        invitationService.sendInvitationForPrivateEventsToUserList(userList,invitationWithPublicEvent);
+        List<Invitation> invitationList = invitationRepository.findAll();
+        assertThat(invitationList.size()).isEqualTo(1);
+    }
+
 
     @Test
     public void assertThatCreateChallengeInvitationIsWorking() throws NotFoundException, ExistingItemException {
