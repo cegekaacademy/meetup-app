@@ -66,16 +66,16 @@ public class EventController {
 
             } else if (!validationAccessService.verifyUserAccessForEventEntity(event.getId())) {
 
-                throw new UnauthorizedUserException();
+                throw new UnauthorizedUserException().setMessage("You have no right to update this event");
 
             } else if (!expirationCheckService.availabilityCheck(event.getEndDate())) {
 
-                throw new ExpiredObjectException();
+                throw new ExpiredObjectException().setMessage("This event is expired");
 
             }
         } else {
 
-            throw new NotFoundException();
+            throw new NotFoundException().setMessage("Event not found");
         }
 
     }
@@ -93,12 +93,12 @@ public class EventController {
 
             } else {
 
-                throw new UnauthorizedUserException();
+                throw new UnauthorizedUserException().setMessage("You have no right to delete this event");
 
             }
         } else {
 
-            throw new NotFoundException();
+            throw new NotFoundException().setMessage("Event not found");
         }
 
     }
