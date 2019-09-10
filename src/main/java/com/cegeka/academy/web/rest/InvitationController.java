@@ -57,12 +57,12 @@ public class InvitationController {
 
             } else {
 
-                throw new UnauthorizedUserException();
+                throw new UnauthorizedUserException().setMessage("You have no right to update this invitation");
             }
 
         } else {
 
-            throw new NotFoundException();
+            throw new NotFoundException().setMessage("Invitation not found");
         }
     }
 
@@ -79,15 +79,15 @@ public class InvitationController {
 
             } else {
 
-                throw new UnauthorizedUserException();
+                throw new UnauthorizedUserException().setMessage("You have no right to delete this invitation");
             }
         } else {
 
-            throw new NotFoundException();
+            throw new NotFoundException().setMessage("Invitation not found");
         }
     }
 
-    @GetMapping("/pending/{id}")
+    @GetMapping("/pending/{userId}")
     public List<InvitationDTO> getPendingInvitationsByUserId(@PathVariable Long userId) {
 
         return invitationService.getPendingInvitationsByUserId(userId);

@@ -1,6 +1,8 @@
 package com.cegeka.academy.domain;
 
 
+import org.hibernate.annotations.Type;
+
 import javax.persistence.*;
 import javax.validation.constraints.Size;
 import java.util.Date;
@@ -38,7 +40,8 @@ public class Event {
     private String notes;
 
     @Column(name = "is_public")
-    private Boolean isPublic;
+    @Type(type = "boolean")
+    private Boolean publicEvent;
 
     @Size(max = 250, message = "Image path must have 250 letters")
     @Column(name = "cover_photo")
@@ -60,7 +63,7 @@ public class Event {
 
     @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_event",referencedColumnName = "id")
-    Set<Invitation>pendingInvitations=new HashSet<>();
+    private Set<Invitation> pendingInvitations = new HashSet<>();
 
 
     public Long getId() {
@@ -119,12 +122,12 @@ public class Event {
         this.notes = notes;
     }
 
-    public Boolean isPublic() {
-        return isPublic;
+    public Boolean isPublicEvent() {
+        return publicEvent;
     }
 
-    public void setPublic(Boolean aPublic) {
-        isPublic = aPublic;
+    public void setPublicEvent(Boolean publicEvent) {
+        this.publicEvent = publicEvent;
     }
 
     public Address getAddressId() {
@@ -190,7 +193,7 @@ public class Event {
                 ", endDate=" + endDate +
                 ", owner=" + owner +
                 ", notes='" + notes + '\'' +
-                ", isPublic=" + isPublic +
+                ", isPublic=" + publicEvent +
                 ", coverPhoto='" + coverPhoto + '\'' +
                 ", addressId=" + addressId +
                 ", users=" + users +
