@@ -1,6 +1,7 @@
 package com.cegeka.academy.web.rest;
 
 import com.cegeka.academy.domain.UserChallenge;
+import com.cegeka.academy.domain.enums.InvitationStatus;
 import com.cegeka.academy.service.dto.ChallengeDTO;
 import com.cegeka.academy.service.dto.UserChallengeDTO;
 import com.cegeka.academy.service.userChallenge.UserChallengeService;
@@ -24,7 +25,7 @@ public class UserChallengeController {
 
     @RequestMapping(value = "/{userId}", method = RequestMethod.GET)
     @ResponseBody
-    public List<UserChallengeDTO> getChallengesByUserId(@PathVariable("userId") Long userId){
+    public List<UserChallengeDTO> getChallengesByUserId(@PathVariable("userId") Long userId) throws NotFoundException {
 
         return userChallengeService.getUserChallengesByUserId(userId);
     }
@@ -58,6 +59,13 @@ public class UserChallengeController {
     public List<ChallengeDTO> getNextChallenges(@PathVariable(value = "userId") Long userId) throws NotFoundException {
 
         return userChallengeService.getNextChallengesForAnUser(userId);
+
+    }
+
+    @GetMapping("/pending/{userId}")
+    public List<ChallengeDTO> getChallengesWithPendingInvitation(@PathVariable(value = "userId") Long userId) throws NotFoundException {
+
+        return userChallengeService.getChallengesByInvitationStatus(userId, InvitationStatus.PENDING);
 
     }
 

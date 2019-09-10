@@ -140,4 +140,18 @@ public class GeneralExceptionHandler extends HttpResponseExceptionHandler {
                 detailsList,
                 HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(value = ExistingItemException.class)
+    public ResponseEntity<ErrorResponse> handleExistingItemException(ExistingItemException e) {
+        List<String> detailsList = new ArrayList<>();
+        detailsList.add("ErrorMessage: " + e.getMessage());
+
+        logger.info(e + "");
+
+        return getErrorResponseEntity(
+                ErrorCode.EXISTING_ITEM.getMessage(),
+                ErrorCode.EXISTING_ITEM.getCode(),
+                detailsList,
+                HttpStatus.CONFLICT);
+    }
 }

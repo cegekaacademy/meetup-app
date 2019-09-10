@@ -21,9 +21,11 @@ import com.cegeka.academy.web.rest.errors.InvalidInvitationStatusException;
 import com.cegeka.academy.web.rest.errors.InvalidUserChallengeStatusException;
 import com.cegeka.academy.web.rest.errors.NotFoundException;
 import com.cegeka.academy.web.rest.errors.WrongOwnerException;
+import io.jsonwebtoken.lang.Collections;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -52,9 +54,15 @@ public class UserChallengeServiceImpl implements UserChallengeService {
     private UserRepository userRepository;
 
     @Override
-    public List<UserChallengeDTO> getUserChallengesByUserId(Long userId) {
+    public List<UserChallengeDTO> getUserChallengesByUserId(Long userId) throws NotFoundException {
 
         List<UserChallenge> userChallengeList = userChallengeRepository.findAllByUserId(userId);
+
+        if(Collections.isEmpty(userChallengeList)){
+
+            throw new NotFoundException().setMessage("List is empty");
+
+        }
 
         return userChallengeList.stream().map(userChallenge -> UserChallengeMapper.convertUserChallengeToUserChallengeDTO(userChallenge)).collect(Collectors.toList());
 
@@ -77,6 +85,12 @@ public class UserChallengeServiceImpl implements UserChallengeService {
 
         UserChallenge userChallenge = userChallengeRepository.findById(userChallengeId)
                 .orElseThrow(() -> new NotFoundException().setMessage("User challenge does not exists."));
+
+        if(userChallenge.getInvitation() == null){
+
+            throw new NotFoundException().setMessage("Invitation does not exists");
+
+        }
 
         userChallenge.getInvitation().setStatus(InvitationStatus.getInvitationStatus(status).toString());
 
@@ -167,6 +181,26 @@ public class UserChallengeServiceImpl implements UserChallengeService {
         return futureChallenges.stream()
                 .map(challenge -> ChallengeMapper.convertChallengeToChallengeDTO(challenge))
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ChallengeDTO> getChallengesByInvitationStatus(Long userId, InvitationStatus invitationStatus) throws NotFoundException {
+
+        List<Challenge> challengeList = userChallengeRepository.findAllByUserIdAndInvitationStatus(userId, invitationStatus.toString())
+                .stream()
+                .map(userChallenge -> userChallenge.getChallenge())
+                .collect(Collectors.toList());
+
+        if(CollectionUtils.isEmpty(challengeList)){
+
+            throw new NotFoundException().setMessage("List is empty");
+
+        }
+
+        return challengeList.stream()
+                .map(ChallengeMapper::convertChallengeToChallengeDTO)
+                .collect(Collectors.toList());
+
     }
 
     private boolean isAfterToday(Date date){

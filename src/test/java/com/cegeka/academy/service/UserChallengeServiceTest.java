@@ -84,7 +84,7 @@ public class UserChallengeServiceTest {
 
         invitation = new Invitation();
         invitation.setDescription("invitationDescription");
-        invitation.setStatus("pending");
+        invitation.setStatus(InvitationStatus.PENDING.toString());
         invitation.setUser(usedUser);
         invitation.setEvent(null);
         invitationRepository.save(invitation);
@@ -153,7 +153,7 @@ public class UserChallengeServiceTest {
     }
 
     @Test
-    public void testGetChallengesByUserId() {
+    public void testGetChallengesByUserIdIsWorking() throws NotFoundException {
 
         List<UserChallengeDTO> results = userChallengeService.getUserChallengesByUserId(usedUser.getId());
         assertThat(results.get(0).getChallenge().getId()).isEqualTo(userChallenge.getChallenge().getId());
@@ -170,8 +170,11 @@ public class UserChallengeServiceTest {
     @Test
     public void testGetChallengesByUserIdWithNoResult() {
 
-        List<UserChallengeDTO> results = userChallengeService.getUserChallengesByUserId(20l);
-        assertThat(results.size()).isEqualTo(0);
+        Assertions.assertThrows(NotFoundException.class, () -> {
+
+            userChallengeService.getUserChallengesByUserId(200L);
+
+        });
 
     }
 
@@ -425,5 +428,40 @@ public class UserChallengeServiceTest {
         Assertions.assertThrows(NotFoundException.class, () -> {
             userChallengeService.getNextChallengesForAnUser(usedUser.getId());
         });
+    }
+
+    @Test
+    public void getChallengesForAnUserWithPendingInvitation() throws NotFoundException {
+
+        List<ChallengeDTO> result = userChallengeService.getChallengesByInvitationStatus(usedUser.getId(), InvitationStatus.PENDING);
+
+        assertThat(result.size()).isEqualTo(1);
+        assertThat(result.get(0).getId()).isEqualTo(userChallenge.getChallenge().getId());
+
+    }
+
+    @Test
+    public void getChallengesForAnUserWithNoPendingInvitation() {
+
+        userChallenge.getInvitation().setStatus(InvitationStatus.ACCEPTED.toString());
+        userChallengeRepository.save(userChallenge);
+
+        Assertions.assertThrows(NotFoundException.class, () -> {
+
+            userChallengeService.getChallengesByInvitationStatus(usedUser.getId(), InvitationStatus.PENDING);
+
+        });
+
+    }
+
+    @Test
+    public void getChallengesForAnUserWithPendingInvitationWithNoResult() {
+
+        Assertions.assertThrows(NotFoundException.class, () -> {
+
+            userChallengeService.getChallengesByInvitationStatus(200L, InvitationStatus.PENDING);
+
+        });
+
     }
 }

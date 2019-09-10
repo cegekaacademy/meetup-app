@@ -7,28 +7,21 @@ import com.cegeka.academy.repository.ChallengeAnswerRepository;
 import com.cegeka.academy.repository.UserChallengeRepository;
 import com.cegeka.academy.service.dto.ChallengeAnswerDTO;
 import com.cegeka.academy.service.mapper.ChallengeAnswerMapper;
-import com.cegeka.academy.service.userChallenge.UserChallengeService;
+import com.cegeka.academy.web.rest.errors.ExistingItemException;
 import com.cegeka.academy.web.rest.errors.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.swing.filechooser.FileSystemView;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Date;
-
 
 @Service
 @Transactional
@@ -44,11 +37,23 @@ public class ChallengeAnswerServiceImp implements ChallengeAnswerService {
     private Logger logger = LoggerFactory.getLogger(ChallengeAnswerServiceImp.class);
 
     @Override
-    public void saveChallengeAnswer(ChallengeAnswerDTO challengeAnswerDTO) {
+    public void saveChallengeAnswer(Long userChallengeId, ChallengeAnswerDTO challengeAnswerDTO) throws NotFoundException, ExistingItemException {
+
+        UserChallenge userChallenge = userChallengeRepository.findById(userChallengeId)
+                .orElseThrow(()-> new NotFoundException().setMessage("User challenge does not exists"));
+
+        if(userChallenge.getChallengeAnswer() != null){
+
+            throw new ExistingItemException().setMessage("Challenge answer already exists");
+        }
 
         ChallengeAnswer saveChallengeAnswer = ChallengeAnswerMapper.convertChallengeAnswerDTOToChallengeAnswer(challengeAnswerDTO);
 
         ChallengeAnswer result = challengeAnswerRepository.save(saveChallengeAnswer);
+
+        userChallenge.setChallengeAnswer(result);
+
+        userChallengeRepository.save(userChallenge);
 
         logger.info("Challenge answer with id: " + result.getId() + " has been saved.");
     }

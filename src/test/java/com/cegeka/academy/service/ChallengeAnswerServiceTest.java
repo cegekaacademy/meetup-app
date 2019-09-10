@@ -4,8 +4,8 @@ import com.cegeka.academy.AcademyProjectApp;
 import com.cegeka.academy.domain.*;
 import com.cegeka.academy.repository.*;
 import com.cegeka.academy.service.challengeAnswer.ChallengeAnswerService;
-import com.cegeka.academy.service.dto.ChallengeAnswerDTO;
 import com.cegeka.academy.service.mapper.ChallengeAnswerMapper;
+import com.cegeka.academy.web.rest.errors.ExistingItemException;
 import com.cegeka.academy.web.rest.errors.NotFoundException;
 import org.apache.commons.compress.utils.IOUtils;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -19,9 +19,9 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.Date;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -51,11 +51,11 @@ public class ChallengeAnswerServiceTest {
     @Autowired
     private UserChallengeRepository userChallengeRepository;
 
-    private ChallengeAnswer challengeAnswer;
+    private ChallengeAnswer challengeAnswer, challengeAnswer2;
 
     private Challenge challenge;
 
-    private UserChallenge userChallenge;
+    private UserChallenge userChallenge, temporaryUserChallenge;
 
     private User user;
 
@@ -65,10 +65,8 @@ public class ChallengeAnswerServiceTest {
 
     private ChallengeCategory challengeCategory;
 
-    private ChallengeAnswerDTO challengeAnswerDTO;
-
     @BeforeEach
-    public void init() throws IOException {
+    public void init() {
 
         user = new User();
         user.setLogin("ana");
@@ -111,27 +109,34 @@ public class ChallengeAnswerServiceTest {
         challengeAnswer.setAnswer("answer");
         challengeAnswerRepository.save(challengeAnswer);
 
+        challengeAnswer2 = new ChallengeAnswer();
+        challengeAnswer2.setVideoAt("videoAt");
+        challengeAnswer2.setAnswer("answer");
+
         userChallenge = new UserChallenge();
         userChallenge.setUser(usedUser);
         userChallenge.setInvitation(invitation);
         userChallenge.setChallenge(challenge);
-        userChallenge.setChallengeAnswer(challengeAnswer);
         userChallenge.setStatus("status");
         userChallenge.setPoints(2.22);
         userChallenge.setStartTime(new Date());
         userChallenge.setEndTime(new Date());
         userChallengeRepository.save(userChallenge);
-
-        challengeAnswerDTO = initChallengeAnswerDTO();
     }
 
-    public ChallengeAnswerDTO initChallengeAnswerDTO() {
+    public UserChallenge initTemporaryUserChallenge() {
+        temporaryUserChallenge = new UserChallenge();
+        temporaryUserChallenge.setUser(usedUser);
+        temporaryUserChallenge.setInvitation(invitation);
+        temporaryUserChallenge.setChallenge(challenge);
+        temporaryUserChallenge.setChallengeAnswer(challengeAnswer);
+        temporaryUserChallenge.setStatus("status");
+        temporaryUserChallenge.setPoints(2.22);
+        temporaryUserChallenge.setStartTime(new Date());
+        temporaryUserChallenge.setEndTime(new Date());
+        userChallengeRepository.save(temporaryUserChallenge);
 
-        ChallengeAnswerDTO challengeAnswerDTO = new ChallengeAnswerDTO();
-        challengeAnswerDTO.setAnswer("Answer");
-        challengeAnswerDTO.setVideoAt("https://youtube.com/");
-
-        return challengeAnswerDTO;
+        return temporaryUserChallenge;
     }
 
     public MultipartFile initImage() throws IOException {
@@ -166,26 +171,59 @@ public class ChallengeAnswerServiceTest {
             userChallengeRepository.delete(userChallenge);
         }
 
+        if(temporaryUserChallenge != null) {
+            userChallengeRepository.delete(temporaryUserChallenge);
+        }
+
         if (challengeAnswer != null) {
             challengeAnswerRepository.delete(challengeAnswer);
+        }
+
+        if(challengeAnswer2 != null) {
+            challengeAnswerRepository.delete(challengeAnswer2);
         }
     }
 
 
     @Test
-    public void testSaveChallengeAnswer() {
+    public void testSaveChallengeAnswerIsWorking() throws NotFoundException, ExistingItemException {
 
-        challengeAnswerService.saveChallengeAnswer(ChallengeAnswerMapper.convertChallengeAnswerToChallengeAnswerDTO(challengeAnswer));
-        assertThat(challengeAnswerRepository.findAll().get(0).getAnswer()).isEqualTo(challengeAnswer.getAnswer());
-        assertThat(challengeAnswerRepository.findAll().get(0).getImagePath()).isEqualTo(challengeAnswer.getImagePath());
-        assertThat(challengeAnswerRepository.findAll().get(0).getVideoAt()).isEqualTo(challengeAnswer.getVideoAt());
+        challengeAnswerService.saveChallengeAnswer(userChallenge.getId(), ChallengeAnswerMapper.convertChallengeAnswerToChallengeAnswerDTO(challengeAnswer2));
+        assertThat(challengeAnswerRepository.findAll().get(0).getAnswer()).isEqualTo(challengeAnswer2.getAnswer());
+        assertThat(challengeAnswerRepository.findAll().get(0).getImagePath()).isEqualTo(challengeAnswer2.getImagePath());
+        assertThat(challengeAnswerRepository.findAll().get(0).getVideoAt()).isEqualTo(challengeAnswer2.getVideoAt());
+        assertThat(userChallengeRepository.findAll().get(0).getChallengeAnswer().getId()).isEqualTo(challengeAnswerRepository.findAll().get(1).getId());
 
     }
 
     @Test
-    public void testUpdateChallengeAnswer() throws NotFoundException {
+    public void testSaveChallengeAnswerWithInvalidUserChallengeId(){
 
-        challengeAnswerService.saveChallengeAnswer(ChallengeAnswerMapper.convertChallengeAnswerToChallengeAnswerDTO(challengeAnswer));
+        Assertions.assertThrows(NotFoundException.class, () -> {
+
+            challengeAnswerService.saveChallengeAnswer(400L, ChallengeAnswerMapper.convertChallengeAnswerToChallengeAnswerDTO(challengeAnswer));
+
+        });
+
+    }
+
+    @Test
+    public void testSaveChallengeAnswerWithExistingAnswer() throws NotFoundException, ExistingItemException {
+
+        challengeAnswerService.saveChallengeAnswer(userChallenge.getId(), ChallengeAnswerMapper.convertChallengeAnswerToChallengeAnswerDTO(challengeAnswer));
+
+        Assertions.assertThrows(ExistingItemException.class, () -> {
+
+            challengeAnswerService.saveChallengeAnswer(userChallenge.getId(), ChallengeAnswerMapper.convertChallengeAnswerToChallengeAnswerDTO(challengeAnswer));
+
+        });
+
+    }
+
+    @Test
+    public void testUpdateChallengeAnswer() throws NotFoundException, ExistingItemException {
+
+        challengeAnswerService.saveChallengeAnswer(userChallenge.getId(),ChallengeAnswerMapper.convertChallengeAnswerToChallengeAnswerDTO(challengeAnswer));
 
         ChallengeAnswer existingChallenge = challengeAnswerRepository.findAll().get(0);
         existingChallenge.setAnswer("answer2");
@@ -209,9 +247,9 @@ public class ChallengeAnswerServiceTest {
     }
 
     @Test
-    public void testDeleteChallengeAnswerByUserIdAndChallengeId() throws NotFoundException {
+    public void testDeleteChallengeAnswerByUserIdAndChallengeId() throws NotFoundException, ExistingItemException {
 
-        challengeAnswerService.saveChallengeAnswer(ChallengeAnswerMapper.convertChallengeAnswerToChallengeAnswerDTO(challengeAnswer));
+        challengeAnswerService.saveChallengeAnswer(userChallenge.getId(), ChallengeAnswerMapper.convertChallengeAnswerToChallengeAnswerDTO(challengeAnswer));
         userChallenge.setChallengeAnswer(challengeAnswerRepository.findAll().get(0));
         userChallengeRepository.save(userChallenge);
 
@@ -231,6 +269,7 @@ public class ChallengeAnswerServiceTest {
     @Test
     public void testUploadAnswerIsWorking() throws IOException, NotFoundException {
 
+        initTemporaryUserChallenge();
         MultipartFile image = initImage();
 
         challengeAnswerService.uploadAnswerPhoto(challengeAnswer.getId(), image);
