@@ -162,12 +162,14 @@ public class InvitationServiceImpl implements InvitationService {
         if (invitation.getEvent() == null) {
             throw new NotFoundException().setMessage("Event not found");
         }
-        if (!invitation.getEvent().isPublic()) {
+        if (!invitation.getEvent().isPublicEvent()) {
             for (User userInvitation : userList) {
-
-                if (checkUniqueService.checkUniqueInvitation(userInvitation, invitation.getEvent())) {
-
-                    Invitation invitationForUserList = InvitationMapper.createInvitation(invitation.getDescription(), invitation.getStatus(), userInvitation, invitation.getEvent());
+                Optional<Event> event = eventRepository.findById(invitation.getEvent().getId());
+                Optional<User> user = userRepository.findById(userInvitation.getId());
+                event.orElseThrow(() -> new NotFoundException().setMessage("Event not found"));
+                user.orElseThrow(() -> new NotFoundException().setMessage("User not found"));
+                if (checkUniqueService.checkUniqueInvitation(user.get(), event.get())) {
+                    Invitation invitationForUserList = InvitationMapper.createInvitation(invitation.getDescription(), invitation.getStatus(), user.get(), event.get());
                     invitationRepository.save(invitationForUserList);
                 }
             }
