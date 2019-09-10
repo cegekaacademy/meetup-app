@@ -1,5 +1,7 @@
 package com.cegeka.academy.config;
 
+import com.cegeka.academy.domain.Event;
+import com.cegeka.academy.service.dto.UserStatisticsDTO;
 import io.github.jhipster.config.JHipsterConstants;
 import io.github.jhipster.config.JHipsterProperties;
 import io.github.jhipster.web.filter.CachingHttpHeadersFilter;
@@ -23,6 +25,7 @@ import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 import static java.net.URLDecoder.decode;
 
@@ -136,6 +139,11 @@ public class WebConfigurer implements ServletContextInitializer, WebServerFactor
             source.registerCorsConfiguration("/v2/api-docs", config);
         }
         return new CorsFilter(source);
+    }
+
+    @Bean
+    public ConcurrentLinkedQueue<UserStatisticsDTO> statisticsCache(){
+        return new ConcurrentLinkedQueue<>();
     }
 
 }

@@ -2,61 +2,52 @@ package com.cegeka.academy.service.dto;
 
 import com.cegeka.academy.domain.AgeIntervals;
 import com.cegeka.academy.domain.Event;
+import com.cegeka.academy.domain.enums.Gender;
+
+import java.util.Objects;
 
 public class UserStatisticsDTO {
+    private long ageIntervalId;
+    private long eventId;
+    private Gender gender;
 
-
-    private long id;
-    private AgeIntervals ageInterval;
-    private Event event;
-    private int noPeople;
-    private String gender;
-
-    public UserStatisticsDTO(long id, AgeIntervals ageInterval, Event event, int noPeople, String gender) {
-        this.id = id;
-        this.ageInterval = ageInterval;
-        this.event = event;
-        this.noPeople = noPeople;
-        this.gender = gender;
+    public long getAgeIntervalId() {
+        return ageIntervalId;
     }
 
-    public long getId() {
-        return id;
+    public void setAgeIntervalId(long ageIntervalId) {
+        this.ageIntervalId = ageIntervalId;
     }
 
-    public void setId(long id) {
-        this.id = id;
+    public long getEventId() {
+        return eventId;
     }
 
-    public AgeIntervals getAgeInterval() {
-        return ageInterval;
+    public void setEventId(long eventId) {
+        this.eventId = eventId;
     }
 
-    public void setAgeInterval(AgeIntervals ageInterval) {
-        this.ageInterval = ageInterval;
-    }
-
-    public Event getEvent() {
-        return event;
-    }
-
-    public void setEvent(Event event) {
-        this.event = event;
-    }
-
-    public int getNoPeople() {
-        return noPeople;
-    }
-
-    public void setNoPeople(int noPeople) {
-        this.noPeople = noPeople;
-    }
-
-    public String getGender() {
+    public Gender getGender() {
         return gender;
     }
 
-    public void setGender(String gender) {
+    public void setGender(Gender gender) {
         this.gender = gender;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        UserStatisticsDTO that = (UserStatisticsDTO) o;
+        return ageIntervalId == that.ageIntervalId &&
+                eventId == that.eventId &&
+                gender == that.gender;
+    }
+
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(ageIntervalId, eventId, gender);
     }
 }
