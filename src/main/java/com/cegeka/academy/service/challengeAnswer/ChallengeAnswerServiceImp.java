@@ -1,5 +1,6 @@
 package com.cegeka.academy.service.challengeAnswer;
 
+import com.cegeka.academy.config.MediaFileConfig;
 import com.cegeka.academy.domain.ChallengeAnswer;
 import com.cegeka.academy.domain.UserChallenge;
 import com.cegeka.academy.repository.ChallengeAnswerRepository;
@@ -13,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
@@ -30,20 +32,14 @@ import java.util.Date;
 
 @Service
 @Transactional
-@Configuration
 public class ChallengeAnswerServiceImp implements ChallengeAnswerService {
 
     @Autowired
     private ChallengeAnswerRepository challengeAnswerRepository;
     @Autowired
     private UserChallengeRepository userChallengeRepository;
-
-
-    private String rootDirectory = System.getProperty("user.home") + "\\";
-    @Value("${UPLOAD_CHALLENGE_DIRECTORY}")
-    private String challengeDirectory;
-    @Value("${JPG_EXTENSION}")
-    private String jpgExtension;
+    @Autowired
+    private MediaFileConfig mediaFileConfig;
 
     private Logger logger = LoggerFactory.getLogger(ChallengeAnswerServiceImp.class);
 
@@ -113,7 +109,7 @@ public class ChallengeAnswerServiceImp implements ChallengeAnswerService {
 
     public String saveImage(MultipartFile image, Long userId, Long challengeId) throws IOException {
 
-        String imagePath = rootDirectory + challengeDirectory + userId + "\\" + challengeId + "\\";
+        String imagePath = mediaFileConfig.getRootDirectory() + mediaFileConfig.getUploadChallengeDirectory() + userId + "\\" + challengeId + "\\";
         File file = new File(imagePath);
         if (!file.exists()) {
             file.mkdirs();
@@ -122,7 +118,7 @@ public class ChallengeAnswerServiceImp implements ChallengeAnswerService {
         byte[] bytes = image.getBytes();
         String imageName = "answer_" + userId + "_" + challengeId + "_" + new Date().getTime();
 
-        Path path = Paths.get(imagePath + imageName + jpgExtension);
+        Path path = Paths.get(imagePath + imageName + mediaFileConfig.getJPGExtension());
         Files.write(path, bytes);
 
         return path.toString();
