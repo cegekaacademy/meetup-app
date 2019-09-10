@@ -8,7 +8,6 @@ import com.cegeka.academy.domain.enums.UserChallengeStatus;
 import com.cegeka.academy.repository.*;
 import com.cegeka.academy.service.dto.ChallengeDTO;
 import com.cegeka.academy.service.dto.UserChallengeDTO;
-import com.cegeka.academy.service.mapper.ChallengeMapper;
 import com.cegeka.academy.service.mapper.UserChallengeMapper;
 import com.cegeka.academy.service.userChallenge.UserChallengeService;
 import com.cegeka.academy.web.rest.errors.InvalidInvitationStatusException;
@@ -32,12 +31,10 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 @SpringBootTest(classes = AcademyProjectApp.class)
 @Transactional
-public class UserChallengeServiceTest  {
+public class UserChallengeServiceTest {
 
     @Autowired
     private UserChallengeRepository userChallengeRepository;
@@ -57,12 +54,16 @@ public class UserChallengeServiceTest  {
     @Autowired
     private UserChallengeService userChallengeService;
 
+    @Autowired
+    private ChallengeAnswerRepository challengeAnswerRepository;
+
     private Invitation invitation;
     private User user;
     private Challenge challenge, challenge2;
     private ChallengeCategory challengeCategory;
     private UserChallengeDTO userChallengeDTO;
     private UserChallenge userChallenge;
+    private ChallengeAnswer challengeAnswer;
     private User usedUser;
     private SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 
@@ -130,12 +131,19 @@ public class UserChallengeServiceTest  {
         userChallenge.setEndTime(new Date());
         userChallengeRepository.save(userChallenge);
 
+        challengeAnswer = new ChallengeAnswer();
+        challengeAnswer.setImagePath("imagePath");
+        challengeAnswer.setVideoAt("videoAt");
+        challengeAnswer.setAnswer("answer");
+
+        challengeAnswerRepository.save(challengeAnswer);
+
         userChallengeDTO = UserChallengeMapper.convertUserChallengeToUserChallengeDTO(userChallenge);
 
     }
 
     @AfterEach
-    public void destroy(){
+    public void destroy() {
 
         invitationRepository.deleteAll();
         userChallengeRepository.deleteAll();
@@ -147,7 +155,7 @@ public class UserChallengeServiceTest  {
     @Test
     public void testGetChallengesByUserIdIsWorking() throws NotFoundException {
 
-       List<UserChallengeDTO> results = userChallengeService.getUserChallengesByUserId(usedUser.getId());
+        List<UserChallengeDTO> results = userChallengeService.getUserChallengesByUserId(usedUser.getId());
         assertThat(results.get(0).getChallenge().getId()).isEqualTo(userChallenge.getChallenge().getId());
         assertThat(results.get(0).getStartTime()).isEqualTo(userChallenge.getStartTime());
         assertThat(results.get(0).getEndTime()).isEqualTo(userChallenge.getEndTime());
@@ -160,7 +168,7 @@ public class UserChallengeServiceTest  {
     }
 
     @Test
-    public void testGetChallengesByUserIdWithNoResult(){
+    public void testGetChallengesByUserIdWithNoResult() {
 
         Assertions.assertThrows(NotFoundException.class, () -> {
 
@@ -248,48 +256,51 @@ public class UserChallengeServiceTest  {
     @Test
     public void testRateUserByWrongOwner() {
         userChallengeDTO.setPoints(49);
-        try {
-            userChallengeService.rateUser(userChallengeDTO, (long)3);
-            fail();
-        } catch (WrongOwnerException e) {
-            assertTrue(true);
-        }
+
+        Assertions.assertThrows(WrongOwnerException.class, () -> {
+            userChallengeService.rateUser(userChallengeDTO, 4L);
+        });
+
     }
 
     @Test
-    public void testRateUserWhenInvitationIdIsWrong() throws WrongOwnerException {
+    public void testRateUserWhenInvitationIdIsWrong() {
         userChallengeDTO.setPoints(49);
-        userChallengeDTO.getInvitation().setId((long) 5);
-        try {
-            userChallengeService.rateUser(userChallengeDTO, (long)4);
-            fail();
-        } catch (NoSuchElementException e) {
-            assertTrue(true);
-        }
+        userChallengeDTO.getInvitation().setId(200L);
+
+        Assertions.assertThrows(NoSuchElementException.class, () -> {
+            userChallengeService.rateUser(userChallengeDTO, challenge.getCreator().getId());
+        });
     }
 
     @Test
-    public void testRateUserWhenUserIdIsWrong() throws WrongOwnerException {
+    public void testRateUserWhenUserIdIsWrong() {
         userChallengeDTO.setPoints(49);
-        userChallengeDTO.getUser().setId((long) 7);
-        try {
-            userChallengeService.rateUser(userChallengeDTO, (long)4);
-            fail();
-        } catch (NoSuchElementException e) {
-            assertTrue(true);
-        }
+        userChallengeDTO.getUser().setId(7L);
+
+        Assertions.assertThrows(NoSuchElementException.class, () -> {
+            userChallengeService.rateUser(userChallengeDTO, challenge.getCreator().getId());
+        });
+
     }
 
     @Test
-    public void testRateUserWhenChallengeIdIsWrong() throws WrongOwnerException {
+    public void testRateUserWhenChallengeIdIsWrong() {
         userChallengeDTO.setPoints(49);
-        userChallengeDTO.getChallenge().setId((long) 5);
-        try {
-            userChallengeService.rateUser(userChallengeDTO, (long)4);
-            fail();
-        } catch (NoSuchElementException e) {
-            assertTrue(true);
-        }
+        userChallengeDTO.getChallenge().setId(5L);
+
+        Assertions.assertThrows(NoSuchElementException.class, () -> {
+            userChallengeService.rateUser(userChallengeDTO, challenge.getCreator().getId());
+        });
+
+    }
+
+    @Test
+    public void testUpdateAnswerForExistingUserChallengeIsWorking() throws NotFoundException {
+
+        userChallengeService.addUserChallengeAnswer(userChallenge, challengeAnswer);
+
+        assertThat(userChallengeRepository.findAllByChallengeAnswerId(challengeAnswer.getId()).size()).isEqualTo(1);
     }
 
     @Test
@@ -309,7 +320,7 @@ public class UserChallengeServiceTest  {
     public void testInitUserChallengeThrowsNotFoundExceptionForMissingChallenge() throws NotFoundException {
 
         Challenge temporaryChallenge = new Challenge();
-        temporaryChallenge.setId((long)200);
+        temporaryChallenge.setId(200L);
 
         Assertions.assertThrows(NotFoundException.class,
                 () -> userChallengeService.initUserChallenge(temporaryChallenge, invitation));
@@ -319,7 +330,7 @@ public class UserChallengeServiceTest  {
     @Test
     public void testInitUserChallengeThrowsNotFoundExceptionForMissingInvitation() {
         Invitation temporaryInvitation = new Invitation();
-        temporaryInvitation.setId((long)200);
+        temporaryInvitation.setId(200L);
 
         Assertions.assertThrows(NotFoundException.class,
                 () -> userChallengeService.initUserChallenge(challenge2, temporaryInvitation));
@@ -328,14 +339,34 @@ public class UserChallengeServiceTest  {
     @Test
     public void testInitUserChallengeThrowsNotFoundExceptionForMissingUser() {
         User temporaryUser = new User();
-        temporaryUser.setId((long)200);
+        temporaryUser.setId(200L);
 
         Invitation temporaryInvitation = new Invitation();
-        temporaryInvitation.setId((long)5);
+        temporaryInvitation.setId(5L);
         temporaryInvitation.setUser(temporaryUser);
 
         Assertions.assertThrows(NotFoundException.class,
                 () -> userChallengeService.initUserChallenge(challenge2, temporaryInvitation));
+    }
+
+    @Test
+    public void testAddUserChallengeAnswerThrowsNotFoundExceptionForMissingUserChallenge() {
+
+        UserChallenge temporaryUserChallenge = new UserChallenge();
+        temporaryUserChallenge.setId(1000L);
+
+        Assertions.assertThrows(NotFoundException.class,
+                () -> userChallengeService.addUserChallengeAnswer(temporaryUserChallenge, challengeAnswer));
+    }
+
+    @Test
+    public void testAddUserChallengeAnswerThrowsNotFoundExceptionForMissingAnswer() {
+
+        ChallengeAnswer temporaryUserAnswer = new ChallengeAnswer();
+        temporaryUserAnswer.setId(1000L);
+
+        Assertions.assertThrows(NotFoundException.class,
+                () -> userChallengeService.addUserChallengeAnswer(userChallenge, temporaryUserAnswer));
     }
 
     @Test
