@@ -5,6 +5,7 @@ import com.cegeka.academy.repository.InvitationRepository;
 import com.cegeka.academy.service.dto.InvitationDTO;
 import com.cegeka.academy.service.invitation.InvitationService;
 import com.cegeka.academy.service.serviceValidation.ValidationAccessService;
+import com.cegeka.academy.web.rest.errors.ExistingItemException;
 import com.cegeka.academy.web.rest.errors.NotFoundException;
 import com.cegeka.academy.web.rest.errors.UnauthorizedUserException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,12 +57,12 @@ public class InvitationController {
 
             } else {
 
-                throw new UnauthorizedUserException();
+                throw new UnauthorizedUserException().setMessage("You have no right to update this invitation");
             }
 
         } else {
 
-            throw new NotFoundException();
+            throw new NotFoundException().setMessage("Invitation not found");
         }
     }
 
@@ -78,15 +79,15 @@ public class InvitationController {
 
             } else {
 
-                throw new UnauthorizedUserException();
+                throw new UnauthorizedUserException().setMessage("You have no right to delete this invitation");
             }
         } else {
 
-            throw new NotFoundException();
+            throw new NotFoundException().setMessage("Invitation not found");
         }
     }
 
-    @GetMapping("/pending/{id}")
+    @GetMapping("/pending/{userId}")
     public List<InvitationDTO> getPendingInvitationsByUserId(@PathVariable Long userId) {
 
         return invitationService.getPendingInvitationsByUserId(userId);
@@ -115,5 +116,18 @@ public class InvitationController {
                                                     @Valid @RequestBody Invitation newInvitation) throws NotFoundException {
 
         invitationService.sendGroupInvitationsToPrivateEvents(idGroup, newInvitation);
+    }
+
+    @PostMapping("/challenge-invitation/{challengeId}")
+    public Invitation createChallengeInvitationForOneUser(@RequestBody InvitationDTO invitationDTO,
+                                                    @PathVariable Long challengeId) throws NotFoundException, ExistingItemException {
+
+        return invitationService.createChallengeInvitationForOneUser(invitationDTO, challengeId);
+    }
+
+    @GetMapping("/{invitationId}")
+    public Invitation getInvitation(@PathVariable Long invitationId) throws NotFoundException {
+
+        return invitationService.getInvitation(invitationId);
     }
 }

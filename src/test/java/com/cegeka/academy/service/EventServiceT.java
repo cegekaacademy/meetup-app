@@ -48,15 +48,17 @@ public class EventServiceT {
 
     private Event event;
     private User user;
+    private Category category1, category3;
+    private Address address;
 
     @BeforeEach
     void init() {
         user = TestsRepositoryUtil.createUser("cosminalex", "anaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaana");
         userRepository.saveAndFlush(user);
-        Address address = TestsRepositoryUtil.createAddress("Romania", "Bucuresti", "Splai", "333", "Casa", "Casa magica");
+        address = TestsRepositoryUtil.createAddress("Romania", "Bucuresti", "Splai", "333", "Casa", "Casa magica");
         addressRepository.save(address);
-        Category category1 = TestsRepositoryUtil.createCategory("Sport", "Liber pentru toate varstele!");
-        Category category3 = TestsRepositoryUtil.createCategory("Arta", "Expozitii de arta");
+        category1 = TestsRepositoryUtil.createCategory("Sport", "Liber pentru toate varstele!");
+        category3 = TestsRepositoryUtil.createCategory("Arta", "Expozitii de arta");
         categoryRepository.save(category1);
         categoryRepository.save(category3);
         Set<Category> list1 = new HashSet<>();
@@ -112,7 +114,7 @@ public class EventServiceT {
     @Test
     @Transactional
     public void assertThatAddUserToPublicEventWorksWithPrivateEvent() throws NotFoundException {
-        event.setPublic(false);
+        event.setPublicEvent(false);
         eventRepository.save(event);
         eventService.addUserToPublicEvent(event.getId(), user.getId());
         List<Event> events = eventRepository.findByUsers_id(user.getId());
@@ -167,4 +169,57 @@ public class EventServiceT {
         assertThat(events.size()).isEqualTo(1);
     }
 
+    @Test
+    public void assertGetEventsByUserInterestedCategoriesIsWorkingWithInvalidArgument() {
+        Assertions.assertThrows(NotFoundException.class, () -> eventService.getEventsByUserInterestedCategories(100L));
+    }
+
+    @Test
+    public void assertGetEventsByUserInterestedCategoriesIsWorkingWithNoEvents() {
+        User user2 = TestsRepositoryUtil.createUser("aaaaaa", "anaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaana");
+        userRepository.saveAndFlush(user2);
+        Assertions.assertThrows(NotFoundException.class, () -> eventService.getEventsByUserInterestedCategories(user2.getId()));
+    }
+
+    @Test
+    public void assertGetEventsByUserInterestedCategoriesIsWorkingWithValidData() throws NotFoundException {
+
+        Set<Category> list2 = new HashSet<>();
+        list2.add(category1);
+        list2.add(category3);
+        Event event2 = TestsRepositoryUtil.createEvent("Ana are mere!", "name", true, address, user, list2, null);
+        eventRepository.save(event2);
+        user.getEvents().add(event2);
+        userRepository.save(user);
+        List<EventDTO> eventDTOS = eventService.getEventsByUserInterestedCategories(user.getId());
+        assertThat(eventDTOS.size()).isEqualTo(1);
+        assertThat(eventDTOS.get(0).getName()).isEqualTo(event.getName());
+
+    }
+
+    @Test
+    public void assertGetEventsByUserInterestedCategoriesIsWorkingWithNoResult() throws NotFoundException {
+
+        eventRepository.save(event);
+        user.getEvents().add(event);
+        userRepository.save(user);
+        List<EventDTO> eventDTOS = eventService.getEventsByUserInterestedCategories(user.getId());
+        assertThat(eventDTOS.size()).isEqualTo(0);
+
+    }
+
+    @Test
+    public void assertGetEventsByUserInterestedCategoriesIsWorkingWithWrongCategory() throws NotFoundException {
+
+        Set<Category> list2 = new HashSet<>();
+        Category categoryNotInterested = TestsRepositoryUtil.createCategory("notinterested", "not interested");
+        list2.add(categoryNotInterested);
+        Event event2 = TestsRepositoryUtil.createEvent("Ana are mere!", "name", true, address, user, list2, null);
+        eventRepository.save(event2);
+        user.getEvents().add(event);
+        userRepository.save(user);
+        List<EventDTO> eventDTOS = eventService.getEventsByUserInterestedCategories(user.getId());
+        assertThat(eventDTOS.size()).isEqualTo(0);
+
+    }
 }

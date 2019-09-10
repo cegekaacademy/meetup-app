@@ -4,6 +4,7 @@ import com.cegeka.academy.domain.Category;
 import com.cegeka.academy.domain.Event;
 import com.cegeka.academy.domain.User;
 import com.cegeka.academy.repository.CategoryRepository;
+import com.cegeka.academy.repository.EventRepository;
 import com.cegeka.academy.web.rest.errors.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,13 +16,16 @@ import java.util.stream.Collectors;
 
 @Service
 @Transactional
-public class SearchService {
+public class SearchHelperService {
 
     private final CategoryRepository categoryRepository;
+    private final EventRepository eventRepository;
+
 
     @Autowired
-    public SearchService(CategoryRepository categoryRepository) {
+    public SearchHelperService(CategoryRepository categoryRepository, EventRepository eventRepository) {
         this.categoryRepository = categoryRepository;
+        this.eventRepository = eventRepository;
     }
 
     public Set<Event> searchEventsByCategoryName(String categoryName) throws NotFoundException {
@@ -41,6 +45,17 @@ public class SearchService {
 
         return events.stream().filter(event -> event.getUsers().size() > 0).
                 flatMap(event -> event.getUsers().stream()).collect(Collectors.toList());
+
+    }
+
+    public List<Category> searchUserInterestCategories(Long userId) throws NotFoundException {
+
+        List<Event> userEvents = eventRepository.findByUsers_id(userId);
+        if (userEvents == null || userEvents.isEmpty()) {
+            throw new NotFoundException().setMessage("User events not found");
+        }
+
+        return categoryRepository.findDistinctByEventsIn(userEvents);
 
     }
 }

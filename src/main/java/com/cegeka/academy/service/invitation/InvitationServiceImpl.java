@@ -1,17 +1,13 @@
 package com.cegeka.academy.service.invitation;
 
-import com.cegeka.academy.domain.Event;
-import com.cegeka.academy.domain.GroupUserRole;
-import com.cegeka.academy.domain.Invitation;
-import com.cegeka.academy.domain.User;
+import com.cegeka.academy.domain.*;
 import com.cegeka.academy.domain.enums.InvitationStatus;
-import com.cegeka.academy.repository.EventRepository;
-import com.cegeka.academy.repository.GroupUserRoleRepository;
-import com.cegeka.academy.repository.InvitationRepository;
-import com.cegeka.academy.repository.UserRepository;
+import com.cegeka.academy.repository.*;
 import com.cegeka.academy.service.dto.InvitationDTO;
 import com.cegeka.academy.service.mapper.InvitationMapper;
 import com.cegeka.academy.service.serviceValidation.CheckUniqueService;
+import com.cegeka.academy.service.userChallenge.UserChallengeService;
+import com.cegeka.academy.web.rest.errors.ExistingItemException;
 import com.cegeka.academy.web.rest.errors.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,27 +27,34 @@ public class InvitationServiceImpl implements InvitationService {
     private final EventRepository eventRepository;
     private final GroupUserRoleRepository groupUserRoleRepository;
     private final UserRepository userRepository;
+    private final UserChallengeService userChallengeService;
+    private final ChallengeRepository challengeRepository;
     private final CheckUniqueService checkUniqueService;
+    private final UserChallengeRepository userChallengeRepository;
 
 
-    private Logger logger =  LoggerFactory.getLogger(InvitationServiceImpl.class);
+    private Logger logger = LoggerFactory.getLogger(InvitationServiceImpl.class);
 
     @Autowired
     public InvitationServiceImpl(InvitationRepository invitationRepository, EventRepository eventRepository,
                                  GroupUserRoleRepository groupUserRoleRepository, UserRepository userRepository,
-                                 CheckUniqueService checkUniqueService) {
+                                 CheckUniqueService checkUniqueService, UserChallengeService userChallengeService,
+                                 ChallengeRepository challengeRepository, UserChallengeRepository userChallengeRepository) {
         this.invitationRepository = invitationRepository;
         this.eventRepository = eventRepository;
         this.groupUserRoleRepository = groupUserRoleRepository;
         this.userRepository = userRepository;
         this.checkUniqueService = checkUniqueService;
+        this.userChallengeService = userChallengeService;
+        this.challengeRepository = challengeRepository;
+        this.userChallengeRepository = userChallengeRepository;
     }
 
     @Override
     public List<InvitationDTO> getAllInvitations() {
 
-        List<InvitationDTO>listToShow = new ArrayList<>();
-        List<Invitation>list = invitationRepository.findAll();
+        List<InvitationDTO> listToShow = new ArrayList<>();
+        List<Invitation> list = invitationRepository.findAll();
         for (Invitation invitation : list) {
             InvitationDTO aux = InvitationMapper.convertInvitationEntityToInvitationDTO(invitation);
             listToShow.add(aux);
@@ -64,7 +67,7 @@ public class InvitationServiceImpl implements InvitationService {
     public void saveInvitation(Invitation invitation) {
 
         invitation.setStatus(InvitationStatus.PENDING.name());
-        logger.info("Invitation with id: "+ invitationRepository.save(invitation).getId() +"  was saved to database.");
+        logger.info("Invitation with id: " + invitationRepository.save(invitation).getId() + "  was saved to database.");
         eventRepository.findById(invitation.getEvent().getId()).ifPresent(event -> {
             event.getPendingInvitations().add(invitation);
             eventRepository.save(event);
@@ -74,7 +77,7 @@ public class InvitationServiceImpl implements InvitationService {
     @Override
     public void updateInvitation(Invitation invitation) {
 
-        logger.info("Invitation with id: "+ invitationRepository.save(invitation).getId() +"  was updated into database.");
+        logger.info("Invitation with id: " + invitationRepository.save(invitation).getId() + "  was updated into database.");
 
     }
 
@@ -107,12 +110,12 @@ public class InvitationServiceImpl implements InvitationService {
         Event event = eventRepository.findById(invitation.getEvent().getId()).
                 orElseThrow(() -> new NotFoundException().setMessage("Event not found"));
         event.getPendingInvitations().remove(invitation);
-            eventRepository.save(event);
+        eventRepository.save(event);
 
         User user = userRepository.findById(invitation.getUser().getId())
                 .orElseThrow(() -> new NotFoundException().setMessage("User not found"));
-                user.getEvents().add(event);
-                userRepository.save(user);
+        user.getEvents().add(event);
+        userRepository.save(user);
 
     }
 
@@ -132,23 +135,80 @@ public class InvitationServiceImpl implements InvitationService {
             throw new NotFoundException().setMessage("Event not found");
 
         }
-        if (!invitation.getEvent().isPublic()) {
+        if (!invitation.getEvent().isPublicEvent()) {
 
             List<GroupUserRole> listIdUsers = groupUserRoleRepository.findAllByGroupId(idGroup);
 
             for (GroupUserRole userGroup : listIdUsers) {
 
                 Optional<User> user = userRepository.findById(userGroup.getUser().getId());
+                Optional<Event> event = eventRepository.findById(invitation.getEvent().getId());
 
-                user.orElseThrow(NotFoundException::new);
+                user.orElseThrow(() -> new NotFoundException().setMessage("User not found"));
+                event.orElseThrow(() -> new NotFoundException().setMessage("Event not found"));
 
-                if (checkUniqueService.checkUniqueInvitation(user.get(), invitation.getEvent())) {
+                if (checkUniqueService.checkUniqueInvitation(user.get(), event.get())) {
 
                     Invitation invitationSendToGroup = InvitationMapper.createInvitation(invitation.getDescription(), invitation.getStatus(), user.get(), invitation.getEvent());
                     invitationRepository.save(invitationSendToGroup);
                 }
             }
         }
+
     }
+
+    @Override
+    public void sendInvitationForPrivateEventsToUserList(List<User> userList, Invitation invitation) throws NotFoundException {
+        if (invitation.getEvent() == null) {
+            throw new NotFoundException().setMessage("Event not found");
+        }
+        if (!invitation.getEvent().isPublicEvent()) {
+            for (User userInvitation : userList) {
+                Optional<Event> event = eventRepository.findById(invitation.getEvent().getId());
+                Optional<User> user = userRepository.findById(userInvitation.getId());
+                event.orElseThrow(() -> new NotFoundException().setMessage("Event not found"));
+                user.orElseThrow(() -> new NotFoundException().setMessage("User not found"));
+                if (checkUniqueService.checkUniqueInvitation(user.get(), event.get())) {
+                    Invitation invitationForUserList = InvitationMapper.createInvitation(invitation.getDescription(), invitation.getStatus(), user.get(), event.get());
+                    invitationRepository.save(invitationForUserList);
+                }
+            }
+        }
+    }
+
+    @Override
+    public Invitation createChallengeInvitationForOneUser(InvitationDTO invitationDTO, Long challengeId)
+            throws ExistingItemException, NotFoundException {
+
+        long userId = invitationDTO.getUserId();
+        Optional<UserChallenge> userChallengeOptional = userChallengeRepository.findByUserIdAndChallengeId(userId, challengeId);
+
+        if (userChallengeOptional.isPresent()) {
+            throw new ExistingItemException();
+        } else {
+
+            User user = userRepository.findById(userId).orElseThrow(
+                    () -> new NotFoundException().setMessage("User not found"));
+            Invitation invitation = InvitationMapper.createInvitation(
+                    invitationDTO.getDescription(),
+                    invitationDTO.getStatus(),
+                    user,
+                    null);
+            invitationRepository.save(invitation);
+            Challenge challenge = challengeRepository.findById(challengeId).orElseThrow(
+                    () -> new NotFoundException().setMessage("Challenge not found"));
+
+            userChallengeService.initUserChallenge(challenge, invitation);
+
+            return invitation;
+        }
+    }
+
+    @Override
+    public Invitation getInvitation(Long invitationId) throws NotFoundException {
+        return invitationRepository.findById(invitationId).orElseThrow(() -> new NotFoundException()
+                .setMessage("Invitation not found"));
+    }
+
 
 }
