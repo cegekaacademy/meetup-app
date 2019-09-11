@@ -8,6 +8,9 @@ import com.cegeka.academy.service.serviceValidation.ValidationAccessService;
 import com.cegeka.academy.web.rest.errors.ExistingItemException;
 import com.cegeka.academy.web.rest.errors.NotFoundException;
 import com.cegeka.academy.web.rest.errors.UnauthorizedUserException;
+import com.cegeka.academy.web.rest.strategy.InvitationConstants;
+import com.cegeka.academy.web.rest.strategy.InvitationStrategy;
+import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,11 +28,14 @@ public class InvitationController {
 
     private final ValidationAccessService validationAccessService;
 
+    private final BeanFactory beanFactory;
+
     @Autowired
-    public InvitationController(InvitationService invitationService, ValidationAccessService validationAccessService, InvitationRepository invitationRepository) {
+    public InvitationController(InvitationService invitationService, ValidationAccessService validationAccessService, InvitationRepository invitationRepository, BeanFactory bf) {
         this.invitationService = invitationService;
         this.validationAccessService = validationAccessService;
         this.invitationRepository = invitationRepository;
+        this.beanFactory = bf;
     }
 
     @GetMapping("/all")
@@ -93,21 +99,17 @@ public class InvitationController {
         return invitationService.getPendingInvitationsByUserId(userId);
     }
 
-    @PutMapping("/accept/{id}")
-    public void acceptInvitation(@PathVariable Long id) throws NotFoundException {
-
-        if (validationAccessService.verifyUserAccessForInvitationEntity(id)) {
-            invitationService.acceptInvitation(id);
-
-        }
-    }
-
-    @PutMapping("/reject/{id}")
-    public void rejectInvitation(@PathVariable Long id) throws NotFoundException {
-
-        if (validationAccessService.verifyUserAccessForInvitationEntity(id)) {
-            invitationService.rejectInvitation(id);
-
+    @PutMapping("/{perform}/{id}")
+    public void decideAboutInvitation(@PathVariable String perform, @PathVariable Long id) throws NotFoundException {
+        switch (perform) {
+            case InvitationConstants.ACCEPT_INVITATION:
+                beanFactory.getBean(InvitationConstants.ACCEPT_INVITATION, InvitationStrategy.class).executeInvitation(id);
+                break;
+            case InvitationConstants.REJECT_INVITATION:
+                beanFactory.getBean(InvitationConstants.REJECT_INVITATION, InvitationStrategy.class).executeInvitation(id);
+                break;
+            default:
+                throw new NotFoundException();
         }
     }
 
