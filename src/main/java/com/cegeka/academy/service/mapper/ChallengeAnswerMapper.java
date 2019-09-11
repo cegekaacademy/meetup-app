@@ -15,7 +15,7 @@ public class ChallengeAnswerMapper {
 
             ChallengeAnswer challengeAnswer = new ChallengeAnswer();
             challengeAnswer.setVideoAt(challengeAnswerDTO.getVideoAt());
-            challengeAnswer.setImagePath(challengeAnswerDTO.getImagePath());
+            challengeAnswer.setImage(challengeAnswerDTO.getImage());
             challengeAnswer.setAnswer(challengeAnswerDTO.getAnswer());
 
             return challengeAnswer;
@@ -33,7 +33,7 @@ public class ChallengeAnswerMapper {
             ChallengeAnswerDTO challengeAnswerDTO = new ChallengeAnswerDTO();
             challengeAnswerDTO.setId(challengeAnswer.getId());
             challengeAnswerDTO.setVideoAt(challengeAnswer.getVideoAt());
-            challengeAnswerDTO.setImagePath(challengeAnswer.getImagePath());
+            challengeAnswerDTO.setImage(challengeAnswer.getImage());
             challengeAnswerDTO.setAnswer(challengeAnswer.getAnswer());
 
             return challengeAnswerDTO;

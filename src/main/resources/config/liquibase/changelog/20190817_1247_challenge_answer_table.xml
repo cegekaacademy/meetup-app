@@ -24,4 +24,12 @@
 
     </changeSet>
 
+    <changeSet id="20190910113702" author="iuliana">
+        <dropColumn columnName="image_path"
+                    tableName="challenge_answer"/>
+        <addColumn tableName="challenge_answer">
+            <column name="image" type="longblob"/>
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>
