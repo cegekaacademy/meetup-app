@@ -3,11 +3,19 @@ package com.cegeka.academy.repository;
 
 import com.cegeka.academy.AcademyProjectApp;
 import com.cegeka.academy.domain.ChallengeAnswer;
+import org.apache.commons.compress.utils.IOUtils;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -20,21 +28,26 @@ public class ChallengeAnswerRepositoryTest {
 
     private ChallengeAnswer challengeAnswer;
 
+    public MultipartFile initImage() throws IOException {
+        File image = new File("src/test/resources/images/poza123.jpg");
+        FileInputStream input = new FileInputStream(image);
+
+        MultipartFile imageFile = new MockMultipartFile("image", IOUtils.toByteArray(input));
+
+        return imageFile;
+    }
+
     @BeforeEach
-    public void setUp(){
+    public void setUp() throws IOException {
 
         challengeAnswer = new ChallengeAnswer();
-        challengeAnswer.setImage(new byte[]{
-                (byte)0x80, 0x53, 0x1c,
-                (byte)0x87, (byte)0xa0, 0x42, 0x69, 0x10, (byte)0xa2, (byte)0xea, 0x08,
-                0x00, 0x2b, 0x30, 0x30, (byte)0x9d
-        });
+        challengeAnswer.setImage(initImage().getBytes());
         challengeAnswer.setVideoAt("videoAt");
         challengeAnswer.setAnswer("answer");
 
     }
 
-    @BeforeEach
+    @AfterEach
     public void destroy(){
 
         challengeAnswerRepository.deleteAll();
@@ -48,14 +61,10 @@ public class ChallengeAnswerRepositoryTest {
     }
 
     @Test
-    public void testFindChallengeAnswerByImagePath(){
+    public void testFindChallengeAnswerByImagePath() throws IOException {
 
         challengeAnswerRepository.save(challengeAnswer);
-        assertThat(challengeAnswerRepository.findByImage(new byte[]{
-                (byte)0x80, 0x53, 0x1c,
-                (byte)0x87, (byte)0xa0, 0x42, 0x69, 0x10, (byte)0xa2, (byte)0xea, 0x08,
-                0x00, 0x2b, 0x30, 0x30, (byte)0x9d
-        })).isEqualTo(challengeAnswerRepository.findAll().get(0));
+        assertThat(challengeAnswerRepository.findByImage(initImage().getBytes())).isEqualTo(challengeAnswerRepository.findAll().get(0));
 
     }
 
@@ -63,8 +72,7 @@ public class ChallengeAnswerRepositoryTest {
     public void testFindChallengeAnswerByImagePathWithNoResult(){
 
         challengeAnswerRepository.save(challengeAnswer);
-        assertThat(challengeAnswerRepository.findByImage(new byte[]{(byte)0x80, 0x53, 0x1c,
-                (byte)0x87, (byte)0xa0, 0x42, 0x69, 0x10, (byte)0xa2})).isEqualTo(null);
+        assertThat(challengeAnswerRepository.findByImage(new byte[]{(byte)0x80, 0x53, 0x1c, (byte)0x87})).isEqualTo(null);
 
     }
 

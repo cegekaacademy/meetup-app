@@ -1,6 +1,5 @@
 package com.cegeka.academy.service.challengeAnswer;
 
-import com.cegeka.academy.config.MediaFileConfig;
 import com.cegeka.academy.domain.ChallengeAnswer;
 import com.cegeka.academy.domain.UserChallenge;
 import com.cegeka.academy.repository.ChallengeAnswerRepository;
@@ -16,12 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Date;
 
 @Service
 @Transactional
@@ -31,8 +25,6 @@ public class ChallengeAnswerServiceImp implements ChallengeAnswerService {
     private ChallengeAnswerRepository challengeAnswerRepository;
     @Autowired
     private UserChallengeRepository userChallengeRepository;
-    @Autowired
-    private MediaFileConfig mediaFileConfig;
 
     private Logger logger = LoggerFactory.getLogger(ChallengeAnswerServiceImp.class);
 
@@ -102,31 +94,9 @@ public class ChallengeAnswerServiceImp implements ChallengeAnswerService {
         UserChallenge userChallenge = userChallengeRepository.findByChallengeAnswerId(challengeAnswerId).orElseThrow(
                 () -> new NotFoundException().setMessage("User challenge not found"));
 
-        Long userId = userChallenge.getUser().getId();
-        Long challengeId = userChallenge.getChallenge().getId();
-
-        String imagePath = saveImage(image, userId, challengeId);
-
         ChallengeAnswer challengeAnswer = userChallenge.getChallengeAnswer();
-        //challengeAnswer.setImage(imagePath);
+        challengeAnswer.setImage(image.getBytes());
         challengeAnswerRepository.save(challengeAnswer);
-    }
-
-    public String saveImage(MultipartFile image, Long userId, Long challengeId) throws IOException {
-
-        String imagePath = mediaFileConfig.getRootDirectory() + mediaFileConfig.getUploadChallengeDirectory() + userId + "\\" + challengeId + "\\";
-        File file = new File(imagePath);
-        if (!file.exists()) {
-            file.mkdirs();
-        }
-
-        byte[] bytes = image.getBytes();
-        String imageName = "answer_" + userId + "_" + challengeId + "_" + new Date().getTime();
-
-        Path path = Paths.get(imagePath + imageName + mediaFileConfig.getJPGExtension());
-        Files.write(path, bytes);
-
-        return path.toString();
     }
 
     public UserChallenge getUserChallengeByUserIdAndChallengeId(Long userId, Long challengeId) throws NotFoundException {
