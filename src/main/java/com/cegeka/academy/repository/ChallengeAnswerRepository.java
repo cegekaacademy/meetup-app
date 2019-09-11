@@ -7,7 +7,8 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ChallengeAnswerRepository extends JpaRepository<ChallengeAnswer, Long> {
 
-    ChallengeAnswer findByImagePath(String imagePath);
+    ChallengeAnswer findByImage(byte[] image);
+
     ChallengeAnswer findByVideoAt(String videoAt);
 
 }

@@ -66,7 +66,7 @@ public class ChallengeAnswerServiceImp implements ChallengeAnswerService {
 
         challengeAnswer.setAnswer(challengeAnswerDTO.getAnswer());
         challengeAnswer.setVideoAt(challengeAnswerDTO.getVideoAt());
-        challengeAnswer.setImagePath(challengeAnswerDTO.getImagePath());
+        challengeAnswer.setImage(challengeAnswerDTO.getImage());
 
         ChallengeAnswer result = challengeAnswerRepository.save(challengeAnswer);
 
@@ -108,7 +108,7 @@ public class ChallengeAnswerServiceImp implements ChallengeAnswerService {
         String imagePath = saveImage(image, userId, challengeId);
 
         ChallengeAnswer challengeAnswer = userChallenge.getChallengeAnswer();
-        challengeAnswer.setImagePath(imagePath);
+        //challengeAnswer.setImage(imagePath);
         challengeAnswerRepository.save(challengeAnswer);
     }
 
