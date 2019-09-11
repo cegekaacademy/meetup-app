@@ -1,16 +1,15 @@
 package com.cegeka.academy.service.dto;
 
 
-import org.springframework.web.multipart.MultipartFile;
-
 import javax.validation.constraints.NotNull;
+import java.util.Arrays;
 import java.util.Objects;
 
 public class ChallengeAnswerDTO {
 
     private Long id;
     private String videoAt;
-    private String imagePath;
+    private byte[] image;
 
     @NotNull(message = "Answer must not be null.")
     private String answer;
@@ -31,12 +30,12 @@ public class ChallengeAnswerDTO {
         this.videoAt = videoAt;
     }
 
-    public String getImagePath() {
-        return imagePath;
+    public byte[] getImage() {
+        return image;
     }
 
-    public void setImagePath(String imagePath) {
-        this.imagePath = imagePath;
+    public void setImage(byte[] image) {
+        this.image = image;
     }
 
     public String getAnswer() {
@@ -52,7 +51,7 @@ public class ChallengeAnswerDTO {
         return "ChallengeAnswerDTO{" +
                 "id=" + id +
                 ", videoAt='" + videoAt + '\'' +
-                ", imagePath='" + imagePath + '\'' +
+                ", image=" + Arrays.toString(image) +
                 ", answer='" + answer + '\'' +
                 '}';
     }
@@ -62,14 +61,16 @@ public class ChallengeAnswerDTO {
         if (this == o) return true;
         if (!(o instanceof ChallengeAnswerDTO)) return false;
         ChallengeAnswerDTO that = (ChallengeAnswerDTO) o;
-        return Objects.equals(getId(), that.getId()) &&
-                Objects.equals(getVideoAt(), that.getVideoAt()) &&
-                Objects.equals(getImagePath(), that.getImagePath()) &&
-                Objects.equals(getAnswer(), that.getAnswer());
+        return getId().equals(that.getId()) &&
+                getVideoAt().equals(that.getVideoAt()) &&
+                Arrays.equals(getImage(), that.getImage()) &&
+                getAnswer().equals(that.getAnswer());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getVideoAt(), getImagePath(), getAnswer());
+        int result = Objects.hash(getId(), getVideoAt(), getAnswer());
+        result = 31 * result + Arrays.hashCode(getImage());
+        return result;
     }
 }
