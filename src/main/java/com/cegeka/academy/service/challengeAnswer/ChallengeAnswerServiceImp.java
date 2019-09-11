@@ -58,7 +58,6 @@ public class ChallengeAnswerServiceImp implements ChallengeAnswerService {
 
         challengeAnswer.setAnswer(challengeAnswerDTO.getAnswer());
         challengeAnswer.setVideoAt(challengeAnswerDTO.getVideoAt());
-        challengeAnswer.setImage(challengeAnswerDTO.getImage());
 
         ChallengeAnswer result = challengeAnswerRepository.save(challengeAnswer);
 
