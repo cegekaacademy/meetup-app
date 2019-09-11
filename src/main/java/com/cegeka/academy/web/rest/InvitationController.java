@@ -8,9 +8,10 @@ import com.cegeka.academy.service.serviceValidation.ValidationAccessService;
 import com.cegeka.academy.web.rest.errors.ExistingItemException;
 import com.cegeka.academy.web.rest.errors.NotFoundException;
 import com.cegeka.academy.web.rest.errors.UnauthorizedUserException;
+import com.cegeka.academy.web.rest.strategy.AcceptInvitationStrategy;
 import com.cegeka.academy.web.rest.strategy.InvitationConstants;
-import com.cegeka.academy.web.rest.strategy.InvitationStrategy;
-import org.springframework.beans.factory.BeanFactory;
+import com.cegeka.academy.web.rest.strategy.InvitationStatusContext;
+import com.cegeka.academy.web.rest.strategy.RejectInvitationStrategy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,14 +29,15 @@ public class InvitationController {
 
     private final ValidationAccessService validationAccessService;
 
-    private final BeanFactory beanFactory;
+    private final InvitationStatusContext invitationStatusContext;
 
     @Autowired
-    public InvitationController(InvitationService invitationService, ValidationAccessService validationAccessService, InvitationRepository invitationRepository, BeanFactory bf) {
+    public InvitationController(InvitationService invitationService, ValidationAccessService validationAccessService,
+                                InvitationRepository invitationRepository, InvitationStatusContext invitationStatusContext) {
         this.invitationService = invitationService;
         this.validationAccessService = validationAccessService;
         this.invitationRepository = invitationRepository;
-        this.beanFactory = bf;
+        this.invitationStatusContext = invitationStatusContext;
     }
 
     @GetMapping("/all")
@@ -103,10 +105,12 @@ public class InvitationController {
     public void decideAboutInvitation(@PathVariable String perform, @PathVariable Long id) throws NotFoundException {
         switch (perform) {
             case InvitationConstants.ACCEPT_INVITATION:
-                beanFactory.getBean(InvitationConstants.ACCEPT_INVITATION, InvitationStrategy.class).executeInvitation(id);
+                invitationStatusContext.setInvitationStrategy(new AcceptInvitationStrategy());
+                invitationStatusContext.execute(id);
                 break;
             case InvitationConstants.REJECT_INVITATION:
-                beanFactory.getBean(InvitationConstants.REJECT_INVITATION, InvitationStrategy.class).executeInvitation(id);
+                invitationStatusContext.setInvitationStrategy(new RejectInvitationStrategy());
+                invitationStatusContext.execute(id);
                 break;
             default:
                 throw new NotFoundException();
