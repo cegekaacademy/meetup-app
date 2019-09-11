@@ -15,7 +15,6 @@ public class ChallengeAnswerMapper {
 
             ChallengeAnswer challengeAnswer = new ChallengeAnswer();
             challengeAnswer.setVideoAt(challengeAnswerDTO.getVideoAt());
-            challengeAnswer.setImage(challengeAnswerDTO.getImage());
             challengeAnswer.setAnswer(challengeAnswerDTO.getAnswer());
 
             return challengeAnswer;
