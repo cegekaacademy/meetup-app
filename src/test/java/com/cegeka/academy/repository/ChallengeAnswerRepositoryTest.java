@@ -59,38 +59,4 @@ public class ChallengeAnswerRepositoryTest {
         assertThat(challengeAnswerRepository.save(challengeAnswer)).isEqualTo(challengeAnswerRepository.findAll().get(0));
 
     }
-
-    @Test
-    public void testFindChallengeAnswerByImagePath() throws IOException {
-
-        challengeAnswerRepository.save(challengeAnswer);
-        assertThat(challengeAnswerRepository.findByImage(initImage().getBytes())).isEqualTo(challengeAnswerRepository.findAll().get(0));
-
-    }
-
-    @Test
-    public void testFindChallengeAnswerByImagePathWithNoResult(){
-
-        challengeAnswerRepository.save(challengeAnswer);
-        assertThat(challengeAnswerRepository.findByImage(new byte[]{(byte)0x80, 0x53, 0x1c, (byte)0x87})).isEqualTo(null);
-
-    }
-
-    @Test
-    public void testFindChallengeAnswerByVideoAt(){
-
-        challengeAnswerRepository.save(challengeAnswer);
-        assertThat(challengeAnswerRepository.findByVideoAt("videoAt")).isEqualTo(challengeAnswerRepository.findAll().get(0));
-
-    }
-
-    @Test
-    public void testFindChallengeAnswerByVideoAtWithNoResult(){
-
-        challengeAnswerRepository.save(challengeAnswer);
-        assertThat(challengeAnswerRepository.findByVideoAt("videoAt1")).isEqualTo(null);
-
-    }
-
-
 }
