@@ -102,18 +102,25 @@ public class InvitationController {
     }
 
     @PutMapping("/{decide}/{id}")
-    public void decideAboutInvitation(@PathVariable String decide, @PathVariable Long id) throws NotFoundException {
-        switch (decide) {
-            case InvitationConstants.ACCEPT_INVITATION:
-                invitationStatusContext.setInvitationStrategy(new AcceptInvitationStrategy());
-                invitationStatusContext.execute(id);
-                break;
-            case InvitationConstants.REJECT_INVITATION:
-                invitationStatusContext.setInvitationStrategy(new RejectInvitationStrategy());
-                invitationStatusContext.execute(id);
-                break;
-            default:
-                throw new NotFoundException();
+    public void decideAboutInvitationStatus(@PathVariable String decide, @PathVariable Long id) throws NotFoundException {
+
+        if (validationAccessService.verifyUserAccessForInvitationEntity(id)) {
+
+            switch (decide) {
+                case InvitationConstants.ACCEPT_INVITATION:
+                    invitationStatusContext.setInvitationStrategy(new AcceptInvitationStrategy());
+                    invitationStatusContext.execute(id);
+                    break;
+                case InvitationConstants.REJECT_INVITATION:
+                    invitationStatusContext.setInvitationStrategy(new RejectInvitationStrategy());
+                    invitationStatusContext.execute(id);
+                    break;
+                default:
+                    throw new NotFoundException();
+            }
+        } else {
+
+            throw new UnauthorizedUserException().setMessage("You have no rights to change the status of this invitation.");
         }
     }
 
