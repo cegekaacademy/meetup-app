@@ -101,9 +101,9 @@ public class InvitationController {
         return invitationService.getPendingInvitationsByUserId(userId);
     }
 
-    @PutMapping("/{perform}/{id}")
-    public void decideAboutInvitation(@PathVariable String perform, @PathVariable Long id) throws NotFoundException {
-        switch (perform) {
+    @PutMapping("/{decide}/{id}")
+    public void decideAboutInvitation(@PathVariable String decide, @PathVariable Long id) throws NotFoundException {
+        switch (decide) {
             case InvitationConstants.ACCEPT_INVITATION:
                 invitationStatusContext.setInvitationStrategy(new AcceptInvitationStrategy());
                 invitationStatusContext.execute(id);
