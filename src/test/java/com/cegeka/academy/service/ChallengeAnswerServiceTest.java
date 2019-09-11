@@ -191,7 +191,7 @@ public class ChallengeAnswerServiceTest {
 
         challengeAnswerService.saveChallengeAnswer(userChallenge.getId(), ChallengeAnswerMapper.convertChallengeAnswerToChallengeAnswerDTO(challengeAnswer2));
         assertThat(challengeAnswerRepository.findAll().get(0).getAnswer()).isEqualTo(challengeAnswer2.getAnswer());
-        assertThat(challengeAnswerRepository.findAll().get(0).getImagePath()).isEqualTo(challengeAnswer2.getImagePath());
+        assertThat(challengeAnswerRepository.findAll().get(0).getImage()).isEqualTo(challengeAnswer2.getImage());
         assertThat(challengeAnswerRepository.findAll().get(0).getVideoAt()).isEqualTo(challengeAnswer2.getVideoAt());
         assertThat(userChallengeRepository.findAll().get(0).getChallengeAnswer().getId()).isEqualTo(challengeAnswerRepository.findAll().get(1).getId());
 
@@ -232,7 +232,7 @@ public class ChallengeAnswerServiceTest {
         challengeAnswerService.updateChallengeAnswer(existingChallenge.getId(), ChallengeAnswerMapper.convertChallengeAnswerToChallengeAnswerDTO(existingChallenge));
 
         assertThat(challengeAnswerRepository.findAll().get(0).getAnswer()).isEqualTo(existingChallenge.getAnswer());
-        assertThat(challengeAnswerRepository.findAll().get(0).getImagePath()).isEqualTo(existingChallenge.getImagePath());
+        assertThat(challengeAnswerRepository.findAll().get(0).getImage()).isEqualTo(existingChallenge.getImage());
         assertThat(challengeAnswerRepository.findAll().get(0).getVideoAt()).isEqualTo(existingChallenge.getVideoAt());
 
     }
@@ -275,7 +275,7 @@ public class ChallengeAnswerServiceTest {
 
         challengeAnswerService.uploadAnswerPhoto(challengeAnswer.getId(), image);
 
-        assertThat(challengeAnswer.getImagePath()).isNotEqualTo(null);
+        assertThat(challengeAnswer.getImage()).isNotEqualTo(null);
     }
 
     @Test
