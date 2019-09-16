@@ -125,7 +125,7 @@ public class EventServiceT {
     @Test
     @Transactional
     public void assertThatAddUserToPublicEventWorksWithPrivateEvent() throws NotFoundException {
-        event.setPublic(false);
+        event.setPublicEvent(false);
         eventRepository.save(event);
         eventService.addUserToPublicEvent(event.getId(), user.getId());
         List<Event> events = eventRepository.findByUsers_id(user.getId());

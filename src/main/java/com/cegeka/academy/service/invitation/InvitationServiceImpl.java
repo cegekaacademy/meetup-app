@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -136,20 +135,42 @@ public class InvitationServiceImpl implements InvitationService {
             throw new NotFoundException().setMessage("Event not found");
 
         }
-        if (!invitation.getEvent().isPublic()) {
+        if (!invitation.getEvent().isPublicEvent()) {
 
             List<GroupUserRole> listIdUsers = groupUserRoleRepository.findAllByGroupId(idGroup);
 
             for (GroupUserRole userGroup : listIdUsers) {
 
                 Optional<User> user = userRepository.findById(userGroup.getUser().getId());
+                Optional<Event> event = eventRepository.findById(invitation.getEvent().getId());
 
-                user.orElseThrow(NotFoundException::new);
+                user.orElseThrow(() -> new NotFoundException().setMessage("User not found"));
+                event.orElseThrow(() -> new NotFoundException().setMessage("Event not found"));
 
-                if (checkUniqueService.checkUniqueInvitation(user.get(), invitation.getEvent())) {
+                if (checkUniqueService.checkUniqueInvitation(user.get(), event.get())) {
 
                     Invitation invitationSendToGroup = InvitationMapper.createInvitation(invitation.getDescription(), invitation.getStatus(), user.get(), invitation.getEvent());
                     invitationRepository.save(invitationSendToGroup);
+                }
+            }
+        }
+
+    }
+
+    @Override
+    public void sendInvitationForPrivateEventsToUserList(List<User> userList, Invitation invitation) throws NotFoundException {
+        if (invitation.getEvent() == null) {
+            throw new NotFoundException().setMessage("Event not found");
+        }
+        if (!invitation.getEvent().isPublicEvent()) {
+            for (User userInvitation : userList) {
+                Optional<Event> event = eventRepository.findById(invitation.getEvent().getId());
+                Optional<User> user = userRepository.findById(userInvitation.getId());
+                event.orElseThrow(() -> new NotFoundException().setMessage("Event not found"));
+                user.orElseThrow(() -> new NotFoundException().setMessage("User not found"));
+                if (checkUniqueService.checkUniqueInvitation(user.get(), event.get())) {
+                    Invitation invitationForUserList = InvitationMapper.createInvitation(invitation.getDescription(), invitation.getStatus(), user.get(), event.get());
+                    invitationRepository.save(invitationForUserList);
                 }
             }
         }

@@ -7,7 +7,7 @@ public class EventMapper {
 
     public static Event convertEventDTOtoEvent(EventDTO eventDTO) {
         Event event = new Event();
-        event.setPublic(eventDTO.getPublic());
+        event.setPublicEvent(eventDTO.getPublic());
         event.setName(eventDTO.getName());
         event.setDescription(eventDTO.getDescription());
         event.setNotes(eventDTO.getNotes());
@@ -18,7 +18,7 @@ public class EventMapper {
 
     public static EventDTO convertEventtoEventDTO(Event event) {
         EventDTO eventDTO = new EventDTO();
-        eventDTO.setPublic(event.isPublic());
+        eventDTO.setPublic(event.isPublicEvent());
         eventDTO.setName(event.getName());
         eventDTO.setDescription(event.getDescription());
         eventDTO.setNotes(event.getNotes());

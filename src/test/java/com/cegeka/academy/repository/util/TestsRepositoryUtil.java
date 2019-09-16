@@ -22,7 +22,7 @@ public class TestsRepositoryUtil {
         Event event = new Event();
         event.setDescription(description);
         event.setName(name);
-        event.setPublic(isPublic);
+        event.setPublicEvent(isPublic);
         event.setOwner(user);
         event.setCategories(categories);
         event.setCoverPhoto(coverPhoto);

@@ -1,5 +1,6 @@
 package com.cegeka.academy.service.userChallenge;
 
+import com.cegeka.academy.domain.*;
 import com.cegeka.academy.domain.Challenge;
 import com.cegeka.academy.domain.Invitation;
 import com.cegeka.academy.domain.User;
@@ -7,6 +8,7 @@ import com.cegeka.academy.domain.UserChallenge;
 import com.cegeka.academy.domain.enums.ChallengeStatus;
 import com.cegeka.academy.domain.enums.InvitationStatus;
 import com.cegeka.academy.domain.enums.UserChallengeStatus;
+import com.cegeka.academy.repository.*;
 import com.cegeka.academy.repository.ChallengeRepository;
 import com.cegeka.academy.repository.InvitationRepository;
 import com.cegeka.academy.repository.UserChallengeRepository;
@@ -44,6 +46,9 @@ public class UserChallengeServiceImpl implements UserChallengeService {
 
     @Autowired
     private InvitationRepository invitationRepository;
+
+    @Autowired
+    private ChallengeAnswerRepository challengeAnswerRepository;
 
     @Autowired
     private UserRepository userRepository;
@@ -135,6 +140,20 @@ public class UserChallengeServiceImpl implements UserChallengeService {
         userChallenge.setEndTime(new Date());
 
         return userChallengeRepository.save(userChallenge);
+    }
+
+    @Override
+    public void addUserChallengeAnswer(UserChallenge userChallenge, ChallengeAnswer challengeAnswer) throws NotFoundException {
+
+        userChallengeRepository.findById(userChallenge.getId()).orElseThrow(
+                () -> new NotFoundException().setMessage("User challenge not found"));
+
+        challengeAnswerRepository.findById(challengeAnswer.getId()).orElseThrow(
+                () -> new NotFoundException().setMessage("Answer not found"));
+
+        userChallenge.setChallengeAnswer(challengeAnswer);
+
+        userChallengeRepository.save(userChallenge);
     }
 
     @Override
