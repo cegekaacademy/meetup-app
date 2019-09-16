@@ -56,7 +56,7 @@ public class SearchHelperServiceTest {
         address = TestsRepositoryUtil.createAddress("Romania", "Bucuresti", "Splai", "333", "Casa", "Casa magica");
         addressRepository.saveAndFlush(address);
         Set<Category> set = new HashSet<>();
-        event = TestsRepositoryUtil.createEvent("Ana are mere!", "KFC Krushers Party", true, address, userRepository.findAll().get(0), set, null);
+        event = TestsRepositoryUtil.createEvent("Ana are mere!", "KFC Krushers Party", true, address, userRepository.findAll().get(0), set);
         category = TestsRepositoryUtil.createCategory("Ana", "description1");
         Category category1 = TestsRepositoryUtil.createCategory("MARIA", "description1");
         event.getCategories().add(category);
@@ -144,7 +144,7 @@ public class SearchHelperServiceTest {
         set.add(category);
         Category category2 = TestsRepositoryUtil.createCategory("cat", "ss");
         set.add(category2);
-        Event event2 = TestsRepositoryUtil.createEvent("Ana are mere!", "KFC Krushers Party", true, address, user, set, null);
+        Event event2 = TestsRepositoryUtil.createEvent("Ana are mere!", "KFC Krushers Party", true, address, user, set);
         eventRepository.save(event2);
         user.getEvents().add(event2);
         userRepository.save(user);

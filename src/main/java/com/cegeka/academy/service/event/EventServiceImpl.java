@@ -2,6 +2,7 @@ package com.cegeka.academy.service.event;
 
 import com.cegeka.academy.domain.Event;
 import com.cegeka.academy.domain.User;
+import com.cegeka.academy.domain.UserChallenge;
 import com.cegeka.academy.repository.EventRepository;
 import com.cegeka.academy.repository.UserRepository;
 import com.cegeka.academy.service.UserService;
@@ -15,7 +16,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -137,5 +140,13 @@ public class EventServiceImpl implements EventService {
         return SortUtil.sortEventsByStartDate(interestedEvents);
 
 
+    }
+
+    @Override
+    public void uploadEventCoverPhoto(Long eventId, MultipartFile image) throws NotFoundException, IOException {
+        Event event=eventRepository.findById(eventId).orElseThrow(
+                ()->new NotFoundException().setMessage("Event not found"));
+        event.setCoverPhoto(image.getBytes());
+        eventRepository.save(event);
     }
 }

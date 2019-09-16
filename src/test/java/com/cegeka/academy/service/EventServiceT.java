@@ -13,13 +13,19 @@ import com.cegeka.academy.repository.util.TestsRepositoryUtil;
 import com.cegeka.academy.service.dto.EventDTO;
 import com.cegeka.academy.service.event.EventService;
 import com.cegeka.academy.web.rest.errors.NotFoundException;
+import org.apache.commons.compress.utils.IOUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -64,10 +70,15 @@ public class EventServiceT {
         Set<Category> list1 = new HashSet<>();
         list1.add(category1);
         list1.add(category3);
-        event = TestsRepositoryUtil.createEvent("Ana are mere!", "KFC Krushers Party", true, address, user, list1, "https://scontent.fotp3-2.fna.fbcdn.net/v/t1.0-9/67786277_2592710307438854_5055220041180512256");
+        event = TestsRepositoryUtil.createEvent("Ana are mere!", "KFC Krushers Party", true, address, user, list1);
         eventService.createEvent(event);
     }
-
+    public MultipartFile initFile() throws IOException {
+        File image = new File("src/test/resources/images/poza123.jpg");
+        FileInputStream input = new FileInputStream(image);
+        MultipartFile imageFile = new MockMultipartFile("image", IOUtils.toByteArray(input));
+        return imageFile;
+    }
 
     @Test
     @Transactional
@@ -187,7 +198,7 @@ public class EventServiceT {
         Set<Category> list2 = new HashSet<>();
         list2.add(category1);
         list2.add(category3);
-        Event event2 = TestsRepositoryUtil.createEvent("Ana are mere!", "name", true, address, user, list2, null);
+        Event event2 = TestsRepositoryUtil.createEvent("Ana are mere!", "name", true, address, user, list2);
         eventRepository.save(event2);
         user.getEvents().add(event2);
         userRepository.save(user);
@@ -214,12 +225,28 @@ public class EventServiceT {
         Set<Category> list2 = new HashSet<>();
         Category categoryNotInterested = TestsRepositoryUtil.createCategory("notinterested", "not interested");
         list2.add(categoryNotInterested);
-        Event event2 = TestsRepositoryUtil.createEvent("Ana are mere!", "name", true, address, user, list2, null);
+        Event event2 = TestsRepositoryUtil.createEvent("Ana are mere!", "name", true, address, user, list2);
         eventRepository.save(event2);
         user.getEvents().add(event);
         userRepository.save(user);
         List<EventDTO> eventDTOS = eventService.getEventsByUserInterestedCategories(user.getId());
         assertThat(eventDTOS.size()).isEqualTo(0);
+    }
 
+    @Test
+    public void assertThatUploadCoverEventPhotoIsWorking() throws IOException, NotFoundException {
+        MultipartFile file=initFile();
+        eventService.uploadEventCoverPhoto(event.getId(),file);
+        assertThat(event.getCoverPhoto()).isNotEqualTo(null);
+
+    }
+    @Test
+    public void assertThatUploadCoverPhotoThrowsError() throws IOException {
+
+        MultipartFile fileUpload = initFile();
+
+        Assertions.assertThrows(NotFoundException.class, () -> {
+            eventService.uploadEventCoverPhoto(100L, fileUpload);
+        });
     }
 }
