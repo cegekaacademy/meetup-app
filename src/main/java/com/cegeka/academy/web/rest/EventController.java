@@ -13,9 +13,12 @@ import com.cegeka.academy.web.rest.errors.ExpiredObjectException;
 import com.cegeka.academy.web.rest.errors.NotFoundException;
 import com.cegeka.academy.web.rest.errors.UnauthorizedUserException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -131,6 +134,15 @@ public class EventController {
 
         User currentUser = userService.getUserWithAuthorities().orElseThrow(() -> new NotFoundException().setMessage("User not found"));
         return eventService.getEventsByUserInterestedCategories(currentUser.getId());
+    }
+
+    @PostMapping(value = "/photo/{eventId}")
+    public ResponseEntity<String> uploadCoverPhoto(@PathVariable("eventId") Long eventId,
+                                                    @RequestParam("image") MultipartFile image) throws IOException, NotFoundException {
+
+        eventService.uploadEventCoverPhoto(eventId, image);
+
+        return ResponseEntity.ok("Cover has been uploaded.");
     }
 
 }
