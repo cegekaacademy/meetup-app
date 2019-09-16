@@ -8,6 +8,10 @@ import com.cegeka.academy.service.serviceValidation.ValidationAccessService;
 import com.cegeka.academy.web.rest.errors.ExistingItemException;
 import com.cegeka.academy.web.rest.errors.NotFoundException;
 import com.cegeka.academy.web.rest.errors.UnauthorizedUserException;
+import com.cegeka.academy.web.rest.strategy.AcceptInvitationStrategy;
+import com.cegeka.academy.web.rest.strategy.InvitationConstants;
+import com.cegeka.academy.web.rest.strategy.InvitationStatusContext;
+import com.cegeka.academy.web.rest.strategy.RejectInvitationStrategy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,11 +29,15 @@ public class InvitationController {
 
     private final ValidationAccessService validationAccessService;
 
+    private final InvitationStatusContext invitationStatusContext;
+
     @Autowired
-    public InvitationController(InvitationService invitationService, ValidationAccessService validationAccessService, InvitationRepository invitationRepository) {
+    public InvitationController(InvitationService invitationService, ValidationAccessService validationAccessService,
+                                InvitationRepository invitationRepository, InvitationStatusContext invitationStatusContext) {
         this.invitationService = invitationService;
         this.validationAccessService = validationAccessService;
         this.invitationRepository = invitationRepository;
+        this.invitationStatusContext = invitationStatusContext;
     }
 
     @GetMapping("/all")
@@ -93,21 +101,26 @@ public class InvitationController {
         return invitationService.getPendingInvitationsByUserId(userId);
     }
 
-    @PutMapping("/accept/{id}")
-    public void acceptInvitation(@PathVariable Long id) throws NotFoundException {
+    @PutMapping("/{decide}/{id}")
+    public void decideAboutInvitationStatus(@PathVariable String decide, @PathVariable Long id) throws NotFoundException {
 
         if (validationAccessService.verifyUserAccessForInvitationEntity(id)) {
-            invitationService.acceptInvitation(id);
 
-        }
-    }
+            switch (decide) {
+                case InvitationConstants.ACCEPT_INVITATION:
+                    invitationStatusContext.setInvitationStrategy(new AcceptInvitationStrategy());
+                    invitationStatusContext.execute(id);
+                    break;
+                case InvitationConstants.REJECT_INVITATION:
+                    invitationStatusContext.setInvitationStrategy(new RejectInvitationStrategy());
+                    invitationStatusContext.execute(id);
+                    break;
+                default:
+                    throw new NotFoundException();
+            }
+        } else {
 
-    @PutMapping("/reject/{id}")
-    public void rejectInvitation(@PathVariable Long id) throws NotFoundException {
-
-        if (validationAccessService.verifyUserAccessForInvitationEntity(id)) {
-            invitationService.rejectInvitation(id);
-
+            throw new UnauthorizedUserException().setMessage("You have no rights to change the status of this invitation.");
         }
     }
 
