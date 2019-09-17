@@ -46,4 +46,11 @@
             <column name="cover_photo" type="varchar(250)"/>
         </addColumn>
     </changeSet>
+
+    <changeSet id="190716112704" author="teodora">
+        <loadData
+                file="config/liquibase/data/event.csv"
+                separator=";"
+                tableName="event"/>
+    </changeSet>
 </databaseChangeLog>

@@ -35,8 +35,9 @@ public class CategoryRepositoryTest {
 
     @BeforeEach
     public void init() {
-
+        eventRepository.deleteAll();
         categoryRepository.deleteAll();
+
         User user = TestsRepositoryUtil.createUser("login", "anaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaana");
         userRepository.save(user);
         Address address = TestsRepositoryUtil.createAddress("Romania", "Bucuresti", "Splai", "333", "Casa", "Casa magica");

@@ -30,4 +30,21 @@
 
 
     </changeSet>
+    <changeSet id="20190822103002" author="teodora">
+        <loadData
+                file="config/liquibase/data/event_category.csv"
+                separator=";"
+                tableName="Event_Category"/>
+    </changeSet>
+
+
+    <changeSet id="20190822103003" author="teodora" runOnChange="true">
+        <loadUpdateData
+                primaryKey="id"
+                file="config/liquibase/data/event_category.csv"
+                separator=";"
+                tableName="Event_Category"/>
+    </changeSet>
+
+
 </databaseChangeLog>

@@ -37,7 +37,6 @@ public class InterestTest {
 
     @BeforeEach
     public void setUp() {
-        userRepository.deleteAll();
 
         user = new User();
         user.setEmail("gigi.gogaie@gmail.com");
