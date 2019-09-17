@@ -43,9 +43,9 @@ public class Event {
     @Type(type = "boolean")
     private Boolean publicEvent;
 
-    @Size(max = 250, message = "Image path must have 250 letters")
+    @Lob
     @Column(name = "cover_photo")
-    private String coverPhoto;
+    private byte[] coverPhoto;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "address_id", referencedColumnName = "id")
@@ -171,11 +171,11 @@ public class Event {
     }
 
 
-    public String getCoverPhoto() {
+    public byte[] getCoverPhoto() {
         return coverPhoto;
     }
 
-    public void setCoverPhoto(String coverPhoto) {
+    public void setCoverPhoto(byte[] coverPhoto) {
         this.coverPhoto = coverPhoto;
     }
 
