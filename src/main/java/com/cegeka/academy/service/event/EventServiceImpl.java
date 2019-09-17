@@ -139,20 +139,20 @@ public class EventServiceImpl implements EventService {
     @Override
     public List<EventDTO> getEventsByUserInterestedCategories(Long userId) throws NotFoundException {
 
-        List<Event> events = eventRepository.findDistinctByIsPublicIsTrueAndCategoriesIn(searchService.searchUserInterestCategories(userId));
+        List<Event> events = eventRepository.findDistinctByPublicEventIsTrueAndCategoriesIn(searchService.searchUserInterestCategories(userId));
         return filterEvents(events);
 
     }
 
     @Override
     public List<EventDTO> getEventsByName(String eventName) throws NotFoundException {
-        List<Event> events = eventRepository.findAllByIsPublicIsTrueAndNameContaining(eventName);
+        List<Event> events = eventRepository.findAllByPublicEventIsTrueAndNameContaining(eventName);
         return filterEvents(events);
     }
 
     @Override
     public List<EventDTO> getEventsByDates(Date startDate, Date endDate) throws NotFoundException {
-        List<Event> events = eventRepository.findAllByIsPublicIsTrueAndStartDateIsBetween(startDate, endDate);
+        List<Event> events = eventRepository.findAllByPublicEventIsTrueAndStartDateIsBetween(startDate, endDate);
         return filterEvents(events);
     }
 }

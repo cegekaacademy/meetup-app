@@ -254,7 +254,7 @@ public class EventServiceT {
         eventService.createEvent(eventTest);
         eventService.createEvent(eventTest2);
 
-        eventTest.setPublic(false);
+        eventTest.setPublicEvent(false);
         eventService.updateEvent(eventTest);
 
         List<EventDTO> eventDTOList = eventService.getEventsByName("Krushers");

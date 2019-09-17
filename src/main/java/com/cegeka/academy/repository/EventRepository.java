@@ -21,9 +21,7 @@ public interface EventRepository extends JpaRepository<Event, Long> {
 
     List<Event> findDistinctByPublicEventIsTrueAndCategoriesIn(List<Category> categories);
 
-    List<Event> findAllByIsPublicIsTrueAndNameContaining(String eventName);
+    List<Event> findAllByPublicEventIsTrueAndNameContaining(String eventName);
 
-    List<Event> findAllByIsPublicIsTrueAndStartDateIsBetween(Date startDate, Date endDate);
-
-
+    List<Event> findAllByPublicEventIsTrueAndStartDateIsBetween(Date startDate, Date endDate);
 }
