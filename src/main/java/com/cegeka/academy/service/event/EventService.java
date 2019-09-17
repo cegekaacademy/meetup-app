@@ -5,6 +5,7 @@ import com.cegeka.academy.domain.User;
 import com.cegeka.academy.service.dto.EventDTO;
 import com.cegeka.academy.web.rest.errors.NotFoundException;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,4 +28,8 @@ public interface EventService {
     List<EventDTO> getEventsByUser(Long userId) throws NotFoundException;
 
     List<EventDTO> getEventsByUserInterestedCategories(Long userId) throws NotFoundException;
+
+    List<EventDTO> getEventsByName(String eventName) throws NotFoundException;
+
+    List<EventDTO> getEventsByDates(Date startDate, Date endDate) throws NotFoundException;
 }
