@@ -83,7 +83,7 @@ public class EventServiceT {
         event = TestsRepositoryUtil.createEvent("Ana are mere!", "KFC Krushers Party", true, address, user, list1);
         eventService.createEvent(event);
     }
-    public MultipartFile initFile() throws IOException {
+    private MultipartFile initFile() throws IOException {
         File image = new File("src/test/resources/images/poza123.jpg");
         FileInputStream input = new FileInputStream(image);
         MultipartFile imageFile = new MockMultipartFile("image", IOUtils.toByteArray(input));
