@@ -24,7 +24,6 @@ public class TestsRepositoryUtil {
         event.setName(name);
         event.setPublicEvent(isPublic);
         event.setOwner(user);
-        event.setAddressId(address);
         event.setCategories(categories);
         return event;
     }
