@@ -250,22 +250,12 @@ public class EventServiceT {
         assertThat(eventDTOS.size()).isEqualTo(1);
 
     }
-
     @Test
     public void assertThatUploadCoverEventPhotoIsWorking() throws IOException, NotFoundException {
         MultipartFile file=initFile();
         eventService.uploadEventCoverPhoto(event.getId(),file);
         assertThat(event.getCoverPhoto()).isNotEqualTo(null);
 
-    }
-    @Test
-    public void assertThatUploadCoverPhotoThrowsError() throws IOException, NotFoundException {
-
-        MultipartFile fileUpload = initFile();
-
-        Assertions.assertThrows(NotFoundException.class, () -> {
-            eventService.uploadEventCoverPhoto(100L, fileUpload);
-        });
     }
     @Test
     @WithMockUser
@@ -286,5 +276,14 @@ public class EventServiceT {
 
         List<EventDTO> eventDTOList = eventService.getEventsByName("Krushers");
         assertThat(eventDTOList.size()).isEqualTo(1);
+    }
+    @Test
+    public void assertThatUploadCoverPhotoThrowsError() throws IOException, NotFoundException {
+
+        MultipartFile fileUpload = initFile();
+
+        Assertions.assertThrows(NotFoundException.class, () -> {
+            eventService.uploadEventCoverPhoto(100L, fileUpload);
+        });
     }
 }
