@@ -182,18 +182,18 @@ public class EventServiceT {
         List<EventDTO> events = eventService.getAllByOwner(user);
         assertThat(events.size()).isEqualTo(1);
     }
-//
-//    @Test
-//    public void assertGetEventsByUserInterestedCategoriesIsWorkingWithInvalidArgument() {
-//        Assertions.assertThrows(NotFoundException.class, () -> eventService.getEventsByUserInterestedCategories(100L));
-//    }
-//
-//    @Test
-//    public void assertGetEventsByUserInterestedCategoriesIsWorkingWithNoEvents() {
-//        User user2 = TestsRepositoryUtil.createUser("aaaaaa", "anaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaana");
-//        userRepository.saveAndFlush(user2);
-//        Assertions.assertThrows(NotFoundException.class, () -> eventService.getEventsByUserInterestedCategories(user2.getId()));
-//    }
+
+    @Test
+    public void assertGetEventsByUserInterestedCategoriesIsWorkingWithInvalidArgument() {
+        Assertions.assertThrows(NotFoundException.class, () -> eventService.getEventsByUserInterestedCategories(100L));
+    }
+
+    @Test
+    public void assertGetEventsByUserInterestedCategoriesIsWorkingWithNoEvents() {
+        User user2 = TestsRepositoryUtil.createUser("aaaaaa", "anaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaana");
+        userRepository.saveAndFlush(user2);
+        Assertions.assertThrows(NotFoundException.class, () -> eventService.getEventsByUserInterestedCategories(user2.getId()));
+    }
 
     @WithMockUser
     @Test
