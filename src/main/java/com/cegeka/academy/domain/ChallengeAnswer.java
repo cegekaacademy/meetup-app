@@ -6,6 +6,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import javax.persistence.*;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.Objects;
 
 @Entity
@@ -21,9 +22,9 @@ public class ChallengeAnswer implements Serializable {
     @Column(name = "video_at", length = 150)
     private String videoAt;
 
-    @Size(max = 150)
-    @Column(name = "image_path", length = 150)
-    private String imagePath;
+    @Lob
+    @Column(name = "image")
+    private byte[] image;
 
     @Size(max = 150)
     @Column(name = "answer", length = 150)
@@ -45,12 +46,12 @@ public class ChallengeAnswer implements Serializable {
         this.videoAt = videoAt;
     }
 
-    public String getImagePath() {
-        return imagePath;
+    public byte[] getImage() {
+        return image;
     }
 
-    public void setImagePath(String imagePath) {
-        this.imagePath = imagePath;
+    public void setImage(byte[] image) {
+        this.image = image;
     }
 
     public String getAnswer() {
@@ -67,14 +68,16 @@ public class ChallengeAnswer implements Serializable {
         if (!(o instanceof ChallengeAnswer)) return false;
         ChallengeAnswer that = (ChallengeAnswer) o;
         return getId().equals(that.getId()) &&
-                Objects.equals(getVideoAt(), that.getVideoAt()) &&
-                Objects.equals(getImagePath(), that.getImagePath()) &&
-                Objects.equals(getAnswer(), that.getAnswer());
+                getVideoAt().equals(that.getVideoAt()) &&
+                Arrays.equals(getImage(), that.getImage()) &&
+                getAnswer().equals(that.getAnswer());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getVideoAt(), getImagePath(), getAnswer());
+        int result = Objects.hash(getId(), getVideoAt(), getAnswer());
+        result = 31 * result + Arrays.hashCode(getImage());
+        return result;
     }
 
     @Override
@@ -82,7 +85,7 @@ public class ChallengeAnswer implements Serializable {
         return "ChallengeAnswer{" +
                 "id=" + id +
                 ", videoAt='" + videoAt + '\'' +
-                ", imagePath='" + imagePath + '\'' +
+                ", image=" + Arrays.toString(image) +
                 ", answer='" + answer + '\'' +
                 '}';
     }

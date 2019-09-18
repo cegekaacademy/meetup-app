@@ -16,14 +16,14 @@ import java.util.stream.Collectors;
 
 @Service
 @Transactional
-public class SearchService {
+public class SearchHelperService {
 
     private final CategoryRepository categoryRepository;
     private final EventRepository eventRepository;
 
 
     @Autowired
-    public SearchService(CategoryRepository categoryRepository, EventRepository eventRepository) {
+    public SearchHelperService(CategoryRepository categoryRepository, EventRepository eventRepository) {
         this.categoryRepository = categoryRepository;
         this.eventRepository = eventRepository;
     }
@@ -56,6 +56,5 @@ public class SearchService {
         }
 
         return categoryRepository.findDistinctByEventsIn(userEvents);
-
     }
 }

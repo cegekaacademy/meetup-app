@@ -52,12 +52,14 @@ public class InvitationRepositoryTest {
         addressRepository.saveAndFlush(address);
         category1 = TestsRepositoryUtil.createCategory("Sport", "Liber pentru toate varstele!");
         category3 = TestsRepositoryUtil.createCategory("Arta", "Expozitii de arta");
+        categoryRepository.save(category1);
+        categoryRepository.save(category3);
         Set<Category> list1 = new HashSet<>();
         list1.add(category1);
         list1.add(category3);
         categoryRepository.save(category1);
         categoryRepository.save(category3);
-        event = TestsRepositoryUtil.createEvent("Ana are mere!", "KFC Krushers Party", true, address, user, list1, "https://scontent.fotp3-2.fna.fbcdn.net/v/t1.0-9/67786277_2592710307438854_5055220041180512256");
+        event = TestsRepositoryUtil.createEvent("Ana are mere!", "KFC Krushers Party", true, address, user, list1);
         eventRepository.saveAndFlush(event);
         invitation = TestsRepositoryUtil.createInvitation(InvitationStatus.PENDING.name(), "ana are mere", event, user);
         invitationRepository.save(invitation);
@@ -116,7 +118,7 @@ public class InvitationRepositoryTest {
         Set<Category> list1 = new HashSet<>();
         list1.add(category1);
         list1.add(category3);
-        Event event = TestsRepositoryUtil.createEvent("Ana are mere!", "KFC Krushers Party", true, address, user, list1, "https://scontent.fotp3-2.fna.fbcdn.net/v/t1.0-9/67786277_2592710307438854_5055220041180512256");
+        Event event = TestsRepositoryUtil.createEvent("Ana are mere!", "KFC Krushers Party", true, address, user, list1);
         eventRepository.save(event);
         Invitation invitation1 = TestsRepositoryUtil.createInvitation("pending", "description1", event, user);
         invitationRepository.save(invitation1);

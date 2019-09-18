@@ -30,4 +30,85 @@
 
 
     </changeSet>
+
+    <changeSet id="20190822103002" author="teodora">
+        <insert tableName="Event_Category">
+            <column name="event_id"
+                    valueComputed="(select id from event where name = 'Wine and Street Food Festival')"/>
+            <column name="category_id" valueComputed="(select id from category where name ='Food and Drink')"/>
+        </insert>
+    </changeSet>
+
+
+    <changeSet id="20190822103003" author="teodora">
+        <insert tableName="Event_Category">
+            <column name="event_id"
+                    valueComputed="(select id from event where name = 'Designing scalable REST APIs and Open Space')"/>
+            <column name="category_id" valueComputed="(select id from category where name ='Tech')"/>
+        </insert>
+
+        <insert tableName="Event_Category">
+            <column name="event_id"
+                    valueComputed="(select id from event where name = 'Designing scalable REST APIs and Open Space')"/>
+            <column name="category_id" valueComputed="(select id from category where name ='Career and Business')"/>
+        </insert>
+
+        <insert tableName="Event_Category">
+            <column name="event_id"
+                    valueComputed="(select id from event where name = 'Calithenics Workout @ Parcul Tineretului')"/>
+            <column name="category_id" valueComputed="(select id from category where name ='Sports and Fitness')"/>
+        </insert>
+
+        <insert tableName="Event_Category">
+            <column name="event_id" valueComputed="(select id from event where name = 'Art Safari 2019')"/>
+            <column name="category_id" valueComputed="(select id from category where name ='Arts')"/>
+        </insert>
+
+        <insert tableName="Event_Category">
+            <column name="event_id"
+                    valueComputed="(select id from event where name = 'Noaptea Albă a Filmului Românesc')"/>
+            <column name="category_id" valueComputed="(select id from category where name ='Arts')"/>
+        </insert>
+
+        <insert tableName="Event_Category">
+            <column name="event_id"
+                    valueComputed="(select id from event where name = 'Noaptea Albă a Filmului Românesc')"/>
+            <column name="category_id" valueComputed="(select id from category where name ='Film')"/>
+        </insert>
+
+        <insert tableName="Event_Category">
+            <column name="event_id"
+                    valueComputed="(select id from event where name = 'Harvest Wine Festival by RoWine')"/>
+            <column name="category_id" valueComputed="(select id from category where name ='Food and Drink')"/>
+        </insert>
+
+        <insert tableName="Event_Category">
+            <column name="event_id" valueComputed="(select id from event where name = 'Board Games Garage Sale')"/>
+            <column name="category_id" valueComputed="(select id from category where name ='Games')"/>
+        </insert>
+
+        <insert tableName="Event_Category">
+            <column name="event_id" valueComputed="(select id from event where name = 'Board Games Garage Sale')"/>
+            <column name="category_id" valueComputed="(select id from category where name ='Social')"/>
+        </insert>
+
+        <insert tableName="Event_Category">
+            <column name="event_id"
+                    valueComputed="(select id from event where name = 'Septembriada - Bounty Fair ediție de toamnă')"/>
+            <column name="category_id" valueComputed="(select id from category where name ='Fashion and Beauty')"/>
+        </insert>
+
+        <insert tableName="Event_Category">
+            <column name="event_id"
+                    valueComputed="(select id from event where name = 'Construind Comunitatea • Orașul Alternativ')"/>
+            <column name="category_id" valueComputed="(select id from category where name ='Social')"/>
+        </insert>
+
+        <insert tableName="Event_Category">
+            <column name="event_id"
+                    valueComputed="(select id from event where name = 'Cazanele Dunării în Serbia și România')"/>
+            <column name="category_id" valueComputed="(select id from category where name ='Outdoors and Adventure')"/>
+        </insert>
+    </changeSet>
+
 </databaseChangeLog>

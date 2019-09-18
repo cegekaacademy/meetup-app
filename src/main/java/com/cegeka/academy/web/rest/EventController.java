@@ -13,9 +13,12 @@ import com.cegeka.academy.web.rest.errors.ExpiredObjectException;
 import com.cegeka.academy.web.rest.errors.NotFoundException;
 import com.cegeka.academy.web.rest.errors.UnauthorizedUserException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -66,16 +69,16 @@ public class EventController {
 
             } else if (!validationAccessService.verifyUserAccessForEventEntity(event.getId())) {
 
-                throw new UnauthorizedUserException();
+                throw new UnauthorizedUserException().setMessage("You have no right to update this event");
 
             } else if (!expirationCheckService.availabilityCheck(event.getEndDate())) {
 
-                throw new ExpiredObjectException();
+                throw new ExpiredObjectException().setMessage("This event is expired");
 
             }
         } else {
 
-            throw new NotFoundException();
+            throw new NotFoundException().setMessage("Event not found");
         }
 
     }
@@ -93,12 +96,12 @@ public class EventController {
 
             } else {
 
-                throw new UnauthorizedUserException();
+                throw new UnauthorizedUserException().setMessage("You have no right to delete this event");
 
             }
         } else {
 
-            throw new NotFoundException();
+            throw new NotFoundException().setMessage("Event not found");
         }
 
     }
@@ -131,6 +134,15 @@ public class EventController {
 
         User currentUser = userService.getUserWithAuthorities().orElseThrow(() -> new NotFoundException().setMessage("User not found"));
         return eventService.getEventsByUserInterestedCategories(currentUser.getId());
+    }
+
+    @PostMapping(value = "/photo/{eventId}")
+    public ResponseEntity<String> uploadCoverPhoto(@PathVariable("eventId") Long eventId,
+                                                    @RequestParam("image") MultipartFile image) throws IOException, NotFoundException {
+
+        eventService.uploadEventCoverPhoto(eventId, image);
+
+        return ResponseEntity.ok("Cover has been uploaded.");
     }
 
 }

@@ -57,4 +57,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("SELECT concat(firstName, ' ', lastName) FROM User where firstName like %:keyword%")
     List<String> searchByKeyword(@Param("keyword") String keyword);
 
+    User findTopByOrderByIdDesc();
+
 }

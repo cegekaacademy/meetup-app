@@ -132,7 +132,6 @@ public class UserChallengeServiceTest {
         userChallengeRepository.save(userChallenge);
 
         challengeAnswer = new ChallengeAnswer();
-        challengeAnswer.setImagePath("imagePath");
         challengeAnswer.setVideoAt("videoAt");
         challengeAnswer.setAnswer("answer");
 

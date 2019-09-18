@@ -53,7 +53,6 @@ public class UserChallengeTest {
         challenge.setCreator(user);
         challengeRepository.save(challenge);
 
-        challengeAnswer.setImagePath("imagePath");
         challengeAnswer.setVideoAt("videoAt");
         challengeAnswer.setAnswer("answer");
         challengeAnswerRepository.save(challengeAnswer);
