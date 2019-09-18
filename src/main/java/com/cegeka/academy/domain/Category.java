@@ -3,6 +3,7 @@ package com.cegeka.academy.domain;
 
 import javax.persistence.*;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 @Entity
@@ -22,6 +23,19 @@ public class Category {
             mappedBy = "categories")
     private Set<Event> events = new HashSet<>();
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Category category = (Category) o;
+        return id.equals(category.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
 
     public Long getId() {
         return id;

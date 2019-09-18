@@ -65,6 +65,7 @@ public class EventServiceT {
     private User currentUser;
     private Category category1, category3;
     private Address address;
+    private List<Event> existingEvents;
 
     @BeforeEach
     void init() {
@@ -94,9 +95,10 @@ public class EventServiceT {
     @Transactional
     public void assertThatCreateEventWorks() {
         List<Event> events = eventService.getAllPubicEvents();
-        assertThat(events.size()).isEqualTo(1);
-        assertThat(events.get(0).getName()).isEqualTo(event.getName());
-        assertThat(events.get(0).getOwner().getLogin()).isEqualTo(event.getOwner().getLogin());
+        Event lastEvent = eventRepository.findTopByOrderByIdDesc();
+        assertThat(events.size()).isEqualTo(1 + existingEvents.size());
+        assertThat(lastEvent.getName()).isEqualTo(event.getName());
+        assertThat(lastEvent.getOwner().getLogin()).isEqualTo(event.getOwner().getLogin());
     }
 
     @Test
@@ -104,12 +106,12 @@ public class EventServiceT {
     public void assertThatUpdateEventWorks() {
         List<Event> events = eventService.getAllPubicEvents();
         event.setName("Macarena");
-        event.setId(events.get(0).getId());
         eventService.updateEvent(event);
-        assertThat(events.size()).isEqualTo(1);
-        assertThat(events.get(0).getNotes()).isEqualTo(event.getNotes());
-        assertThat(events.get(0).getName()).isEqualTo(event.getName());
-        assertThat(events.get(0).getOwner()).isEqualTo(event.getOwner());
+        Event lastEvent = eventRepository.findTopByOrderByIdDesc();
+        assertThat(events.size()).isEqualTo(existingEvents.size() + 1);
+        assertThat(lastEvent.getNotes()).isEqualTo(event.getNotes());
+        assertThat(lastEvent.getName()).isEqualTo(event.getName());
+        assertThat(lastEvent.getOwner()).isEqualTo(event.getOwner());
     }
 
     @Test
@@ -118,7 +120,7 @@ public class EventServiceT {
         List<Event> listBeforeDelete = eventService.getAllPubicEvents();
         eventService.deleteEventById(listBeforeDelete.get(0).getId());
         List<Event> listAfterDelete = eventService.getAllPubicEvents();
-        assertThat(listAfterDelete.size()).isEqualTo(0);
+        assertThat(listAfterDelete.size()).isEqualTo(listBeforeDelete.size() - 1);
     }
 
     @Test
@@ -190,18 +192,18 @@ public class EventServiceT {
         List<EventDTO> events = eventService.getAllByOwner(user);
         assertThat(events.size()).isEqualTo(1);
     }
-//
-//    @Test
-//    public void assertGetEventsByUserInterestedCategoriesIsWorkingWithInvalidArgument() {
-//        Assertions.assertThrows(NotFoundException.class, () -> eventService.getEventsByUserInterestedCategories(100L));
-//    }
-//
-//    @Test
-//    public void assertGetEventsByUserInterestedCategoriesIsWorkingWithNoEvents() {
-//        User user2 = TestsRepositoryUtil.createUser("aaaaaa", "anaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaana");
-//        userRepository.saveAndFlush(user2);
-//        Assertions.assertThrows(NotFoundException.class, () -> eventService.getEventsByUserInterestedCategories(user2.getId()));
-//    }
+
+    @Test
+    public void assertGetEventsByUserInterestedCategoriesIsWorkingWithInvalidArgument() {
+        Assertions.assertThrows(NotFoundException.class, () -> eventService.getEventsByUserInterestedCategories(100L));
+    }
+
+    @Test
+    public void assertGetEventsByUserInterestedCategoriesIsWorkingWithNoEvents() {
+        User user2 = TestsRepositoryUtil.createUser("aaaaaa", "anaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaana");
+        userRepository.saveAndFlush(user2);
+        Assertions.assertThrows(NotFoundException.class, () -> eventService.getEventsByUserInterestedCategories(user2.getId()));
+    }
 
     @WithMockUser
     @Test

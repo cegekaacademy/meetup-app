@@ -35,7 +35,7 @@ public class CategoryRepositoryTest {
 
     @BeforeEach
     public void init() {
-
+        eventRepository.deleteAll();
         categoryRepository.deleteAll();
         User user = TestsRepositoryUtil.createUser("login", "anaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaana");
         userRepository.save(user);
@@ -43,11 +43,11 @@ public class CategoryRepositoryTest {
         addressRepository.saveAndFlush(address);
         Category category_1 = TestsRepositoryUtil.createCategory("Sport", "Liber pentru toate varstele!");
         Category category_3 = TestsRepositoryUtil.createCategory("Arta", "Expozitii de arta");
+        categoryRepository.save(category_1);
+        categoryRepository.save(category_3);
         Set<Category> list1 = new HashSet<>();
         list1.add(category_1);
         list1.add(category_3);
-        categoryRepository.save(category_1);
-        categoryRepository.save(category_3);
         event = TestsRepositoryUtil.createEvent("Ana are mere!", "KFC Krushers Party", true, address, user, list1);
         eventRepository.save(event);
         Category category1 = TestsRepositoryUtil.createCategory("Ana", "description1");

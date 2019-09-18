@@ -52,6 +52,8 @@ public class InvitationRepositoryTest {
         addressRepository.saveAndFlush(address);
         category1 = TestsRepositoryUtil.createCategory("Sport", "Liber pentru toate varstele!");
         category3 = TestsRepositoryUtil.createCategory("Arta", "Expozitii de arta");
+        categoryRepository.save(category1);
+        categoryRepository.save(category3);
         Set<Category> list1 = new HashSet<>();
         list1.add(category1);
         list1.add(category3);
