@@ -29,9 +29,7 @@ public class Category {
         if (o == null || getClass() != o.getClass()) return false;
 
         Category category = (Category) o;
-
-        if (!id.equals(category.id)) return false;
-        return name != null ? name.equals(category.name) : category.name == null;
+        return id.equals(category.id);
     }
 
     @Override

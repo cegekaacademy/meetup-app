@@ -59,6 +59,7 @@ public class EventServiceT {
     private User currentUser;
     private Category category1, category3;
     private Address address;
+    private List<Event> existingEvents;
 
     @BeforeEach
     void init() {
@@ -74,6 +75,7 @@ public class EventServiceT {
         Set<Category> list1 = new HashSet<>();
         list1.add(category1);
         list1.add(category3);
+        existingEvents = eventRepository.findAllByPublicEventIsTrue();
         event = TestsRepositoryUtil.createEvent("Ana are mere!", "KFC Krushers Party", true, address, user, list1, "https://scontent.fotp3-2.fna.fbcdn.net/v/t1.0-9/67786277_2592710307438854_5055220041180512256");
         eventService.createEvent(event);
     }
@@ -83,9 +85,10 @@ public class EventServiceT {
     @Transactional
     public void assertThatCreateEventWorks() {
         List<Event> events = eventService.getAllPubicEvents();
-        assertThat(events.size()).isEqualTo(1);
-        assertThat(events.get(0).getName()).isEqualTo(event.getName());
-        assertThat(events.get(0).getOwner().getLogin()).isEqualTo(event.getOwner().getLogin());
+        Event lastEvent = eventRepository.findTopByOrderByIdDesc();
+        assertThat(events.size()).isEqualTo(1 + existingEvents.size());
+        assertThat(lastEvent.getName()).isEqualTo(event.getName());
+        assertThat(lastEvent.getOwner().getLogin()).isEqualTo(event.getOwner().getLogin());
     }
 
     @Test
@@ -93,12 +96,12 @@ public class EventServiceT {
     public void assertThatUpdateEventWorks() {
         List<Event> events = eventService.getAllPubicEvents();
         event.setName("Macarena");
-        event.setId(events.get(0).getId());
         eventService.updateEvent(event);
-        assertThat(events.size()).isEqualTo(1);
-        assertThat(events.get(0).getNotes()).isEqualTo(event.getNotes());
-        assertThat(events.get(0).getName()).isEqualTo(event.getName());
-        assertThat(events.get(0).getOwner()).isEqualTo(event.getOwner());
+        Event lastEvent = eventRepository.findTopByOrderByIdDesc();
+        assertThat(events.size()).isEqualTo(existingEvents.size() + 1);
+        assertThat(lastEvent.getNotes()).isEqualTo(event.getNotes());
+        assertThat(lastEvent.getName()).isEqualTo(event.getName());
+        assertThat(lastEvent.getOwner()).isEqualTo(event.getOwner());
     }
 
     @Test
@@ -107,7 +110,7 @@ public class EventServiceT {
         List<Event> listBeforeDelete = eventService.getAllPubicEvents();
         eventService.deleteEventById(listBeforeDelete.get(0).getId());
         List<Event> listAfterDelete = eventService.getAllPubicEvents();
-        assertThat(listAfterDelete.size()).isEqualTo(0);
+        assertThat(listAfterDelete.size()).isEqualTo(listBeforeDelete.size() - 1);
     }
 
     @Test

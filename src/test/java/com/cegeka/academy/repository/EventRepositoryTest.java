@@ -45,7 +45,7 @@ public class EventRepositoryTest {
         addressRepository.saveAndFlush(address);
         category1 = TestsRepositoryUtil.createCategory("Sport", "Liber pentru toate varstele!");
         Category category3 = TestsRepositoryUtil.createCategory("Arta", "Expozitii de arta");
-        category2 = TestsRepositoryUtil.createCategory("Social", "Actiuni caritabile");
+        category2 = TestsRepositoryUtil.createCategory("Sociale", "Actiuni caritabile");
         categoryRepository.save(category1);
         categoryRepository.save(category3);
         categoryRepository.save(category2);
@@ -63,13 +63,14 @@ public class EventRepositoryTest {
     public void testAddEvent() {
         event = TestsRepositoryUtil.createEvent("Ana are mere!", "KFC Krushers Party", true, address, user, categories, "https://scontent.fotp3-2.fna.fbcdn.net/v/t1.0-9/67786277_2592710307438854_5055220041180512256");
         eventRepository.save(event);
-        Event eventTest = eventRepository.findAllByPublicEventIsTrue().get(0);
+        Event eventTest = eventRepository.findTopByOrderByIdDesc();
         assertThat(eventTest.isPublicEvent()).isEqualTo(true);
         assertThat(eventTest.getName()).isEqualTo(event.getName());
     }
 
     @Test
     public void testFindAllByIsPublicIsTrue() {
+        List<Event> existingEvents = eventRepository.findAllByPublicEventIsTrue();
         for (int i = 0; i < 5; i++) {
             Event event = TestsRepositoryUtil.createEvent("Ana are mere!", "KFC Krushers Party", true, address, user, categories, "https://scontent.fotp3-2.fna.fbcdn.net/v/t1.0-9/67786277_2592710307438854_5055220041180512256");
             event.setPublicEvent(i % 2 == 0);
@@ -77,7 +78,7 @@ public class EventRepositoryTest {
         }
 
         List<Event> publicEvents = eventRepository.findAllByPublicEventIsTrue();
-        assertThat(publicEvents.size()).isEqualTo(3);
+        assertThat(publicEvents.size()).isEqualTo(3 + existingEvents.size());
     }
 
     @Test

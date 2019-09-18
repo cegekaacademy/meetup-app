@@ -29,8 +29,15 @@
         <renameColumn tableName="Category" oldColumnName="category_id" newColumnName="id" columnDataType="bigint"></renameColumn>
     </changeSet>
 
-
     <changeSet id="10292008193503" author="teodora">
+
+        <addAutoIncrement columnDataType="bigint"
+                          columnName="id"
+                          incrementBy="1"
+                          tableName="Category"/>
+
+    </changeSet>
+    <changeSet id="10292008193504" author="teodora">
         <loadData
                 file="config/liquibase/data/category.csv"
                 separator=";"

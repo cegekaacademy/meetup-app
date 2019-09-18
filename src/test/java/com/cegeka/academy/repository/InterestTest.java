@@ -104,7 +104,8 @@ public class InterestTest {
     @Test
     public void testAddUserInterest(){
 
-        assertThat(userRepository.findAll().get(0).getUserInterests().equals(interestSet)).isTrue();
+        User lastUser = userRepository.findTopByOrderByIdDesc();
+        assertThat(lastUser.getUserInterests().equals(interestSet)).isTrue();
 
         assertThat(interestRepository.findAll().get(0).getInterestUsers().equals(userSet)).isTrue();
     }

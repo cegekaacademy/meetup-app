@@ -24,4 +24,6 @@ public interface EventRepository extends JpaRepository<Event, Long> {
     List<Event> findAllByPublicEventIsTrueAndNameContaining(String eventName);
 
     List<Event> findAllByPublicEventIsTrueAndStartDateIsBetween(Date startDate, Date endDate);
+
+    Event findTopByOrderByIdDesc();
 }
