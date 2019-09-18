@@ -23,5 +23,18 @@
         </createTable>
 
     </changeSet>
+    
+    <changeSet id="20190917172502" author="alexandru">
+       <loadData tableName="challenge_answer"
+                 file="config/liquibase/data/challenge_answer.csv"
+                 separator=";"
+                 encoding="UTF-8"
+                 schemaName="academyproject"
+       >
+           <column name="video_at" type="STRING"/>
+           <column name="image_path" type="STRING"/>
+           <column name="answer" type="STRING"/>
+       </loadData>
+    </changeSet>
 
 </databaseChangeLog>

@@ -20,7 +20,18 @@
             <column name="name" type="varchar(45)"/>
             <column name="description" type="varchar(45)"/>
         </createTable>
-
+    </changeSet>
+    <changeSet id="20190917190402" author="alexandru">
+        <loadData tableName="challenge_category"
+                  encoding="UTF-8"
+                  file = "/config/liquibase/data/challenge_category.csv"
+                  separator=";"
+                  schemaName="academyproject"
+        >
+            <column name="id" type="NUMERIC"/>
+            <column name="name" type="STRING"/>
+            <column name="description" type="STRING"/>
+        </loadData>
     </changeSet>
 
 </databaseChangeLog>
