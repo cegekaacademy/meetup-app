@@ -46,8 +46,14 @@
             <column name="cover_photo" type="varchar(250)"/>
         </addColumn>
     </changeSet>
+    <changeSet id="190917155404" author="andrei">
+        <dropColumn tableName="event" columnName="cover_photo"/>
+        <addColumn tableName="event">
+            <column name="cover_photo" type="longblob"/>
+        </addColumn>
+    </changeSet>
 
-    <changeSet id="190716112704" author="teodora">
+    <changeSet id="190716112705" author="teodora">
         <loadData
                 file="config/liquibase/data/event.csv"
                 separator=";"

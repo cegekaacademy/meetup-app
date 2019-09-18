@@ -61,7 +61,7 @@ public class EventRepositoryTest {
 
     @Test
     public void testAddEvent() {
-        event = TestsRepositoryUtil.createEvent("Ana are mere!", "KFC Krushers Party", true, address, user, categories, "https://scontent.fotp3-2.fna.fbcdn.net/v/t1.0-9/67786277_2592710307438854_5055220041180512256");
+        event = TestsRepositoryUtil.createEvent("Ana are mere!", "KFC Krushers Party", true, address, user, categories);
         eventRepository.save(event);
         Event eventTest = eventRepository.findTopByOrderByIdDesc();
         assertThat(eventTest.isPublicEvent()).isEqualTo(true);
@@ -72,7 +72,7 @@ public class EventRepositoryTest {
     public void testFindAllByIsPublicIsTrue() {
         List<Event> existingEvents = eventRepository.findAllByPublicEventIsTrue();
         for (int i = 0; i < 5; i++) {
-            Event event = TestsRepositoryUtil.createEvent("Ana are mere!", "KFC Krushers Party", true, address, user, categories, "https://scontent.fotp3-2.fna.fbcdn.net/v/t1.0-9/67786277_2592710307438854_5055220041180512256");
+            Event event = TestsRepositoryUtil.createEvent("Ana are mere!", "KFC Krushers Party", true, address, user, categories);
             event.setPublicEvent(i % 2 == 0);
             eventRepository.save(event);
         }
@@ -84,12 +84,12 @@ public class EventRepositoryTest {
     @Test
     public void testFindByUsers_id() {
 
-        Event event = TestsRepositoryUtil.createEvent("Ana are mere!", "KFC Krushers Party", true, address, user, categories, "https://scontent.fotp3-2.fna.fbcdn.net/v/t1.0-9/67786277_2592710307438854_5055220041180512256");
+        Event event = TestsRepositoryUtil.createEvent("Ana are mere!", "KFC Krushers Party", true, address, user, categories);
         eventRepository.save(event);
         user.getEvents().add(event);
         userRepository.save(user);
 
-        Event event1 = TestsRepositoryUtil.createEvent("Ana are mere!", "KFC Krushers Party", true, address, user, categories, "https://scontent.fotp3-2.fna.fbcdn.net/v/t1.0-9/67786277_2592710307438854_5055220041180512256");
+        Event event1 = TestsRepositoryUtil.createEvent("Ana are mere!", "KFC Krushers Party", true, address, user, categories);
         eventRepository.save(event1);
         user.getEvents().add(event1);
         userRepository.save(user);
@@ -101,9 +101,9 @@ public class EventRepositoryTest {
 
     @Test
     public void testFindByCategory_id() {
-        Event event1 = TestsRepositoryUtil.createEvent("Ana are mere!", "KFC Krushers Party", true, address, user, categories, "https://scontent.fotp3-2.fna.fbcdn.net/v/t1.0-9/67786277_2592710307438854_5055220041180512256");
+        Event event1 = TestsRepositoryUtil.createEvent("Ana are mere!", "KFC Krushers Party", true, address, user, categories);
         eventRepository.save(event1);
-        Event event2 = TestsRepositoryUtil.createEvent("Vanzare tablou", "Arta vie", false, address, user, categoriesHelper, "E:\\photos");
+        Event event2 = TestsRepositoryUtil.createEvent("Ana are mere!", "KFC Krushers Party", false, address, user, categories);
         eventRepository.save(event2);
         List<Event> eventsCategory_1 = eventRepository.findAllByCategories_id(category1.getId());
         assertThat(eventsCategory_1.size()).isEqualTo(2);
@@ -113,7 +113,7 @@ public class EventRepositoryTest {
     public void testFindAllByEvents_id() {
         User user1 = TestsRepositoryUtil.createUser("login2", "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa2");
 
-        Event event = TestsRepositoryUtil.createEvent("Ana are mere!", "KFC Krushers Party", true, address, user, categories, "https://scontent.fotp3-2.fna.fbcdn.net/v/t1.0-9/67786277_2592710307438854_5055220041180512256");
+        Event event = TestsRepositoryUtil.createEvent("Ana are mere!", "KFC Krushers Party", true, address, user, categories);
         eventRepository.save(event);
 
         user.getEvents().add(event);
@@ -130,10 +130,10 @@ public class EventRepositoryTest {
     @Test
     public void testfindAllByIsPublicIsTrueAndCategoriesIn() {
 
-        Event event = TestsRepositoryUtil.createEvent("Ana are mere!", "KFC Krushers Party", true, address, user, categories, "https://scontent.fotp3-2.fna.fbcdn.net/v/t1.0-9/67786277_2592710307438854_5055220041180512256");
+        Event event = TestsRepositoryUtil.createEvent("Ana are mere!", "KFC Krushers Party", true, address, user, categories);
         eventRepository.save(event);
 
-        Event event1 = TestsRepositoryUtil.createEvent("Ana are mere!", "KFC Krushers Party", true, address, user, categoriesHelper, "https://scontent.fotp3-2.fna.fbcdn.net/v/t1.0-9/67786277_2592710307438854_5055220041180512256");
+        Event event1 = TestsRepositoryUtil.createEvent("Ana are mere!", "KFC Krushers Party", true, address, user, categories);
         eventRepository.save(event1);
 
         List<Category> categ = new ArrayList<>();
@@ -147,7 +147,7 @@ public class EventRepositoryTest {
     @Test
     public void testfindAllByIsPublicIsTrueAndCategoriesInIsWorkingWithPrivateEvent() {
 
-        Event event = TestsRepositoryUtil.createEvent("Ana are mere!", "KFC Krushers Party", false, address, user, categories, "https://scontent.fotp3-2.fna.fbcdn.net/v/t1.0-9/67786277_2592710307438854_5055220041180512256");
+        Event event = TestsRepositoryUtil.createEvent("Ana are mere!", "KFC Krushers Party", false, address, user, categories);
         eventRepository.save(event);
         List<Category> categ = new ArrayList<>();
         categ.add(category2);
