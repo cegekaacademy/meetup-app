@@ -2,6 +2,7 @@ package com.cegeka.academy.service.event;
 
 import com.cegeka.academy.domain.Event;
 import com.cegeka.academy.domain.User;
+import com.cegeka.academy.domain.UserChallenge;
 import com.cegeka.academy.repository.EventRepository;
 import com.cegeka.academy.repository.UserRepository;
 import com.cegeka.academy.service.UserService;
@@ -15,8 +16,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -39,6 +43,23 @@ public class EventServiceImpl implements EventService {
         this.searchService = searchService;
     }
 
+    private List<EventDTO> filterEvents(List<Event> events) throws NotFoundException {
+        if (events == null || events.isEmpty()) {
+            throw new NotFoundException().setMessage("No events found");
+        }
+        ArrayList<EventDTO> eventDTOS = new ArrayList<>();
+        Optional<User> currentUser = userService.getUserWithAuthorities();
+        if (currentUser.isPresent()) {
+            User user = currentUser.get();
+            for (Event event : events) {
+                if (!userRepository.findAllByEvents_id(event.getId()).contains(user)) {
+                    EventDTO aux = EventMapper.convertEventtoEventDTO(event);
+                    eventDTOS.add(aux);
+                }
+            }
+            return SortUtil.sortEventsByStartDate(eventDTOS);
+        } else return null;
+    }
 
     public List<Event> getAllPubicEvents() {
         return eventRepository.findAllByPublicEventIsTrue();
@@ -121,21 +142,28 @@ public class EventServiceImpl implements EventService {
     @Override
     public List<EventDTO> getEventsByUserInterestedCategories(Long userId) throws NotFoundException {
 
-        User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException().setMessage("User not found"));
-        List<EventDTO> interestedEvents = new ArrayList<>();
         List<Event> events = eventRepository.findDistinctByPublicEventIsTrueAndCategoriesIn(searchService.searchUserInterestCategories(userId));
-        if (events == null || events.isEmpty()) {
-            throw new NotFoundException().setMessage("No events found");
-        }
-        for (Event event : events) {
-            if (!userRepository.findAllByEvents_id(event.getId()).contains(user)) {
-                EventDTO aux = EventMapper.convertEventtoEventDTO(event);
-                interestedEvents.add(aux);
-            }
-        }
+        return filterEvents(events);
 
-        return SortUtil.sortEventsByStartDate(interestedEvents);
+    }
 
+    @Override
+    public List<EventDTO> getEventsByName(String eventName) throws NotFoundException {
+        List<Event> events = eventRepository.findAllByPublicEventIsTrueAndNameContaining(eventName);
+        return filterEvents(events);
+    }
 
+    @Override
+    public List<EventDTO> getEventsByDates(Date startDate, Date endDate) throws NotFoundException {
+        List<Event> events = eventRepository.findAllByPublicEventIsTrueAndStartDateIsBetween(startDate, endDate);
+        return filterEvents(events);
+    }
+
+    @Override
+    public void uploadEventCoverPhoto(Long eventId, MultipartFile image) throws NotFoundException, IOException {
+        Event event=eventRepository.findById(eventId).orElseThrow(
+                ()->new NotFoundException().setMessage("Event not found"));
+        event.setCoverPhoto(image.getBytes());
+        eventRepository.save(event);
     }
 }

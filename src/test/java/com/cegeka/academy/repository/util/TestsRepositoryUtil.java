@@ -18,15 +18,13 @@ public class TestsRepositoryUtil {
         return address;
     }
 
-    public static Event createEvent(String description, String name, boolean isPublic, Address address, User user, Set<Category> categories, String coverPhoto) {
+    public static Event createEvent(String description, String name, boolean isPublic, Address address, User user, Set<Category> categories) {
         Event event = new Event();
         event.setDescription(description);
         event.setName(name);
         event.setPublicEvent(isPublic);
         event.setOwner(user);
-        event.setAddressId(address);
         event.setCategories(categories);
-        event.setCoverPhoto(coverPhoto);
         return event;
     }
 

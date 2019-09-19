@@ -1,27 +1,25 @@
 package com.cegeka.academy.web.rest;
 
 import com.cegeka.academy.AcademyProjectApp;
-import com.cegeka.academy.domain.*;
+import com.cegeka.academy.domain.Challenge;
+import com.cegeka.academy.domain.ChallengeCategory;
+import com.cegeka.academy.domain.User;
 import com.cegeka.academy.repository.ChallengeCategoryRepository;
 import com.cegeka.academy.repository.ChallengeRepository;
+import com.cegeka.academy.repository.EventRepository;
 import com.cegeka.academy.repository.UserRepository;
-import com.cegeka.academy.service.mapper.UserMapper;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.junit.jupiter.api.*;
-
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.util.Date;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest(classes = AcademyProjectApp.class)
 public class ChallengeControllerTest {
@@ -30,6 +28,9 @@ public class ChallengeControllerTest {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private EventRepository eventRepository;
 
     @Autowired
     private ChallengeController challengeController;
@@ -43,12 +44,13 @@ public class ChallengeControllerTest {
     @Autowired
     private GlobalExceptionHandler globalExceptionHandler;
 
+
     @BeforeEach
     void setUp() {
-
+        eventRepository.deleteAll();
         challengeRepository.deleteAll();
-        userRepository.deleteAll();
         challengeCategoryRepository.deleteAll();
+        userRepository.deleteAll();
 
         restMockMvc = MockMvcBuilders.standaloneSetup(challengeController).setControllerAdvice(globalExceptionHandler).build();
 
@@ -60,7 +62,7 @@ public class ChallengeControllerTest {
         user.setPassword("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
         user.setLogin("gigel@purcel.com");
 
-        userRepository.saveAndFlush(user);
+        userRepository.save(user);
 
 
         ChallengeCategory challengeCategory = new ChallengeCategory();

@@ -35,7 +35,7 @@ public class CategoryRepositoryTest {
 
     @BeforeEach
     public void init() {
-
+        eventRepository.deleteAll();
         categoryRepository.deleteAll();
         User user = TestsRepositoryUtil.createUser("login", "anaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaana");
         userRepository.save(user);
@@ -43,12 +43,12 @@ public class CategoryRepositoryTest {
         addressRepository.saveAndFlush(address);
         Category category_1 = TestsRepositoryUtil.createCategory("Sport", "Liber pentru toate varstele!");
         Category category_3 = TestsRepositoryUtil.createCategory("Arta", "Expozitii de arta");
+        categoryRepository.save(category_1);
+        categoryRepository.save(category_3);
         Set<Category> list1 = new HashSet<>();
         list1.add(category_1);
         list1.add(category_3);
-        categoryRepository.save(category_1);
-        categoryRepository.save(category_3);
-        event = TestsRepositoryUtil.createEvent("Ana are mere!", "KFC Krushers Party", true, address, user, list1, "https://scontent.fotp3-2.fna.fbcdn.net/v/t1.0-9/67786277_2592710307438854_5055220041180512256");
+        event = TestsRepositoryUtil.createEvent("Ana are mere!", "KFC Krushers Party", true, address, user, list1);
         eventRepository.save(event);
         Category category1 = TestsRepositoryUtil.createCategory("Ana", "description1");
         categoryRepository.save(category1);
@@ -68,7 +68,7 @@ public class CategoryRepositoryTest {
         Set<Category> list2 = new HashSet<>();
         list2.add(category1);
         list2.add(category2);
-        event1 = TestsRepositoryUtil.createEvent("Ana are mere", "Krushers Party", true, address, user, list2, "https://scontent.fotp3-2.fna.fbcdn.net/v/t1.0-9/67786277_2592710307438854_5055220041180512256");
+        event1 = TestsRepositoryUtil.createEvent("Ana are mere", "Krushers Party", true, address, user, list2);
         eventRepository.save(event1);
 
     }

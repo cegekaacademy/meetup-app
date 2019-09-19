@@ -21,11 +21,14 @@ public class UserRepositoryTest {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private EventRepository eventRepository;
+
     private User user;
 
     @BeforeEach
     public void init() {
-
+        eventRepository.deleteAll();
         userRepository.deleteAll();
         user = TestsRepositoryUtil.createUser("login1", "anaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaana");
         user.setFirstName("ana");

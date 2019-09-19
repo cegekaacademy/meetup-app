@@ -2,7 +2,6 @@ package com.cegeka.academy.service;
 
 import com.cegeka.academy.AcademyProjectApp;
 import com.cegeka.academy.domain.*;
-import com.cegeka.academy.domain.enums.ChallengeStatus;
 import com.cegeka.academy.domain.enums.InvitationStatus;
 import com.cegeka.academy.repository.*;
 import com.cegeka.academy.repository.util.TestsRepositoryUtil;
@@ -20,15 +19,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
-import java.util.HashSet;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 @SpringBootTest(classes = AcademyProjectApp.class)
 @Transactional
@@ -88,11 +80,12 @@ public class InvitationServiceTest {
 
     @BeforeEach
     public void init() {
+        eventRepository.deleteAll();
 
         userRepository.deleteAll();
         categoryRepository.deleteAll();
         user = TestsRepositoryUtil.createUser("login", "anaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaana");
-        userRepository.saveAndFlush(user);
+        userRepository.save(user);
         user1 = TestsRepositoryUtil.createUser("login2", "anaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaaka");
         userRepository.save(user1);
         user2 = TestsRepositoryUtil.createUser("login3", "anaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaanaama");
@@ -106,9 +99,9 @@ public class InvitationServiceTest {
         Set<Category> list1 = new HashSet<>();
         list1.add(category1);
         list1.add(category3);
-        event = TestsRepositoryUtil.createEvent("Ana are mere!", "KFC Krushers Party", false, address, user, list1, "https://scontent.fotp3-2.fna.fbcdn.net/v/t1.0-9/67786277_2592710307438854_5055220041180512256");
+        event = TestsRepositoryUtil.createEvent("Ana are mere!", "KFC Krushers Party", false, address, user, list1);
         eventRepository.saveAndFlush(event);
-        publicEvent = TestsRepositoryUtil.createEvent("Ana are mere!", "KFC Krushers Party", true, address, user, list1, "sfgsfgf");
+        publicEvent = TestsRepositoryUtil.createEvent("Ana are mere!", "KFC Krushers Party", true, address, user, list1);
         eventRepository.saveAndFlush(publicEvent);
         invitation = TestsRepositoryUtil.createInvitation(InvitationStatus.PENDING.name(), "ana are mere", event, user);
         invitationService.saveInvitation(invitation);
@@ -179,10 +172,12 @@ public class InvitationServiceTest {
     public void assertThatSaveUserToParticipationListAfterAcceptInvitationIsWorking() {
         Category category1 = TestsRepositoryUtil.createCategory("Sport1", "Liber pentru toate varstele!");
         Category category3 = TestsRepositoryUtil.createCategory("Arta1", "Expozitii de arta");
+        categoryRepository.save(category1);
+        categoryRepository.save(category3);
         Set<Category> list1 = new HashSet<>();
         list1.add(category1);
         list1.add(category3);
-        Event event2 = TestsRepositoryUtil.createEvent("Ana are mere!", "KFC Krushers Party", true, address, user, list1, "https://scontent.fotp3-2.fna.fbcdn.net/v/t1.0-9/67786277_2592710307438854_5055220041180512256");
+        Event event2 = TestsRepositoryUtil.createEvent("Ana are mere!", "KFC Krushers Party", true, address, user, list1);
         eventRepository.save(event2);
         invitation3 = TestsRepositoryUtil.createInvitation(InvitationStatus.PENDING.name(), "ana are mere", event2, user);
         invitationService.saveInvitation(invitation3);
