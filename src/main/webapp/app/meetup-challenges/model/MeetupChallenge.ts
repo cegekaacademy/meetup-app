@@ -12,5 +12,4 @@ export class MeetupChallenge {
     description: string;
     challengeCategory: ChallengeCategory;
     active: boolean;
-
 }

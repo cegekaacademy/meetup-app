@@ -2,6 +2,7 @@ import {NgModule} from '@angular/core';
 import {Routes, RouterModule} from '@angular/router';
 import {ChallengesListComponent} from "app/meetup-challenges/challenges-list/challenges-list.component";
 import {ChallengesEditComponent} from "app/meetup-challenges/challenges-edit/challenges-edit.component";
+import {ChallengesSaveFormComponent} from "app/meetup-challenges/challenges-save-form/challenges-save-form.component";
 import {JhiResolvePagingParams} from "ng-jhipster";
 
 const routes: Routes = [
@@ -26,7 +27,7 @@ const routes: Routes = [
     },
     {
         path: 'add',
-        component: ChallengesEditComponent
+        component: ChallengesSaveFormComponent
     }
 ];
 

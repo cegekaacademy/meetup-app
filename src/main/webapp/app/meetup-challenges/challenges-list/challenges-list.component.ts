@@ -51,6 +51,7 @@ export class ChallengesListComponent implements OnInit {
     onUserFound(data) {
         this.user = data;
         this.getChallenges();
+
     }
 
     getChallenges() {
@@ -116,6 +117,10 @@ export class ChallengesListComponent implements OnInit {
 
     goToEdit(){
         this.router.navigate(['challenges/edit/' + this.selectedChallenge.id]);
+    }
+
+    goToAdd(){
+        this.router.navigate(['challenges/add']);
     }
 
     deleteChallenge() {
