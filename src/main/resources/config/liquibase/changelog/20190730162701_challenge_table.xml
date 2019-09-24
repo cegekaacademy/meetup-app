@@ -52,4 +52,23 @@
                                  referencedColumnNames="id"
                                  referencedTableName="challenge_category"/>
     </changeSet>
+
+
+    <changeSet id="20190917191304" author="bitzik">
+        <loadData tableName="challenge"
+                  file="/config/liquibase/data/challenge.csv"
+                  separator=";"
+                  encoding="UTF-8"
+                  schemaName="academyproject">
+
+            <column name="id" type="NUMERIC"/>
+            <column name="creator" type="NUMERIC"/>
+            <column name="start_date" type="TIMESTAMP"/>
+            <column name="end_date" type="TIMESTAMP"/>
+            <column name="status" type="STRING"/>
+            <column name="points" type = "NUMERIC"/>
+            <column name="drescripton" type="STRING"/>
+            <column name="category_id" type="NUMERIC"/>
+        </loadData>
+    </changeSet>
 </databaseChangeLog>
