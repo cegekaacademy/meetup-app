@@ -114,6 +114,11 @@ public class ChallengeMapper {
 
     public static ChallengeCategory enrichChallengeCategory(ChallengeCategory challengeCategory, ChallengeCategoryDTO challengeCategoryDTO) {
 
+        if(challengeCategory == null){
+
+            return null;
+
+        }
         if(!challengeCategory.getId().equals(challengeCategoryDTO.getId())) {
 
             challengeCategory = new ChallengeCategory();

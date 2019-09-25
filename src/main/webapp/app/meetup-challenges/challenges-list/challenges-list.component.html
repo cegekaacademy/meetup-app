@@ -50,7 +50,7 @@
 
 
     <div>
-        <a routerLink="/add" class="float circle-margin--first">
+        <a routerLink="/add" class="float circle-margin--first" (click)="goToAdd()" >
             <i class="fa fa-plus my-float"></i>
         </a>
 
@@ -58,7 +58,7 @@
             <i class="fa fa-trash my-float"></i>
         </a>
 
-        <a href="#" class="float" (click)="goToEdit()">
+        <a routerLink="/edit" class="float" (click)="goToEdit()">
             <i class="fa fa-pencil my-float"></i>
         </a>
     </div>
